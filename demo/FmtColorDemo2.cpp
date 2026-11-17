@@ -28,4 +28,9 @@ int main() {
   // Overrides replace colors throughout relative parts; absolute scopes stay.
   std::println("Overlay:");
   std::println("{}", overlay(surrounding, line2));
+
+  // Style only the hexadecimal ID; the suffix uses the surrounding style.
+  std::println("\nRequest ID: {:04x} — completed",
+               tjg::color::styled(42,
+                   tjg::color::fg(tjg::color::term_color::bright_cyan)));
 }

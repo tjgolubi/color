@@ -224,17 +224,11 @@ auto style = tjg::color::fg(accent);
 `rgb` values support equality and ordering by their packed `0xRRGGBB` values:
 red first, then green, then blue. This is numeric ordering, rather than an
 ordering by brightness. They can be used as keys in `std::map` and `std::set`.
-In C++20 and later, `operator<=>` returns `std::strong_ordering`.
+`operator<=>` returns `std::strong_ordering`.
 
 `std::hash<tjg::color::rgb>` hashes the packed `uint32_t` representation, allowing RGB
 values to be keys in `std::unordered_map` and `std::unordered_set`. Equal RGB
 values have equal hashes. Hash values are not a stable serialization format.
-
-!!! note "Changed behavior"
-
-    `tjg::color` was previously an enum type. It is now a namespace containing
-    RGB constants. The color names and RGB values are unchanged; `tjg::color`
-    is no longer a type, and its named values are no longer enum values.
 
 ### Integer representation
 
@@ -255,11 +249,6 @@ auto sample = tjg::color::rgb{0xab123456};
 auto packed = static_cast<uint32_t>(sample); // 0x00123456
 auto named  = static_cast<uint32_t>(tjg::color::rgb::coral); // 0x00FF7F50
 ```
-
-!!! note "Changed behavior"
-
-    Packed integer construction of `rgb` was previously implicit. It is now
-    explicit; conversion from `rgb` to a packed integer is also explicit.
 
 ## Gray palette colors
 

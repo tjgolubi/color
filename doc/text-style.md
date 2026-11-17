@@ -320,18 +320,6 @@ auto has_fg = source.has_fg(); // false
 auto unspecified = std::holds_alternative<tjg::color::no_color_t>(foreground); // true
 ```
 
-!!! note "Changed behavior"
-
-    Previously, the foreground, background, and emphasis getters required their
-    components to be present. They can now be called when those components are
-    absent.
-
-!!! note "Changed behavior"
-
-    Foreground and background values now have the public type `tjg::color::color_t`.
-    Their type was previously unspecified and named `detail::color_type`
-    internally. The getters return `color_t` by value.
-
 ### Attribute queries
 
 ```cpp
@@ -372,7 +360,7 @@ Attribute and component setters support constant evaluation in C++23 and
 later on supported compilers.
 
 Use `emph(attributes)` to set exactly a group of attributes, then individual
-setters to change selected bits. In C++20 and later, `using enum` makes the
+setters to change selected bits. `using enum` makes the
 attribute names available without repeating their type:
 
 ```cpp
@@ -383,8 +371,8 @@ style.emph(bold | blink | strike);  // Exactly these three attributes.
 style.blink(false).underline();     // Bold, underline, strike.
 ```
 
-In older language modes, qualify names with `tjg::color::emphasis::` or use a type
-alias such as `using em = tjg::color::emphasis;` and write `em::bold`.
+Alternatively, qualify names with `tjg::color::emphasis::` or use a type alias
+such as `using em = tjg::color::emphasis;` and write `em::bold`.
 
 ### Attribute functions returning a new style
 
@@ -508,7 +496,7 @@ hashes. Hash values are not a stable serialization format.
 ### Integer representation
 
 `text_style` stores its components directly. No integer representation or
-`to_underlying(text_style)` conversion is provided at present.
+`to_underlying(text_style)` conversion is provided.
 
 ## Combining emphasis attributes
 

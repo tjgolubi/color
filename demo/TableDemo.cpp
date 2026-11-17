@@ -20,7 +20,7 @@ constexpr auto notes_color   = fg(tc::white).bg(rgb::indigo);
 
 // An absolute style replaces inherited styling.
 constexpr auto critical_style =
-                      fg(rgb::red).bg(rgb::white).bold().blink().absolute();
+    fg(rgb::red).bg(rgb::white).bold().blink().absolute();
 
 // Apply column defaults without overriding existing styles.
 auto cell(styled_text text, text_style column) -> styled_text {
@@ -29,8 +29,10 @@ auto cell(styled_text text, text_style column) -> styled_text {
 
 // Each field has equal width and precision.
 // Long content is truncated; short content is padded.
-void print_row(styled_text service, styled_text status,
-               styled_text latency, styled_text notes,
+void print_row(styled_text service,
+               styled_text status,
+               styled_text latency,
+               styled_text notes,
                text_style row = {})
 {
   tjg::color::println(row, "{:<16.16} {:^12.12} {:>12.12} {:<30.30}",
@@ -78,4 +80,9 @@ int main() {
 
   // Faint row emphasis, retaining the column backgrounds.
   print_row("Old server", "OFFLINE", "--", "Maintenance mode", tjg::color::faint());
+
+  // Style only the hexadecimal ID; the suffix uses the surrounding style.
+  std::println("\nRequest ID: {:04x} — completed",
+               tjg::color::styled(42,
+                   tjg::color::fg(tjg::color::term_color::bright_cyan)));
 } // main

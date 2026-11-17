@@ -19,27 +19,34 @@ constexpr auto status_color  = fg(tc::white).bg(rgb::dark_green);
 constexpr auto latency_color = fg(tc::white).bg(rgb::dark_golden_rod);
 constexpr auto notes_color   = fg(tc::white).bg(rgb::indigo);
 
+// An absolute style replaces inherited styling.
+constexpr auto critical_style =
+    fg(rgb::red).bg(rgb::white).bold().blink().absolute();
+
 // Apply column defaults without overriding existing styles.
 auto cell(styled_text text, text_style column, text_style row) -> styled_text {
   text.underlay(column.underlay(row));
   return text;
 }
 
-// Each field has equal width and precision.
+// Each field has a minimum width.
 // Long content is not truncated; short content is padded.
 void print_row(std::ostream& out,
-               styled_text service, styled_text status,
-               styled_text latency, styled_text notes,
+               styled_text service,
+               styled_text status,
+               styled_text latency,
+               styled_text notes,
                text_style row = {})
 {
   // setw() applies to one cell. Width is a minimum, so use notes that fit.
   out        << std::left << std::setw(16)
              << cell(std::move(service), service_color, row)
-      << ' ' << std::setw(12) << cell(std::move(status), status_color, row)
+      << ' ' << std::setw(12)
+             << cell(std::move(status),  status_color, row)
       << ' ' << std::right << std::setw(12)
              << cell(std::move(latency), latency_color, row)
       << ' ' << std::left << std::setw(30)
-             << cell(std::move(notes), notes_color, row) << '\n';
+             << cell(std::move(notes),   notes_color, row) << '\n';
 }
 
 } // local
@@ -62,7 +69,7 @@ int main() {
   print_row(out, "東京 NAS", ok, "9 ms", "Café 東京: all systems normal");
 
   // Two fragments with different foreground colors.
-  const auto vpn_note = styled_text{"Encrypted "}
+  const auto vpn_note = "Encrypted "
                       + styled_text{"connection", fg(rgb::aquamarine)};
   print_row(out, "VPN", ok, "38 ms", vpn_note);
 
@@ -74,17 +81,16 @@ int main() {
 
   // An absolute red-on-white fragment within the Notes column.
   const auto fail = styled_text{"FAIL", fg(tc::bright_red)};
-  const auto critical_style =
-                      fg(rgb::red).bg(rgb::white).bold().blink().absolute();
-  const auto db_note = styled_text{"Connection refused: "}
+  const auto db_note = "Connection refused: "
                      + styled_text{"CRITICAL!", critical_style};
   print_row(out, "Database", fail, "--", db_note, tjg::color::bold());
 
   // Faint row emphasis, retaining the column backgrounds.
   print_row(out, "Old server", "OFFLINE", "--", "Maintenance mode", tjg::color::faint());
 
+  // Style only the hexadecimal ID; the suffix uses the surrounding style.
   // The underlying integer inserter handles the base, fill, and field width.
   out << "\nRequest ID: " << std::hex << std::right << std::setfill('0')
       << std::setw(4) << tjg::color::styled(42, fg(tc::bright_cyan))
-      << std::dec << std::setfill(' ') << '\n';
-}
+      << std::dec << std::setfill(' ') << " — completed\n";
+} // main

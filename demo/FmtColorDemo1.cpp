@@ -24,4 +24,9 @@ int main() {
             styled("blue background", bg(blue)),
             styled("reset+underline only", text_style{}.absolute().underline()),
             styled("reverse red", fg(red).reverse()));
+
+  // Style only the hexadecimal ID; the suffix uses the surrounding style.
+  std::println("\nRequest ID: {:04x} — completed",
+               tjg::color::styled(42,
+                   tjg::color::fg(tjg::color::term_color::bright_cyan)));
 } // main

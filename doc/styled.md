@@ -230,7 +230,7 @@ Each node shows its [readable style](text-style.md#readable-style-output), a
 space, then either its quoted debug string or an opening `{` and newline.
 An empty node style and its following space are omitted. Children are indented
 two spaces per level; each closing `}` aligns with its node's style. Leaf
-strings use the extension's debug escaping, including quotes, backslashes,
+strings use the library's debug escaping, including quotes, backslashes,
 embedded nulls, and control characters.
 
 ```cpp
@@ -290,7 +290,7 @@ whether the failure throws. For a debug tree dump, insert the result of
 
 ### Table demonstration
 
-The complete [TableDemo.cpp](https://github.com/tjgolubi/fmt/blob/color-dev/demo/TableDemo.cpp)
+The complete [TableDemo.cpp](https://github.com/tjgolubi/color/blob/dev/demo/TableDemo.cpp)
 example combines column backgrounds, independently colored cell contents, row
 emphasis, and an absolute warning span. It also demonstrates UTF-8 display
 widths and fixed-width padding and truncation.
@@ -298,14 +298,13 @@ widths and fixed-width padding and truncation.
 From the repository root, build and run the table demo with:
 
 ```sh
-make -C demo TableDemo
-./demo/TableDemo
+c++ -std=c++23 -I include demo/TableDemo.cpp -o /tmp/TableDemo
+/tmp/TableDemo
 ```
 
-The demo Makefile uses C++23, header-only formatting, and compact SGR output.
-Run `make -C demo` to build both `FmtColorDemo2` and `TableDemo`,
-`make -C demo run` to run both, and `make -C demo clean` to remove both
-executables. The extension requires C++23.
+Use a C++23 compiler and standard library with `<format>` and `<print>`.
+The demo uses the header-only library and emits compact SGR sequences.
+An ANSI-capable terminal displays its colors and text attributes.
 
 #### Apply column defaults beneath cell styles
 

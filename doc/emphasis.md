@@ -28,11 +28,6 @@ auto style = tjg::color::emphasis::bold
 tjg::color::println(style, "Important: {}", 42);
 ```
 
-!!! note "Changed behavior"
-
-    Combining two emphasis values now returns `emphasis`.
-    Previously, it returned `text_style`.
-
 ```cpp
 tjg::color::text_style style = tjg::color::emphasis::bold | tjg::color::emphasis::underline;
 if (style.has_emph())

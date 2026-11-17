@@ -6,8 +6,8 @@ or output.
 
 The library API lives in namespace `tjg::color` and targets C++23.
 Text utilities and SGR helpers use `std::basic_string_view`, including
-`std::string_view` and `std::wstring_view`. Formatting and printing use `std::format` and `std::print`; the extension
-uses `<tjg/...>` headers and requires no {fmt} headers or library.
+`std::string_view` and `std::wstring_view`. Formatting and printing use
+`std::format` and `std::print`. The library uses `<tjg/...>` headers.
 Color and styling APIs live in `tjg::color`; general utilities remain in `tjg`.
 Use `using namespace tjg::color;` locally for concise styled-text expressions.
 The repository's root CMake project provides the installable `tjg::tjg` target.

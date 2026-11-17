@@ -39,4 +39,9 @@ int main() {
     tjg::color::println(tjg::color::underline(), "The result is {} bytes.",
                  tjg::color::styled(42, tjg::color::fg(tjg::color::term_color::red)));
   }
+
+  // Style only the hexadecimal ID; the suffix uses the surrounding style.
+  std::println("\nRequest ID: {:04x} — completed",
+               tjg::color::styled(42,
+                   tjg::color::fg(tjg::color::term_color::bright_cyan)));
 } // main
