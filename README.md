@@ -83,5 +83,5 @@ pinned Python packages into a virtual environment under `build/`.
 - [Color user guide](https://tjgolubi.github.io/color/)
 - [Color user guide source](doc/index.md)
 - [Change log](CHANGELOG.md)
-- [Project website and design rationale](https://color.tjgolubi.chatgpt.site)
+- [Project website and design rationale](https://color-kit-cpp23.tjgolubi.chatgpt.site)
 - [License](LICENSE) and [Boost Software License](https://www.boost.org/LICENSE_1_0.txt)
