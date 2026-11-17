@@ -21,7 +21,20 @@ The source checkout's `README.md` provides the library overview, header map,
 build instructions, and documentation links. `doc/` contains the user guide,
 `include/tjg/` the implementation, `test/` the regression tests, and `demo/`
 the examples and comparison programs. External-library comparisons belong in
-the demo context.
+the demo context. The user guide covers styled text; do not create a separate
+`StyledText.md`.
+
+## Current handoff
+
+`dev` is pushed at `c17e87a` with the guide publication workflow and `{color}`
+branding. The library checkout is on `fix/Demos` at `acd98bd`, pushed for
+Terry's review, with matching style names and comment sections in the C++23
+and {fmt} table demos. It is not integrated into `dev` or the website.
+
+The marketing website is public and has three comparison pages, including
+aligned table code and pinned output screenshots. See [Website.md](Website.md)
+for the published version and pending demo refresh. See
+[BuildAndTest.md](BuildAndTest.md) for validation results.
 
 ## Coordination documents
 
@@ -60,7 +73,7 @@ current local and GitHub CI results, and coverage limitations.
 
 - [Repository](https://github.com/tjgolubi/color)
 - [User guide](https://tjgolubi.github.io/color/)
-- [New website, private review](https://color-kit-cpp23.tjgolubi.chatgpt.site)
+- [Project website](https://color-kit-cpp23.tjgolubi.chatgpt.site)
 
-See [Website.md](Website.md) for deployment details, the outstanding guide
-publication issue, and the different website address still in the library README.
+See [Website.md](Website.md) for deployment details and the different website
+address still in the library README.

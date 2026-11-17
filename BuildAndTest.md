@@ -106,40 +106,92 @@ cd /workspace/color
 PATH=/workspace/.build-tools/cmake/data/bin:$PATH ./build.bash
 ```
 
-Demos and a local documentation build have not been verified in this
-conversation. This local result covers the script's Debug configuration.
+That local full-suite result covers the initial snapshot's Debug configuration;
+it is not a fresh full-suite run of later commits.
+
+The current guide configuration built locally with the pinned Python packages
+and Doxygen 1.9.8. All eight generated pages use `{color}` in their titles.
+Canonical and repository links, the configured `dev` edit links, API rendering,
+and both `tjg` and `tjg::color` documentation lookups passed checks. C++
+identifiers such as the `Color` concept remain unchanged.
+
+Doxygen is installed locally under `/workspace/.build-tools/doxygen`. This
+workspace's executable needs
+`LD_LIBRARY_PATH=/workspace/.build-tools/doxygen/usr/lib/x86_64-linux-gnu`.
+The documentation virtual environment is `build/doc-venv`; use
+`TJG_DOXYGEN=/workspace/.build-tools/doxygen/usr/bin/doxygen` and
+`PYTHONPATH=support/python` for a direct MkDocs invocation. These paths are
+workspace-specific, not additional project dependencies.
 
 ## Current GitHub CI validation
 
-The four push workflows completed successfully for the same full SHA above
-on `dev`. All ten jobs passed:
+Verified November 17, 2026: all 11 jobs passed for `dev` at
+`c17e87a881477ac3adea00f68cde8eacfb1c1a2e`.
 
-| Workflow                                                                  | Configurations                                                                                     | Jobs | Result |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44007727703)       | GCC 14 Debug and Release; Clang 20 with libc++ Debug and Release; GCC 14 Debug with ASan and UBSan | 5    | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44007727806)       | LLVM 20 with libc++, Debug and Release                                                             | 2    | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44007727657)     | MSVC v143, x64, Debug and Release                                                                  | 2    | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44007727728) | User-guide build                                                                                   | 1    | Passed |
+| Workflow                                                                  | Configurations                                                        | Jobs | Result |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------- | ---: | ------ |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44025326570)       | GCC 14 and Clang 20/libc++ Debug and Release; GCC 14 Debug ASan/UBSan | 5    | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44025326564)       | LLVM 20/libc++ Debug and Release                                      | 2    | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44025326514)     | MSVC v143 x64 Debug and Release                                       | 2    | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44025326520) | Build and GitHub Pages publication                                    | 2    | Passed |
 
 The nine platform jobs configure, build, and run the TJG regression suite in
 C++23 mode with test warnings treated as errors. Matrix fail-fast is disabled.
-The guide workflow builds the documentation; it does not deploy it.
+CI evidence applies to the exact tested SHA, not later source or uncommitted
+changes.
 
-These workflows trigger on pushes and pull requests. CI evidence applies to
-the exact tested SHA, not later source or uncommitted changes.
+## Demo alignment candidate
+
+`fix/Demos` is pushed at `acd98bddd545fe86b1e86637dff28302fd5d1b3b`, based on
+`dev` at `c17e87a`. It updates only `demo/Cpp23Demo.cpp` and
+`demo/FmtColorDemo0.cpp`: matching style and note names, corresponding comments,
+modest section spacing, and a named `bold_underline` constant for the C++23
+heading. The Color demo, displayed strings, and library headers are unchanged.
+The candidate awaits Terry's review and is not integrated or published to Sites.
+
+Both revised demos compile with GCC 14.2 in C++23 mode using
+`-Wall -Wextra -Wpedantic -Werror`. The {fmt} comparison uses external upstream
+{fmt} 10.2.1, header-only, from `/workspace/.build-tools/fmt-comparison`.
+Captured output matches each original byte for byte: C++23 1,717 bytes,
+{fmt} 1,916 bytes. All three demos have identical ordered dashboard-row comments.
+Artifacts are in `build/demo-alignment/`. These are focused demo checks;
+the full local regression suite was not rerun for this documentation-oriented
+change. The comparisons are intended to show clear, idiomatic alternatives,
+not make C++23 or {fmt} look artificially cumbersome.
+
+All four workflows passed for this exact candidate SHA: all 10 executed jobs
+passed. The Pages deployment job was correctly skipped because
+this is not `dev`:
+
+| Workflow    | Evidence                                                   |
+| ----------- | ---------------------------------------------------------- |
+| Linux       | https://github.com/tjgolubi/color/actions/runs/44026165378 |
+| macOS       | https://github.com/tjgolubi/color/actions/runs/44026165359 |
+| Windows     | https://github.com/tjgolubi/color/actions/runs/44026165424 |
+| Guide build | https://github.com/tjgolubi/color/actions/runs/44026165367 |
+
+CI success does not authorize integration. Terry is reviewing this branch.
+
+## User-guide publication
+
+The repository's Pages source is now GitHub Actions. The `github-pages`
+environment permits `dev`. `.github/workflows/doc.yml` builds on pushes and
+pull requests, uploads the guide artifact only for pushes to `dev`, and runs
+a dependent Pages deployment job under the same condition. Deployments are
+serialized without cancelling an active publication. Other branches, including
+`docs/Coord` and feature branches, do not publish.
+
+The live guide at https://tjgolubi.github.io/color/ returned HTTP 200 and
+its title is `{color}` after the `c17e87a` deployment. The overview, Colors,
+and Styled Arguments pages were also checked after initial publication.
+Support configuration now uses this repository and `dev` edit links, and
+publication instructions are in library `support/color-pages.md`.
+
+The Pages upload action currently brings a nonfatal warning about its nested
+`actions/upload-artifact` Node.js 20 runtime being forced onto Node.js 24.
+Build and deployment still pass; this is not a deployment failure.
 
 ## Other workflow coverage
-
-### Outstanding: publish the user guide
-
-The `dev` guide workflow passes its build but has no GitHub Pages deployment
-step. `https://tjgolubi.github.io/color/` returned HTTP 404 when checked on
-November 17, 2026. A successful documentation build does not publish the guide.
-
-Terry wants guide publication repaired. The workflow and Pages configuration
-still need inspection and an authorized update, followed by verification of
-both deployment and the live guide. No deployment repair has been made.
-See [Website.md](Website.md) for the marketing site's guide links and fallback.
 
 ### Inherited workflow configuration
 
@@ -148,7 +200,7 @@ CodeQL and supply-chain workflows are enabled but their push triggers target
 requests. Recent Dependabot pull requests show failures in both the clang-format
 and cmake-format jobs; those are separate from the successful `dev` push runs.
 Dependabot and lint are inherited configuration that Terry has not adopted.
-No configuration changes or fixes have been authorized.
+No adoption or repair of those inherited checks has been requested.
 
 ## Maintaining this document
 

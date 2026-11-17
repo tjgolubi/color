@@ -92,7 +92,8 @@ because Doxygen can interpret wrapped text as list syntax.
 
 ## Repository and tools
 
-The library repository is `tjgolubi/color`; its development branch is `dev`.
+The library repository is `tjgolubi/color`; its integration and default branch
+is `dev`.
 Coordination documents live at the root of the separate `docs/Coord` branch.
 Inspect actual refs and worktrees before acting rather than assuming recorded
 checkout state still holds.
@@ -120,6 +121,17 @@ bundle import separately, and provide fetch and integration commands. This
 preference does not authorize commits or pushes.
 
 ## Branches and integration
+
+Use `dev` to integrate features, fixes, and refactors. For a release, squash-merge
+`dev` into `main`, then merge `main` back into `dev` before continuing work.
+Neither `main` nor `master` exists in the inspected remote; create `main` when
+Terry authorizes the first release. There was no committed `master` history to
+rename. Release operations still need authorization.
+
+Only pushes to `dev` publish the GitHub Pages user guide. Other branches and
+pull requests can build the guide but must not deploy it. This includes
+`docs/Coord`, `fix/Demos`, and a future `main` unless Terry changes that policy.
+
 
 Create focused branches when authorized implementation begins from the agreed
 baseline. Record the proposed name first. Use lowercase slash prefixes and
