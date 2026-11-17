@@ -26,15 +26,19 @@ the demo context. The user guide covers styled text; do not create a separate
 
 ## Current handoff
 
-`dev` is pushed at `c17e87a` with the guide publication workflow and `{color}`
-branding. The library checkout is on `fix/Demos` at `acd98bd`, pushed for
-Terry's review, with matching style names and comment sections in the C++23
-and {fmt} table demos. It is not integrated into `dev` or the website.
+`dev` is pushed at `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b` and is the
+current library checkout, clean and matching the remote. Its latest commit
+fixes the library README website link. Terry authorized squash-merging all
+of `fix/Demos` into `dev` as `e4b2730`; that integration tree matches the feature tip
+`4ca3a80acea98785175a7f74887e55c86713d69e`. Both branches remain on the remote.
+The demo alignment, ostream comparison, Request ID restoration examples,
+cropped screenshot, and initial-release guide cleanup are integrated.
 
-The marketing website is public and has three comparison pages, including
-aligned table code and pinned output screenshots. See [Website.md](Website.md)
-for the published version and pending demo refresh. See
-[BuildAndTest.md](BuildAndTest.md) for validation results.
+The public marketing website is current at version 8, with the small example
+and three table comparison pages, pinned screenshots, SGR explanations, and
+{fmt} acknowledgment. Its copied demos and screenshot match `dev`; no website
+refresh is needed after the squash. See [Website.md](Website.md) for publication
+state and [BuildAndTest.md](BuildAndTest.md) for validation results.
 
 ## Coordination documents
 
@@ -75,5 +79,5 @@ current local and GitHub CI results, and coverage limitations.
 - [User guide](https://tjgolubi.github.io/color/)
 - [Project website](https://color-kit-cpp23.tjgolubi.chatgpt.site)
 
-See [Website.md](Website.md) for deployment details and the different website
-address still in the library README.
+See [Website.md](Website.md) for deployment details. The library README links
+to the current public site.

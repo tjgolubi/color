@@ -109,11 +109,15 @@ PATH=/workspace/.build-tools/cmake/data/bin:$PATH ./build.bash
 That local full-suite result covers the initial snapshot's Debug configuration;
 it is not a fresh full-suite run of later commits.
 
-The current guide configuration built locally with the pinned Python packages
-and Doxygen 1.9.8. All eight generated pages use `{color}` in their titles.
-Canonical and repository links, the configured `dev` edit links, API rendering,
-and both `tjg` and `tjg::color` documentation lookups passed checks. C++
-identifiers such as the `Color` concept remain unchanged.
+The guide cleanup was built locally at feature tip
+`4ca3a80acea98785175a7f74887e55c86713d69e`, whose tree exactly matches the
+integrated `dev` commit. All eight generated pages passed the obsolete-reference
+scan: no {fmt} references, old repository links, changed-behavior notes, or
+older-language-mode guidance remain. Current API descriptions are retained.
+The documented direct C++23 compile command for `demo/TableDemo.cpp` compiled
+and ran successfully, producing the dashboard and Request ID suffix.
+The demo Makefile is absent; do not use the obsolete `make -C demo` guide
+instructions. Guide generation is verified separately from visual review.
 
 Doxygen is installed locally under `/workspace/.build-tools/doxygen`. This
 workspace's executable needs
@@ -126,51 +130,49 @@ workspace-specific, not additional project dependencies.
 ## Current GitHub CI validation
 
 Verified November 17, 2026: all 11 jobs passed for `dev` at
-`c17e87a881477ac3adea00f68cde8eacfb1c1a2e`.
+`e4b2730d6a7d43c262958edf650e32802b97e4db`.
 
 | Workflow                                                                  | Configurations                                                        | Jobs | Result |
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44025326570)       | GCC 14 and Clang 20/libc++ Debug and Release; GCC 14 Debug ASan/UBSan | 5    | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44025326564)       | LLVM 20/libc++ Debug and Release                                      | 2    | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44025326514)     | MSVC v143 x64 Debug and Release                                       | 2    | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44025326520) | Build and GitHub Pages publication                                    | 2    | Passed |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44067830595)       | GCC 14 and Clang 20/libc++ Debug and Release; GCC 14 Debug ASan/UBSan | 5    | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44067830559)       | LLVM 20/libc++ Debug and Release                                      | 2    | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44067830596)     | MSVC v143 x64 Debug and Release                                       | 2    | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44067830859) | Build and GitHub Pages publication                                    | 2    | Passed |
 
 The nine platform jobs configure, build, and run the TJG regression suite in
 C++23 mode with test warnings treated as errors. Matrix fail-fast is disabled.
 CI evidence applies to the exact tested SHA, not later source or uncommitted
 changes.
 
-## Demo alignment candidate
+The current `dev` tip is `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b`, a
+README-only correction to the marketing website URL after that integration.
+Its diff passed whitespace checks; no fresh local build was needed for this
+link edit. Terry confirmed no further CI check is needed for this link-only change.
+The recorded 11-job pass is for `e4b2730`; the library code is unchanged.
 
-`fix/Demos` is pushed at `acd98bddd545fe86b1e86637dff28302fd5d1b3b`, based on
-`dev` at `c17e87a`. It updates only `demo/Cpp23Demo.cpp` and
-`demo/FmtColorDemo0.cpp`: matching style and note names, corresponding comments,
-modest section spacing, and a named `bold_underline` constant for the C++23
-heading. The Color demo, displayed strings, and library headers are unchanged.
-The candidate awaits Terry's review and is not integrated or published to Sites.
+## Integrated demo comparisons
 
-Both revised demos compile with GCC 14.2 in C++23 mode using
-`-Wall -Wextra -Wpedantic -Werror`. The {fmt} comparison uses external upstream
-{fmt} 10.2.1, header-only, from `/workspace/.build-tools/fmt-comparison`.
-Captured output matches each original byte for byte: C++23 1,717 bytes,
-{fmt} 1,916 bytes. All three demos have identical ordered dashboard-row comments.
-Artifacts are in `build/demo-alignment/`. These are focused demo checks;
-the full local regression suite was not rerun for this documentation-oriented
-change. The comparisons are intended to show clear, idiomatic alternatives,
-not make C++23 or {fmt} look artificially cumbersome.
+All of `fix/Demos` was squash-merged into `dev` as `e4b2730`; the staged and
+committed integration trees were checked against the feature tip `4ca3a80`
+and matched exactly. The feature branch remains available; it is no longer
+awaiting integration. No library headers were changed by this integration.
 
-All four workflows passed for this exact candidate SHA: all 10 executed jobs
-passed. The Pages deployment job was correctly skipped because
-this is not `dev`:
+The seven demos include a Request ID example with a cyan `002a` followed by
+plain ` — completed`, demonstrating style recovery after `styled()`. Table
+comparisons use corresponding style names and comment sections, minimal extra
+spacing, and a named `bold_underline` sequence in C++23. The ostream table demo
+also has corresponding sections. The screenshot is the cropped original
+terminal capture at `demo/TableDemo.png` (1480 × 440).
 
-| Workflow    | Evidence                                                   |
-| ----------- | ---------------------------------------------------------- |
-| Linux       | https://github.com/tjgolubi/color/actions/runs/44026165378 |
-| macOS       | https://github.com/tjgolubi/color/actions/runs/44026165359 |
-| Windows     | https://github.com/tjgolubi/color/actions/runs/44026165424 |
-| Guide build | https://github.com/tjgolubi/color/actions/runs/44026165367 |
+Earlier focused checks verified strict-warning demo builds and unchanged
+output for the naming/comment alignment. Those byte-for-byte checks predate
+the intentionally added Request ID line; do not claim the final demos have
+unchanged output relative to the initial snapshot. Final integration coverage
+is the 11 passing CI jobs recorded above. The full local regression suite was
+not rerun for the integration.
 
-CI success does not authorize integration. Terry is reviewing this branch.
+Keep comparisons clear and idiomatic, with matching names and comments where
+appropriate, rather than making C++23 or {fmt} artificially cumbersome.
 
 ## User-guide publication
 
@@ -181,9 +183,10 @@ a dependent Pages deployment job under the same condition. Deployments are
 serialized without cancelling an active publication. Other branches, including
 `docs/Coord` and feature branches, do not publish.
 
-The live guide at https://tjgolubi.github.io/color/ returned HTTP 200 and
-its title is `{color}` after the `c17e87a` deployment. The overview, Colors,
-and Styled Arguments pages were also checked after initial publication.
+All eight live guide pages at https://tjgolubi.github.io/color/ returned
+HTTP 200 after the `e4b2730` deployment.
+The published pages passed the obsolete-reference scan, and the styled-text
+page links to `tjgolubi/color/blob/dev/demo/TableDemo.cpp`.
 Support configuration now uses this repository and `dev` edit links, and
 publication instructions are in library `support/color-pages.md`.
 

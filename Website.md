@@ -17,8 +17,7 @@ visitors can explore the comparisons. Terry began describing two audiences;
 the second audience has not been explicitly defined.
 
 Terry confirmed that the public site is accessible and linked from his page.
-Visitors can also arrive from the library README once its website link is
-updated. No referral from another library's maintainers has been confirmed.
+Visitors can also arrive through the corrected library README website link. No referral from another library's maintainers has been confirmed.
 The site introduces benefits and examples; link to the generated user guide
 for detailed usage and API reference rather than maintaining another guide.
 
@@ -41,14 +40,18 @@ rather than its full code on the homepage.
 
 - `comparisons.html`: the small sentence example, with three code blocks side
   by side for raw C++23 sequences, {fmt} restoration, and {color} nesting.
-  It links to both table comparison pages. `#table` remains a landing point
-  for those links.
+  It links to all three table comparison pages. `#table` remains a landing
+  point for those links. The C++23 explanation identifies SGR (Select Graphic
+  Rendition) and links to the Wikipedia section on SGR.
 - `cpp23-vs-color.html`: complete C++23 and {color} table programs side by side.
 - `fmt-vs-color.html`: complete {fmt} and {color} table programs side by side.
+- `ostream-vs-format.html`: {color} ostream and formatting table programs side
+  by side, with stream and formatting width behavior explained.
 
-Each table page aligns ten corresponding source sections, from setup and cell
-rendering through the individual dashboard rows. The table screenshot and
-column labels stay pinned above the code while scrolling. Code remains
+Each table page aligns eleven corresponding source sections, from setup and
+cell rendering through the dashboard rows and final Request ID example. The
+table screenshot and column labels stay pinned above the code while scrolling.
+Code remains
 visible, with a copy button for each block and complete-source downloads.
 Individual blocks scroll horizontally on narrow screens. Compact viewport
 styles and measured reference height keep the pinned area and anchor spacing
@@ -58,55 +61,64 @@ Keep comparisons fair: use clear, idiomatic C++23 and {fmt}, consistent names,
 and matching comment sections where appropriate. Do not inflate alternatives
 with avoidable clutter or excessive blank lines. Mention {fmt} in relevant
 demo comparisons, without framing {color} as an extension or future port.
+The homepage acknowledges the excellent work of the {fmt} project and its
+influence on {color}'s color and styling API, links to https://fmt.dev/, and
+recommends it to visitors who cannot use C++23, noting its C++11 support.
+The C++23 table page also briefly explains SGR and links to
+https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters.
 No benchmark, adoption, or unrequested future-feature claims are established.
 
 ## Source and assets
 
 The separate site checkout is `/workspace/sites/color-kit`, on `main`. It is
 buildless HTML/CSS/JavaScript with static output under `dist/` and identity in
-`.openai/hosting.json` (`static.directory` is `dist`). The four HTML files are
-the homepage and the three comparison pages above. `dist/assets/style.css`
+`.openai/hosting.json` (`static.directory` is `dist`). The five HTML files are
+the homepage and the four comparison pages above. `dist/assets/style.css`
 and `site.js` implement styling, copying, and pinned-reference measurement.
 
-`dist/assets/table-demo.png` matches library `doc/table-demo.png`;
+`dist/assets/table-demo.png` matches library `demo/TableDemo.png` (1480 × 440),
+the cropped terminal screenshot including `Request ID: 002a — completed`;
 `dist/assets/nested-demo.png` matches library `demo/NestedDemo.png`.
-`dist/examples/` contains seven original demos and the quick-start program.
+`dist/examples/` contains seven demos and the quick-start program.
 The screenshots' `東京` text is retained; Terry considered Beijing but did not
 request that change. Preserve text and screenshots together. Terminal palettes,
 themes, and attribute support affect appearance.
 
 Published source links and example downloads identify library snapshot
-`c576f5df6b4b7d2ba8fa59a2ac9acf9239a6d687`. The displayed code reconstructs the
-complete original programs without source changes. Refresh copied code,
+`c84d85cbb7066812b8cc06ab67b7d4a5b6905861`. The displayed code reconstructs the
+complete programs without source changes. All seven copied demos and the table
+screenshot were checked against integrated `dev` at `e4b2730` and match exactly;
+the intervening guide cleanup did not alter those inputs. Refresh copied code,
 section boundaries, downloads, and source links together after an accepted
 demo update; do not rely on old line numbers.
 
 ## Current public deployment
 
-Native Sites deployment confirmed version 4 succeeded November 17, 2026 at
-05:30:52 UTC. Access is public by Terry's instruction. The site has its own
-project and source repository; the earlier website was not modified.
+Native Sites deployment confirmed version 8 succeeded November 17, 2026 at
+10:15:50 UTC. Current Sites metadata confirms version 8 and public access,
+authorized by Terry. The site has its own project and source repository;
+the earlier website was not modified.
 
 | Item             | Value                                                                               |
 | ---------------- | ----------------------------------------------------------------------------------- |
 | Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
 | Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
-| Version          | 4                                                                                   |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_0c6654a573288191ad4fa8a87ca8b20f` |
-| Deployment ID    | `appgdep_6afbe685eb7c819183bd0acac1235276`                                          |
-| Source commit    | `1e5a8215891398bb0f933a7764f33c083a64aede`                                          |
+| Version          | 8                                                                                   |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_04dbe9dfb30c8191b93d619154baab15` |
+| Deployment ID    | `appgdep_6afc29513fd08191bd2223ef8c1a87f9`                                          |
+| Source commit    | `d474b9ec4c04aa83777352b62e6190c6b6d76123`                                          |
 | Audience         | Public                                                                              |
 
 The exact source is committed and pushed. The deployed archive is
-`/workspace/sites/color-kit-branded.tar.gz`, created with `git archive` from
+`/workspace/sites/color-kit-acknowledgment.tar.gz`, created with `git archive` from
 that pushed commit. No credentials are stored in source or archives.
 
 ## Verification and current handoff
 
 The quick-start program compiled with GCC in C++23 mode and strict warnings;
-its output matched expected style transitions and newline. All four pages
+its output matched expected style transitions and newline. All five pages
 passed balanced-HTML, unique-ID, and local-link/asset/anchor checks. The table
-pages reconstruct both complete sources exactly across ten section pairs.
+pages reconstruct both complete sources exactly across eleven section pairs.
 The seven source downloads and screenshots match their repository inputs.
 JavaScript syntax, copying, and pinned-reference height measurement passed
 checks. Browser tooling was unavailable to the assistant; visual review and
@@ -117,14 +129,18 @@ The user guide is now published at https://tjgolubi.github.io/color/ and uses
 see [BuildAndTest.md](BuildAndTest.md). The footer's guide-source fallback is
 still available, but the live guide no longer returns 404.
 
-`fix/Demos` at `acd98bd` is pushed for Terry's review. It aligns C++23 and
-{fmt} names and comments and introduces `bold_underline`; each demo's output
-is unchanged. The website still shows the original demo snapshot. Do not
-publish the candidate as accepted work without instructions.
+The demo alignment, ostream comparison, new Request ID suffix, and cropped
+screenshot are already published. The final site checks verified unchanged
+code blocks for the SGR and acknowledgment edits, balanced HTML, unique IDs,
+76 local links/assets/anchors, exact demo downloads and screenshot, and compiled
+quick-start output. The latest squash merge into `dev` changed no demo content,
+so it requires no website refresh. All eight live guide pages were verified
+after publication of `dev` at `e4b2730`; no obsolete guide narrative remains.
 
-The library README still links to `https://color.tjgolubi.chatgpt.site`, rather
-than the new public site above. Updating that inbound link remains outstanding;
-no library README edit has been made.
+The library README website link was corrected, committed, and pushed on `dev`
+as `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b`. It now points to
+https://color-kit-cpp23.tjgolubi.chatgpt.site. The library checkout is clean.
+This link-only change does not require a Sites update.
 
 ## Maintenance
 

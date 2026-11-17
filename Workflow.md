@@ -41,7 +41,11 @@ current source and tests. The source code and user guide define the design;
 do not maintain a separate `CppDesign.md`. Preserve useful rationale near the
 implementation or in the guide after checking it against the current code.
 Record uncertainty as a question, not an inferred plan. External-library
-comparisons belong in the demo context.
+comparisons belong in the demo context. The marketing homepage also credits
+{fmt}'s inspiration and recommends it for visitors who cannot use C++23.
+The user guide describes this initial release in the present tense: do not
+include old API behavior, migration notes, or an upstream-extension narrative.
+Keep required source attribution intact.
 
 Read the library README and relevant coordination documents before work.
 State when needed material is missing or stale. Newer explicit instructions
