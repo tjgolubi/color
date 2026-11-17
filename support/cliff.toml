@@ -2,17 +2,19 @@
 # {color} configuration.
 # This generates CHANGELOG.md.
 #
-# Always supply the accepted {color} history range explicitly. Tag filtering
-# alone does not exclude upstream commits or select the correct branch.
-# Current upstream baseline: TBD
+# Supply an explicitly reviewed Color history range. The repository starts
+# with a source snapshot; no external repository baseline is needed.
 # Example preview (stdout only):
-#   git cliff --config cliff.toml --offline --no-exec TBD..dev
+#   git cliff --config support/cliff.toml --offline --no-exec \
+#     c576f5df6b4b7d2ba8fa59a2ac9acf9239a6d687..dev
+# This excludes the initial snapshot's nonconventional commit message.
 #
 # Before creating a squash commit, preview its reviewed message with
 # --with-commit so its changelog entry can be included in the same commit.
 # Do not generate from the feature branch's intermediate commits.
 # Use --output CHANGELOG.md only when the generated result is approved.
-# No automatic version bumping: fork release numbering is not yet agreed.
+# Release numbering and tag naming are not yet agreed. Do not create tags or
+# regenerate the changelog automatically.
 
 [changelog]
 header = """
@@ -79,9 +81,8 @@ commit_parsers = [
 filter_commits = false
 fail_on_unmatched_commit = true
 
-# Draft fork-tag namespace, independent of the final release-number format.
-# Imported upstream tags (such as 12.2.0) must not define our release sections.
-tag_pattern = "^fmtcolor-"
+# Ignore tags until the project's release-tag convention is agreed.
+tag_pattern = "^$"
 use_branch_tags = true
 topo_order = false
 topo_order_commits = true

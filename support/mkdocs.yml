@@ -1,8 +1,8 @@
-site_name: FmtColor
+site_name: Color
 
 docs_dir: ../doc
 
-repo_url: https://github.com/tjgolubi/fmt
+repo_url: https://github.com/tjgolubi/color
 
 theme:
   name: material

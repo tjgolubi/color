@@ -1,4 +1,4 @@
-# A basic mkdocstrings handler for {fmt}.
+# A mkdocstrings handler for Color, adapted from the {fmt} handler.
 # Copyright (c) 2012 - present, Victor Zverovich
 # https://github.com/fmtlib/fmt/blob/master/LICENSE
 
@@ -379,7 +379,7 @@ class CxxHandler(BaseHandler):
         p = Popen(cmd, cwd=top_dir, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
         output, _ = p.communicate(
             input=r"""
-            PROJECT_NAME     = FmtColor
+            PROJECT_NAME     = Color
             GENERATE_XML     = YES
             GENERATE_LATEX   = NO
             GENERATE_HTML    = NO
@@ -490,7 +490,7 @@ class CxxHandler(BaseHandler):
         if identifier.startswith("tjg::"):
             qual_name = identifier
         else:
-            namespace = "tjg::color::" if options.get("color_reference") else "fmt::"
+            namespace = "tjg::color::" if options.get("color_reference") else "tjg::"
             qual_name = namespace + identifier
 
         param_str = None
@@ -529,10 +529,7 @@ class CxxHandler(BaseHandler):
                     else:
                         params_type.append(p.type)
                 node_param_str = ", ".join(params_type)
-                comparable_params = node_param_str
-                if qual_name.startswith("tjg::"):
-                    comparable_params = comparable_params.replace("fmt::", "")
-                if param_str and param_str != comparable_params:
+                if param_str and param_str != node_param_str:
                     candidates.append(f"{name}({node_param_str})")
                     continue
             elif d.kind == "define":
