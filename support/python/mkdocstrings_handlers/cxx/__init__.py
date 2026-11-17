@@ -1,4 +1,4 @@
-# A mkdocstrings handler for Color, adapted from the {fmt} handler.
+# A mkdocstrings handler for {color}, adapted from the {fmt} handler.
 # Copyright (c) 2012 - present, Victor Zverovich
 # https://github.com/fmtlib/fmt/blob/master/LICENSE
 
@@ -379,7 +379,7 @@ class CxxHandler(BaseHandler):
         p = Popen(cmd, cwd=top_dir, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
         output, _ = p.communicate(
             input=r"""
-            PROJECT_NAME     = Color
+            PROJECT_NAME     = "{{color}}"
             GENERATE_XML     = YES
             GENERATE_LATEX   = NO
             GENERATE_HTML    = NO

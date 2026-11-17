@@ -1,4 +1,4 @@
-# Color publication settings.
+# {color} publication settings.
 INHERIT: mkdocs.yml
 
 site_url: https://tjgolubi.github.io/color/
