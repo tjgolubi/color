@@ -1,0 +1,41 @@
+name: TJG macOS
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: LLVM 20 libc++ C++23 ${{ matrix.build_type }}
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install LLVM and libc++
+        run: |
+          brew install llvm@20 ninja
+          llvm_prefix=$(brew --prefix llvm@20)
+          echo "CXX=$llvm_prefix/bin/clang++" >> "$GITHUB_ENV"
+          echo "CXXFLAGS=-stdlib=libc++ -nostdinc++ -isystem $llvm_prefix/include/c++/v1" >> "$GITHUB_ENV"
+          echo "LDFLAGS=-L$llvm_prefix/lib/c++ -Wl,-rpath,$llvm_prefix/lib/c++ -L$llvm_prefix/lib/unwind -Wl,-rpath,$llvm_prefix/lib/unwind -lunwind" >> "$GITHUB_ENV"
+          echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> "$GITHUB_ENV"
+
+      - name: Configure TJG
+        run: >-
+          cmake -S . -B build/color -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+          -DTJG_TEST=ON -DTJG_WERROR=ON
+
+      - name: Build TJG tests
+        run: cmake --build build/color --parallel 4
+
+      - name: Test TJG
+        run: ctest --test-dir build/color -L tjg --output-on-failure

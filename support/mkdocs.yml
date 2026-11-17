@@ -1,0 +1,60 @@
+site_name: FmtColor
+
+docs_dir: ../doc
+
+repo_url: https://github.com/tjgolubi/fmt
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+  - color.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css
+  - color.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      # Use JavaScript syntax highlighter instead of Pygments because it
+      # automatically applies to code blocks extracted through Doxygen.
+      use_pygments: false
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: cxx
+nav:
+  - Overview: index.md
+  - Colors: colors.md
+  - Named colors: named-colors.md
+  - Emphasis: emphasis.md
+  - Text styles: text-style.md
+  - Styled arguments: styled.md
+  - Styled output: print.md
+  - Styled formatting: format.md
+
+extra:
+  generator: false

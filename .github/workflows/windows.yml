@@ -1,0 +1,34 @@
+name: TJG Windows
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: MSVC v143 C++23 x64 ${{ matrix.build_type }}
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set timezone
+        run: tzutil /s "FLE Standard Time"
+
+      - name: Configure TJG
+        run: >-
+          cmake -S . -B build/color -G "Visual Studio 17 2022" -A x64 -T v143
+          -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+          -DTJG_TEST=ON -DTJG_WERROR=ON
+
+      - name: Build TJG tests
+        run: cmake --build build/color --config ${{ matrix.build_type }} --parallel 4
+
+      - name: Test TJG
+        run: ctest --test-dir build/color -C ${{ matrix.build_type }} -L tjg --output-on-failure
