@@ -1,0 +1,62 @@
+name: TJG Linux
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.cxx }} C++23 ${{ matrix.build_type }} ${{ matrix.sanitizers && 'ASan UBSan' || '' }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cxx: [g++-14, clang++-20]
+        build_type: [Debug, Release]
+        sanitizers: [false]
+        include:
+          - cxx: g++-14
+            build_type: Debug
+            sanitizers: true
+    env:
+      CXX: ${{ matrix.cxx }}
+      CXXFLAGS: >-
+        ${{ matrix.cxx == 'clang++-20' && '-stdlib=libc++' || '' }}
+        ${{ matrix.sanitizers && '-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all' || '' }}
+      TZ: Europe/Kyiv
+      GTEST_DEATH_TEST_USE_FORK: ${{ matrix.sanitizers && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Configure LLVM repository
+        if: matrix.cxx == 'clang++-20'
+        run: |
+          sudo install -D -m 0644 support/llvm-snapshot.gpg.key /etc/apt/keyrings/apt.llvm.org.asc
+          codename=$(lsb_release -cs)
+          echo "deb [signed-by=/etc/apt/keyrings/apt.llvm.org.asc] https://apt.llvm.org/$codename/ llvm-toolchain-$codename-20 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ninja-build locales-all
+          if [ "${{ matrix.cxx }}" = "clang++-20" ]; then
+            sudo apt-get install --yes clang-20 libc++-20-dev libc++abi-20-dev
+          else
+            sudo apt-get install --yes g++-14
+          fi
+
+      - name: Configure TJG
+        run: >-
+          cmake -S . -B build/color -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+          -DTJG_TEST=ON -DTJG_WERROR=ON
+
+      - name: Build TJG tests
+        run: cmake --build build/color --parallel 4
+
+      - name: Test TJG
+        run: ctest --test-dir build/color -L tjg --output-on-failure
