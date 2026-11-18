@@ -16,7 +16,7 @@ CMakeFiles
 CPack*.cmake
 CTestTestfile.cmake
 Makefile
-!/tools/Makefile
+!/demo/Makefile
 !/support/unicode/Makefile
 bin/
 build/
