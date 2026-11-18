@@ -2,7 +2,7 @@
 
 [Document map](README.md)
 
-Updated November 17, 2026.
+Updated November 18, 2026.
 
 ## Authorization and scope
 
@@ -93,6 +93,24 @@ constructs. Do not weaken compiler settings to bypass warnings. Formatting
 passes and formatter-configuration changes need instructions; do not restyle
 unrelated files. Check the generated guide when comment wrapping changes
 because Doxygen can interpret wrapped text as list syntax.
+
+## User-guide terminology and review
+
+Describe concatenated text and nested groups of styled text, with grouping
+like parentheses and colors or emphasis applied to groups. Avoid exposing the
+implementation as trees, nodes, roots, or leaves in user-facing explanations.
+Preserve API identifiers and precise behavior while changing the language.
+
+This terminology pass does not authorize removing explanations or corner
+cases. Terry wants to decide which explanations readers need and which corner
+cases to remove. Keep those details for his review. Do not assume that a
+behavior is common sense and delete its explanation.
+
+`REF/user-guide` contains the first pass and awaits Terry's review. "Text span"
+was used to distinguish pieces of text from groups; later discussion noted
+that "text" or "styled text" would usually suffice. Treat that as discussion,
+not authorization for another edit. Preserve the existing branch name as given
+by Terry, despite the general naming convention below.
 
 ## Repository and tools
 

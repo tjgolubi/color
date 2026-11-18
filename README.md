@@ -1,6 +1,6 @@
 # Color coordination
 
-Updated November 17, 2026.
+Updated November 18, 2026.
 
 These documents provide continuity between conversations about
 [`tjgolubi/color`](https://github.com/tjgolubi/color). Keep them current as
@@ -26,13 +26,28 @@ the demo context. The user guide covers styled text; do not create a separate
 
 ## Current handoff
 
-`dev` is pushed at `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b` and is the
-current library checkout, clean and matching the remote. Its latest commit
+`dev` is pushed at `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b` and remains the
+integration baseline. Its latest commit
 fixes the library README website link. Terry authorized squash-merging all
 of `fix/Demos` into `dev` as `e4b2730`; that integration tree matches the feature tip
 `4ca3a80acea98785175a7f74887e55c86713d69e`. Both branches remain on the remote.
 The demo alignment, ostream comparison, Request ID restoration examples,
 cropped screenshot, and initial-release guide cleanup are integrated.
+
+The current library checkout is `REF/user-guide`, clean and matching its
+remote at `9f43e9bfab316965346d5812e871ac9adbfe4af7`. This documentation-only
+revision replaces implementation terms such as tree, node, and leaf with text
+and nested groups of styled text. It updates the library README and guide
+pages `index.md`, `styled.md`, `print.md`, and `text-style.md`. No library code
+or API changes are included. The revision is pushed for Terry's review; it
+has not been integrated into `dev` or published to the Pages user guide.
+
+Corner cases and existing explanations are retained for Terry to evaluate.
+The revision uses "text span" in places; subsequent discussion identified
+"text" or "styled text" as usually sufficient. No follow-up replacement has
+been implemented or explicitly requested. See [Workflow.md](Workflow.md) for
+the agreed reader-facing model and [BuildAndTest.md](BuildAndTest.md) for
+verification and remaining checks.
 
 The public marketing website is current at version 8, with the small example
 and three table comparison pages, pinned screenshots, SGR explanations, and

@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md)
 
-Updated November 17, 2026.
+Updated November 18, 2026.
 
 ## Requirements and standard build
 
@@ -88,6 +88,25 @@ the generated HTML. The `::: name` reference blocks and `!!! note` blocks are
 MkDocs syntax, so their appearance in raw GitHub Markdown does not establish
 whether they render correctly. A successful guide build establishes generation,
 not visual review or deployment; record those checks separately.
+
+## User-guide terminology revision awaiting review
+
+`REF/user-guide` is pushed at
+`9f43e9bfab316965346d5812e871ac9adbfe4af7`. The change is limited to
+`README.md`, `doc/index.md`, `doc/styled.md`, `doc/print.md`, and
+`doc/text-style.md`. Library source and API behavior are unchanged.
+
+The terminology pass preserved corner-case explanations. `git diff --check`
+passed. A scripted comparison verified that all fenced examples and Markdown
+headings were preserved, apart from changing "the tree's styling" to "the
+text's styling" in one example comment. Heading preservation is not a full
+rendered-link check.
+
+No guide build, generated-HTML review, or CI check was performed for this
+revision. The earlier guide and CI results below do not validate this commit.
+Build and inspect the affected guide before integration; Terry's content
+review remains pending. The branch has not been integrated into `dev`, so it
+does not update the published GitHub Pages guide.
 
 ## Current local validation
 
