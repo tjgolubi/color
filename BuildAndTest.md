@@ -108,6 +108,26 @@ Build and inspect the affected guide before integration; Terry's content
 review remains pending. The branch has not been integrated into `dev`, so it
 does not update the published GitHub Pages guide.
 
+## Topic branches awaiting integration
+
+`ref/ShortNames` is pushed at `fc3ec5b3d3e7ef5509964557d9b32c2511861462`.
+All 22 local regression tests passed. `FmtColorDemo1` and `FmtColorDemo2`
+built and ran, and `git diff --check` passed. The pushed tree matches local
+commit `b8aa0f2`. The rendered guide was not verified because Doxygen was
+unavailable.
+
+`feat/FloatColors` is pushed at `8164ae56e060469b3fd94b4cdfff14fd553d8216`.
+Focused GCC C++23 compile-time checks verified both `color()` overloads,
+the exact values of the three named gray constants, and use of the generated
+RGB values with `fg()` and `bg()`. Earlier checks also confirmed that removing
+the floating-point `fg()` and `bg()` overloads restored the empty-brace
+behavior of the free functions and member setters. The corrected guide
+examples compiled and produced the documented RGB values. The pushed tree
+matches local commit `9c49c5b`.
+
+GitHub CI and the rendered guide have not been verified for either topic
+branch. The full regression suite has not been run on `feat/FloatColors`.
+
 ## Current local validation
 
 Verified November 17, 2026, on `dev` at
@@ -135,8 +155,7 @@ scan: no {fmt} references, old repository links, changed-behavior notes, or
 older-language-mode guidance remain. Current API descriptions are retained.
 The documented direct C++23 compile command for `demo/TableDemo.cpp` compiled
 and ran successfully, producing the dashboard and Request ID suffix.
-The demo Makefile is absent; do not use the obsolete `make -C demo` guide
-instructions. Guide generation is verified separately from visual review.
+The demo Makefile is tracked on `dev` again as of `084b241`. Guide generation is verified separately from visual review.
 
 Doxygen is installed locally under `/workspace/.build-tools/doxygen`. This
 workspace's executable needs
@@ -163,7 +182,7 @@ C++23 mode with test warnings treated as errors. Matrix fail-fast is disabled.
 CI evidence applies to the exact tested SHA, not later source or uncommitted
 changes.
 
-The current `dev` tip is `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b`, a
+After that integration, `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b` was a
 README-only correction to the marketing website URL after that integration.
 Its diff passed whitespace checks; no fresh local build was needed for this
 link edit. Terry confirmed no further CI check is needed for this link-only change.

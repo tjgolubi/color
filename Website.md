@@ -139,7 +139,7 @@ after publication of `dev` at `e4b2730`; no obsolete guide narrative remains.
 
 The library README website link was corrected, committed, and pushed on `dev`
 as `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b`. It now points to
-https://color-kit-cpp23.tjgolubi.chatgpt.site. The library checkout is clean.
+https://color-kit-cpp23.tjgolubi.chatgpt.site.
 This link-only change does not require a Sites update.
 
 ## Maintenance

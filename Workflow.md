@@ -35,8 +35,7 @@ automatically.
 ## Project and coding guidance
 
 Color is a standalone C++23 header library using standard formatting and
-printing. The existing implementation defines the current design; no redesign
-or new feature work is planned at present. Derive design descriptions from the
+printing. The existing implementation defines the current design. Derive design descriptions from the
 current source and tests. The source code and user guide define the design;
 do not maintain a separate `CppDesign.md`. Preserve useful rationale near the
 implementation or in the guide after checking it against the current code.
@@ -112,6 +111,35 @@ that "text" or "styled text" would usually suffice. Treat that as discussion,
 not authorization for another edit. Preserve the existing branch name as given
 by Terry, despite the general naming convention below.
 
+### Teaching color choices
+
+The user guide teaches readers how to get the appearance they want. Start
+with named `term_color` values and named RGB constants. For custom shades,
+introduce `color(red, green, blue)` and `color(grayscale)` with inputs from
+`0.0` to `1.0`. Both overloads return `rgb`. The one-argument form uses the
+same value for all three channels.
+
+The named neutral shades `rgb::gray_25`, `rgb::gray_50`, and `rgb::gray_75`
+are `#404040`, `#808080`, and `#C0C0C0`. The guide's Neutral swatches are
+generated from the named RGB constants. Existing CSS names retain their
+values, including `rgb::dark_gray`, which is lighter than `rgb::gray`.
+The chosen `gray_75` matches `rgb::silver`. The normalized call `color(0.75)`
+rounds to `#BFBFBF`.
+
+Reserve direct `rgb{...}` construction and indexed palette colors for the
+advanced section at the end of the guide, where readers who need fine control
+over the generated SGR codes can find them. Use `gray` and `cube` after the
+palette type rename is integrated. Their appearance depends on the output
+platform and its active palette. Keep `term_color::bright_black` for slot 8.
+Most readers care about the appearance and can use the styling API throughout.
+Keep SGR helpers, hand-written escape sequences, threading, and implementation
+details out of the main explanation.
+
+Use **current style** for the style tracked during formatting and **default
+style** for `text_style{}`. Nested formatting inherits and restores the current
+style. The outermost formatting or printing call restores the default style.
+Describe this behavior consistently across output destinations.
+
 ## Repository and tools
 
 The library repository is `tjgolubi/color`; its integration and default branch
@@ -125,10 +153,8 @@ remote inspection where appropriate. Machine-specific paths and tool versions
 must be verified on the machine in use. Reuse existing Git identity, SSH
 configuration, and credentials; keep credentials out of output and documents.
 
-The library checkout here is `/workspace/color`; the coordination worktree is
-`/workspace/color-coord`. Entering a worktree changes which checkout Git sees;
-it does not switch either worktree's branch. Inspect `git worktree list` before
-creating another checkout. Do not switch the library checkout to a branch
+Use `git worktree list` to locate the checkouts before creating another one.
+Enter the worktree for the branch you intend to work on. Do not switch the library checkout to a branch
 already checked out in the coordination worktree. Registration and worktree
 paths are local metadata, not setup commits or portable machine configuration.
 
