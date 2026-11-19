@@ -64,9 +64,10 @@ Include `<tjg/color.hpp>` to use the styled `std::ostream` overloads.
 #include <tjg/color.hpp>
 #include <sstream>
 
+using namespace tjg::color;
 std::ostringstream os;
-tjg::color::print(os, tjg::color::text_style{tjg::color::emphasis::bold}, "Result: {}", 42);
-tjg::color::println(os, tjg::color::fg(tjg::color::term_color::red), "Status: {}", "failed");
+print(os, text_style{emphasis::bold}, "Result: {}", 42);
+println(os, fg(term_color::red), "Status: {}", "failed");
 ```
 
 The style applies to the entire formatted message. A nonempty style ends with
@@ -110,14 +111,15 @@ required.
 #include <iomanip>
 #include <sstream>
 
-const auto style = tjg::color::text_style{tjg::color::emphasis::bold};
+using namespace tjg::color;
+const auto style = text_style{emphasis::bold};
 std::ostringstream os;
 os << "Result: " << std::hex << std::setfill('0') << std::setw(4)
-   << tjg::color::styled(42, style) << '\n';
+   << styled(42, style) << '\n';
 // "Result: \x1b[1m002a\x1b[0m\n"
 
 std::wostringstream wide;
-wide << tjg::color::styled(L"message", style) << L'\n';
+wide << styled(L"message", style) << L'\n';
 ```
 
 The underlying value uses normal stream formatting, including numeric base,
@@ -143,4 +145,5 @@ The operator also supports builds with exceptions disabled.
 insertion of a temporary value is valid for that expression. If you save the
 wrapper, its referenced value must remain alive until insertion is complete.
 
-To insert an owning tree directly, see [styled-text stream insertion](styled.md#stream-insertion).
+To insert a styled-text value directly, see [styled-text stream
+insertion](styled.md#stream-insertion).

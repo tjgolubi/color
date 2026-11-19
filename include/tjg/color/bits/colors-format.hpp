@@ -45,7 +45,7 @@ auto write_value(OutIter out, term_color value) -> OutIter
 
 template<std::output_iterator<char> OutIter>
 [[nodiscard]] constexpr
-auto write_value(OutIter out, const cube_color& value) -> OutIter {
+auto write_value(OutIter out, const cube& value) -> OutIter {
   out = detail::write_ascii(std::move(out), "cube");
   *out++ = static_cast<char>('0' + value.r());
   *out++ = static_cast<char>('0' + value.g());
@@ -55,7 +55,7 @@ auto write_value(OutIter out, const cube_color& value) -> OutIter {
 
 template<std::output_iterator<char> OutIter>
 [[nodiscard]] constexpr
-auto write_value(OutIter out, const gray_color& value) -> OutIter {
+auto write_value(OutIter out, const gray& value) -> OutIter {
   out = detail::write_ascii(std::move(out), "gray");
   const auto index = value.index();
   if (index >= 10)
@@ -91,12 +91,12 @@ struct formatter<tjg::color::term_color, Char>
   : tjg::color::detail::standard_value_formatter<tjg::color::term_color, Char> { };
 
 template<tjg::CharType Char>
-struct formatter<tjg::color::cube_color, Char>
-  : tjg::color::detail::standard_value_formatter<tjg::color::cube_color, Char> { };
+struct formatter<tjg::color::cube, Char>
+  : tjg::color::detail::standard_value_formatter<tjg::color::cube, Char> { };
 
 template<tjg::CharType Char>
-struct formatter<tjg::color::gray_color, Char>
-  : tjg::color::detail::standard_value_formatter<tjg::color::gray_color, Char> { };
+struct formatter<tjg::color::gray, Char>
+  : tjg::color::detail::standard_value_formatter<tjg::color::gray, Char> { };
 
 template<tjg::CharType Char>
 struct formatter<tjg::color::color_t, Char>

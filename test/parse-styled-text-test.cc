@@ -70,8 +70,8 @@ void check_sgr() {
   for (int i = 0; i < 256; ++i) {
     const auto color = [i]() -> tjg::color::color_t {
       if (i < 16) return static_cast<tjg::color::term_color>(i);
-      if (i < 232) return tjg::color::cube_color{i - 16};
-      return tjg::color::gray_color{i - 232};
+      if (i < 232) return tjg::color::cube{i - 16};
+      return tjg::color::gray{i - 232};
     }();
     const auto sequence = std::format("\x1b[38;5;{};48;5;{}m", i, i);
     check(sequence.c_str(), tjg::color::text_style{color, color});

@@ -4,9 +4,10 @@ FMT_ROOT ?= $(HOME)/App/fmt
 FMT_LIB ?= $(FMT_ROOT)/build/libfmtd.a
 CXXFLAGS += -std=gnu++23 -Wall -Wextra -Werror
 
-TJG_DEMOS = FmtColorDemo1 FmtColorDemo2 TableDemo OstreamDemo NestedDemo
-FMT_DEMOS = FmtColorDemo0 NestedDemo
-DEMOS = $(TJG_DEMOS) Cpp23Demo FmtColorDemo0
+TJG_DEMOS := StyledDemo StyledTextDemo
+TJG_DEMOS += TableDemo TableDemoCpp TableDemoOstream
+FMT_DEMOS := Result42Compare TableDemoFmt
+DEMOS := $(TJG_DEMOS) $(FMT_DEMOS)
 
 find_headers = $(wildcard $(1)*.h $(1)*.hpp) \
                $(foreach dir,$(wildcard $(1)*/),$(call find_headers,$(dir)))
@@ -18,21 +19,21 @@ all: $(DEMOS)
 $(DEMOS): %: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(LDFLAGS) $(LDLIBS) -o $@
 
-$(TJG_DEMOS): CPPFLAGS += -I$(TJG_ROOT)/include
-$(TJG_DEMOS): $(TJG_HEADERS)
+$(DEMOS): CPPFLAGS += -I$(TJG_ROOT)/include
+$(DEMOS): $(TJG_HEADERS)
 
 $(FMT_DEMOS): CPPFLAGS += -I"$(FMT_ROOT)/include"
 $(FMT_DEMOS): LDLIBS += "$(FMT_LIB)"
 $(FMT_DEMOS): $(FMT_LIB)
 
 run: all
-	./FmtColorDemo1
-	./FmtColorDemo2
+	./Result42Compare
+	./StyledDemo
+	./StyledTextDemo
 	./TableDemo
-	./OstreamDemo
-	./Cpp23Demo
-	./FmtColorDemo0
-	./NestedDemo
+	./TableDemoCpp
+	./TableDemoFmt
+	./TableDemoOstream
 
 clean:
 	$(RM) $(DEMOS)

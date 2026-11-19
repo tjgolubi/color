@@ -100,10 +100,10 @@ void check_states(const std::basic_string<Char>& output,
             ASSERT_LT(p + 1, parameters.size());
             const auto index = parameters[++p];
             if (index >= 232)
-              color = tjg::color::gray_color{static_cast<int>(index - 232)};
+              color = tjg::color::gray{static_cast<int>(index - 232)};
             else {
               ASSERT_GE(index, 16u);
-              color = tjg::color::cube_color{static_cast<int>(index - 16)};
+              color = tjg::color::cube{static_cast<int>(index - 16)};
             }
           }
           if (code == 38) state.fg(color);
@@ -131,7 +131,7 @@ void check_states(const std::basic_string<Char>& output,
 template<typename Char>
 void check_nested_formatting() {
   using node = tjg::color::basic_styled_text<Char>;
-  const auto outer = tjg::color::text_style{tjg::color::rgb{1, 2, 3}, tjg::color::gray_color{12},
+  const auto outer = tjg::color::text_style{tjg::color::rgb{1, 2, 3}, tjg::color::gray{12},
                                      tjg::color::emphasis::bold};
   auto inner_style = tjg::color::text_style{tjg::color::term_color::green, tjg::color::no_color,
                                     tjg::color::emphasis::italic};
@@ -228,7 +228,7 @@ auto format_in_style(tjg::color::text_style style, const char* pattern, const T&
 
 template<typename Char>
 void check_context_styles() {
-  const auto outer = tjg::color::underline(tjg::color::bg(tjg::color::gray_color{12}));
+  const auto outer = tjg::color::underline(tjg::color::bg(tjg::color::gray{12}));
   const auto red = tjg::color::fg(tjg::color::term_color::bright_red);
   auto inherited = outer;
   inherited.fg(tjg::color::term_color::bright_red);
@@ -534,7 +534,7 @@ TEST(styled_text_format_test, stream_insertion_buffer_exception) {
 
 TEST(styled_text_format_test, all_parent_child_emphasis_pairs) {
   const auto colors = tjg::color::text_style{tjg::color::term_color::red,
-                                      tjg::color::cube_color{1, 2, 3}};
+                                      tjg::color::cube{1, 2, 3}};
   for (unsigned parent = 0; parent < 256; ++parent) {
     auto enclosing = colors;
     enclosing.emph(static_cast<tjg::color::emphasis>(parent));
@@ -741,7 +741,7 @@ TEST(styled_text_format_test, standard_tree_specs_and_debug) {
 }
 
 TEST(styled_text_format_test, standard_tree_inherits_and_restores_style) {
-  const auto outer = tjg::color::underline(tjg::color::bg(tjg::color::gray_color{12}));
+  const auto outer = tjg::color::underline(tjg::color::bg(tjg::color::gray{12}));
   const auto tree = tjg::color::styled_text{"a"} +
       tjg::color::styled_text{"b", tjg::color::fg(tjg::color::term_color::red)} +
       tjg::color::absolute(tjg::color::bold("c")) + "d";

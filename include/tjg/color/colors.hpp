@@ -47,12 +47,13 @@ inline constexpr no_color_t no_color{};
  * Pass a value to `fg()` or `bg()` to select a foreground or background color.
  * The actual RGB values depend on the terminal's palette and theme.
  *
- * Values are palette indices: 0-7 for normal colors and 8-15 for bright colors,
- * in declaration order.  Prefer symbolic names when selecting colors.
+ * Values are palette indices in declaration order. Slots 0-7 are normal
+ * colors and slots 8-15 are bright colors, starting with `gray` at slot 8.
+ * Prefer symbolic names when selecting colors.
  */
 enum class term_color : std::int8_t {
   black, red, green, yellow, blue, magenta, cyan, white,
-  bright_black, bright_red    , bright_green, bright_yellow,
+  gray,         bright_red    , bright_green, bright_yellow,
   bright_blue , bright_magenta, bright_cyan , bright_white
 }; // term_color
 
@@ -62,7 +63,7 @@ auto name_of(term_color value) noexcept -> std::string_view {
   static constexpr auto names = std::array{
     "black"sv,        "red"sv,            "green"sv,       "yellow"sv,
     "blue"sv,         "magenta"sv,        "cyan"sv,        "white"sv,
-    "bright_black"sv, "bright_red"sv,     "bright_green"sv, "bright_yellow"sv,
+    "gray"sv,         "bright_red"sv,     "bright_green"sv, "bright_yellow"sv,
     "bright_blue"sv,  "bright_magenta"sv, "bright_cyan"sv,  "bright_white"sv
   };
   const auto index = std::to_underlying(value);
@@ -144,7 +145,7 @@ struct rgb {
   static const rgb term_magenta;
   static const rgb term_cyan;
   static const rgb term_white;
-  static const rgb term_bright_black;
+  static const rgb term_gray;
   static const rgb term_bright_red;
   static const rgb term_bright_green;
   static const rgb term_bright_yellow;
@@ -205,6 +206,9 @@ struct rgb {
   static const rgb gold;
   static const rgb golden_rod;
   static const rgb gray;
+  static const rgb gray_25;  ///< 25% gray (#404040), equal to `color(0.25)`.
+  static const rgb gray_50;  ///< 50% gray (#808080), equal to `color(0.50)`.
+  static const rgb gray_75;  ///< 75% gray (#C0C0C0), equal to `color(0.75)`.
   static const rgb green;
   static const rgb green_yellow;
   static const rgb honey_dew;
@@ -298,6 +302,37 @@ struct rgb {
 
 }; // rgb
 
+namespace detail {
+
+[[nodiscard]] constexpr int clamp_chan(double x) noexcept {
+  if (!(x > 0)) return   0; // including NaN
+  if (x >= 1.0) return 255;
+  return static_cast<int>(256 * x);
+}
+
+} // detail
+
+/**
+ * Returns an RGB color from red, green, and blue components on a 0-to-1 scale.
+ * Each component strictly between 0.0 and 1.0 is multiplied by 256 and rounded
+ * down. Values at or below 0.0 and NaN map to 0. Values at or above 1.0 map
+ * to 255.
+ */
+[[nodiscard]]
+constexpr rgb color(double red, double green, double blue) noexcept {
+  return rgb{detail::clamp_chan(red),
+             detail::clamp_chan(green),
+             detail::clamp_chan(blue)};
+}
+
+/**
+ * Returns an RGB shade from black (0.0) to white (1.0).
+ * Applies the three-component overload's conversion to the same value for
+ * all three channels.
+ */
+[[nodiscard]] constexpr rgb color(double grayscale) noexcept
+{ return color(grayscale, grayscale, grayscale); }
+
 // Xterm RGB mapping for terminal palette indices 0-15.
 inline constexpr rgb rgb::term_black         {  0,   0,   0};
 inline constexpr rgb rgb::term_red           {205,   0,   0};
@@ -307,7 +342,7 @@ inline constexpr rgb rgb::term_blue          {  0,   0, 238};
 inline constexpr rgb rgb::term_magenta       {205  , 0, 205};
 inline constexpr rgb rgb::term_cyan          {  0, 205, 205};
 inline constexpr rgb rgb::term_white         {229, 229, 229};
-inline constexpr rgb rgb::term_bright_black  {127, 127, 127};
+inline constexpr rgb rgb::term_gray          {127, 127, 127};
 inline constexpr rgb rgb::term_bright_red    {255,   0,   0};
 inline constexpr rgb rgb::term_bright_green  {  0, 255,   0};
 inline constexpr rgb rgb::term_bright_yellow {255, 255,   0};
@@ -324,7 +359,7 @@ inline constexpr auto term_color_palette = std::array{
   rgb::term_blue,  rgb::term_magenta, rgb::term_cyan , rgb::term_white,
 
   // 8–15 bright
-  rgb::term_bright_black, rgb::term_bright_red ,
+  rgb::term_gray        , rgb::term_bright_red,
   rgb::term_bright_green, rgb::term_bright_yellow,
   rgb::term_bright_blue , rgb::term_bright_magenta,
   rgb::term_bright_cyan , rgb::term_bright_white
@@ -346,7 +381,7 @@ constexpr inline rgb::rgb(term_color clr) noexcept
 { *this = detail::term_color_palette[detail::checked_term_index(clr)]; }
 
 /// A zero-based gray palette index from 0 to 23.
-class gray_color {
+class gray {
   using chan_type = std::int8_t;
 
   chan_type _value = 0;
@@ -355,22 +390,22 @@ class gray_color {
   { return rgb{level, level, level}; }
 
   [[nodiscard]] static constexpr chan_type check_arg(int v) noexcept {
-    TJG_ASSERT((v>=0 && v<=23), "gray_color::gray_color: index out of range");
+    TJG_ASSERT((v>=0 && v<=23), "gray::gray: index out of range");
     return narrow_cast<chan_type>(std::clamp(v, 0, 23));
   }
 
  public:
   /// Constructs gray index zero, whose RGB equivalent is {8, 8, 8}.
-  constexpr gray_color() noexcept = default;
-  constexpr gray_color(const gray_color&) noexcept = default;
-  constexpr gray_color& operator=(const gray_color&) noexcept = default;
+  constexpr gray() noexcept = default;
+  constexpr gray(const gray&) noexcept = default;
+  constexpr gray& operator=(const gray&) noexcept = default;
 
-  [[nodiscard]] constexpr auto operator<=>(const gray_color&) const noexcept
+  [[nodiscard]] constexpr auto operator<=>(const gray&) const noexcept
     -> std::strong_ordering = default;
 
   /// Constructs a gray index in the range 0-23.
   /// Asserts on invalid values; clamps them when assertions are disabled.
-  constexpr explicit gray_color(int v) noexcept : _value{check_arg(v)} {}
+  constexpr explicit gray(int v) noexcept : _value{check_arg(v)} {}
 
   /// Returns the zero-based gray palette index, from 0 to 23.
   [[nodiscard]] constexpr auto index() const noexcept -> int { return _value; }
@@ -379,10 +414,10 @@ class gray_color {
   [[nodiscard]] constexpr operator rgb() const noexcept
   { return make_rgb(narrow_cast<rgb::chan_type>(10 * _value + 8)); }
 
-}; // gray_color
+}; // gray
 
 /// A 6x6x6 palette color with channel indices 0-5 and a combined index 0-215.
-class cube_color {
+class cube {
   using chan_type = std::int8_t;
 
   chan_type _r = 0;
@@ -391,12 +426,12 @@ class cube_color {
 
   [[nodiscard]]
   static constexpr auto check_arg(int v) noexcept -> chan_type {
-    TJG_ASSERT((v>=0 && v<=5), "cube_color::cube_color: channel out of range");
+    TJG_ASSERT((v>=0 && v<=5), "cube::cube: channel out of range");
     return narrow_cast<chan_type>(std::clamp(v, 0, 5));
   }
 
   [[nodiscard]] static constexpr auto check_index(int v) noexcept -> int {
-    TJG_ASSERT((v>=0 && v<=215), "cube_color::cube_color: index out of range");
+    TJG_ASSERT((v>=0 && v<=215), "cube::cube: index out of range");
     return std::clamp(v, 0, 215);
   }
 
@@ -415,37 +450,37 @@ class cube_color {
   [[nodiscard]] constexpr auto b() const noexcept -> int { return _b; };
 
   /// Sets the red index.
-  constexpr auto r(int v) noexcept -> cube_color& {
+  constexpr auto r(int v) noexcept -> cube& {
     _r = check_arg(v);
     return *this;
   }
 
   /// Sets the green index.
-  constexpr auto g(int v) noexcept -> cube_color& {
+  constexpr auto g(int v) noexcept -> cube& {
     _g = check_arg(v);
     return *this;
   }
 
   /// Sets the blue index.
-  constexpr auto b(int v) noexcept -> cube_color& {
+  constexpr auto b(int v) noexcept -> cube& {
     _b = check_arg(v);
     return *this;
   }
 
   /// Constructs cube index zero, with all channel indices zero.
-  constexpr cube_color() noexcept = default;
-  constexpr cube_color(const cube_color&) noexcept = default;
-  constexpr cube_color& operator=(const cube_color&) noexcept = default;
+  constexpr cube() noexcept = default;
+  constexpr cube(const cube&) noexcept = default;
+  constexpr cube& operator=(const cube&) noexcept = default;
 
-  [[nodiscard]] constexpr auto operator<=>(const cube_color&) const noexcept
+  [[nodiscard]] constexpr auto operator<=>(const cube&) const noexcept
     -> std::strong_ordering = default;
 
   /// Constructs channel indices 0-5.
-  constexpr cube_color(int r_, int g_, int b_) noexcept
+  constexpr cube(int r_, int g_, int b_) noexcept
     : _r{check_arg(r_)}, _g{check_arg(g_)}, _b{check_arg(b_)} {}
 
   /// Constructs a zero-based index 0-215.
-  constexpr explicit cube_color(int value) noexcept {
+  constexpr explicit cube(int value) noexcept {
     auto v = check_index(value);
     _r = narrow_cast<chan_type>(v / 36);
     _g = narrow_cast<chan_type>((v / 6) % 6);
@@ -463,14 +498,14 @@ public:
   [[nodiscard]] constexpr operator rgb() const noexcept
   { return rgb{cube_levels[_r], cube_levels[_g], cube_levels[_b]}; }
 
-}; // cube_color
+}; // cube
 
 /// Identifies types that can be used directly as color values.
 template<typename T>
 concept Color = std::same_as<std::remove_cvref_t<T>, rgb>
              || std::same_as<std::remove_cvref_t<T>, term_color>
-             || std::same_as<std::remove_cvref_t<T>, cube_color>
-             || std::same_as<std::remove_cvref_t<T>, gray_color>;
+             || std::same_as<std::remove_cvref_t<T>, cube>
+             || std::same_as<std::remove_cvref_t<T>, gray>;
 
 /// Returns a plain color's fixed RGB equivalent without changing the argument.
 template<Color T>
@@ -483,7 +518,7 @@ template<Color T>
 
 /// A color variant with alternatives for each supported color kind.
 using color_t =
-              std::variant<no_color_t, rgb, term_color, cube_color, gray_color>;
+              std::variant<no_color_t, rgb, term_color, cube, gray>;
 
 namespace detail {
 
@@ -574,7 +609,7 @@ struct blend_state {
 
 /**
  * Returns the component-wise arithmetic mean of two or more plain colors.
- * Accepts rgb, term_color, cube_color, and gray_color, converting each to RGB.
+ * Accepts rgb, term_color, cube, and gray, converting each to RGB.
  * Each argument has equal weight. Fractional channels are rounded down after
  * summing all arguments. The arguments are unchanged.
  * Supports constant evaluation.
@@ -664,6 +699,9 @@ inline constexpr rgb rgb::ghost_white             {248, 248, 255};
 inline constexpr rgb rgb::gold                    {255, 215,   0};
 inline constexpr rgb rgb::golden_rod              {218, 165,  32};
 inline constexpr rgb rgb::gray                    {128, 128, 128};
+inline constexpr rgb rgb::gray_25                 { 64,  64,  64};
+inline constexpr rgb rgb::gray_50                 {128, 128, 128};
+inline constexpr rgb rgb::gray_75                 {192, 192, 192};
 inline constexpr rgb rgb::green                   {  0, 128,   0};
 inline constexpr rgb rgb::green_yellow            {173, 255,  47};
 inline constexpr rgb rgb::honey_dew               {240, 255, 240};
@@ -769,13 +807,13 @@ template<> struct hash<tjg::color::rgb> {
   { return tjg::hash_value(static_cast<std::uint32_t>(value)); }
 };
 
-template<> struct hash<tjg::color::cube_color> {
-  auto operator()(tjg::color::cube_color value) const noexcept -> std::size_t
+template<> struct hash<tjg::color::cube> {
+  auto operator()(tjg::color::cube value) const noexcept -> std::size_t
   { return tjg::hash_value(value.index()); }
 };
 
-template<> struct hash<tjg::color::gray_color> {
-  auto operator()(tjg::color::gray_color value) const noexcept -> std::size_t
+template<> struct hash<tjg::color::gray> {
+  auto operator()(tjg::color::gray value) const noexcept -> std::size_t
   { return tjg::hash_value(value.index()); }
 };
 

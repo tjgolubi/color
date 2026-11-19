@@ -18,10 +18,9 @@ unchanged; an absolute style begins with a reset, selecting terminal defaults
 for them. An absolute-only style emits `"\x1b[0m"`.
 
 ```cpp
-const auto style = tjg::color::text_style{tjg::color::emphasis::bold,
-                                   tjg::color::rgb{1, 2, 3},
-                                   tjg::color::term_color::black};
-auto sgr = tjg::color::to_sgr(style);
+using namespace tjg::color;
+const auto style = text_style{emphasis::bold, rgb{1, 2, 3}, term_color::black};
+auto sgr = to_sgr(style);
 ```
 
 The example emits one SGR sequence with unpadded parameters,
@@ -46,9 +45,10 @@ attributes, even when the initial state has the same attributes. This case
 delegates to `tjg::color::to_sgr(final_style)`.
 
 ```cpp
-const auto initial = tjg::color::bold(tjg::color::fg(tjg::color::term_color::red));
-const auto final_style = tjg::color::underline(tjg::color::fg(tjg::color::term_color::red));
-auto transition = tjg::color::to_sgr(final_style, initial);
+using namespace tjg::color;
+const auto initial = bold(fg(term_color::red));
+const auto final_style = underline(fg(term_color::red));
+auto transition = to_sgr(final_style, initial);
 // "\x1b[22;4m" leaves red text underlined and clears bold.
 ```
 
@@ -80,11 +80,12 @@ Use the reset after manually styled text to restore terminal-default colors
 and emphasis. It does not restore a previously active enclosing style.
 
 ```cpp
-auto message     = tjg::color::to_sgr(style) + "message";
-const auto reset = tjg::color::sgr_reset();
+using namespace tjg::color;
+auto message     = to_sgr(style) + "message";
+const auto reset = sgr_reset();
 message.append(reset.data(), reset.size());
 
-auto wide_message = tjg::color::wrap_sgr<wchar_t>(style, L"message");
+auto wide_message = wrap_sgr<wchar_t>(style, L"message");
 ```
 
 ## `wrap_sgr`
@@ -161,5 +162,5 @@ The referenced arguments must remain alive while the pack is used.
 int result   = 42;
 auto args    = std::make_format_args(result);
 auto message = tjg::color::vformat(tjg::color::fg(tjg::color::rgb::green),
-                            "Result: {}", args);
+                                   "Result: {}", args);
 ```

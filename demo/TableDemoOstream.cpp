@@ -10,6 +10,8 @@ using tjg::color::fg;
 using tjg::color::bg;
 using tc = tjg::color::term_color;
 using tjg::color::rgb;
+using tjg::color::bold;
+using tjg::color::faint;
 
 namespace {
 
@@ -56,7 +58,7 @@ int main() {
   out << "SYSTEM HEALTH DASHBOARD\n\n";
 
   // Column headings inherit bold and underline from the row.
-  print_row(out, "Service", "Status", "Latency", "Notes", tjg::color::bold().underline());
+  print_row(out, "Service", "Status", "Latency", "Notes", bold().underline());
 
   // Normal row.
   const auto ok = styled_text{"OK", fg(tc::bright_green)};
@@ -77,20 +79,20 @@ int main() {
   const auto warn = styled_text{"WARN", fg(tc::yellow)};
   const auto backup_note = styled_text{"Slow", fg(rgb::yellow)}
                          + " - retry scheduled";
-  print_row(out, "Backup", warn, "215 ms", backup_note, tjg::color::bold());
+  print_row(out, "Backup", warn, "215 ms", backup_note, bold());
 
   // An absolute red-on-white fragment within the Notes column.
   const auto fail = styled_text{"FAIL", fg(tc::bright_red)};
   const auto db_note = "Connection refused: "
                      + styled_text{"CRITICAL!", critical_style};
-  print_row(out, "Database", fail, "--", db_note, tjg::color::bold());
+  print_row(out, "Database", fail, "--", db_note, bold());
 
   // Faint row emphasis, retaining the column backgrounds.
-  print_row(out, "Old server", "OFFLINE", "--", "Maintenance mode", tjg::color::faint());
+  print_row(out, "Old server", "OFFLINE", "--", "Maintenance mode", faint());
 
   // Style only the hexadecimal ID; the suffix uses the surrounding style.
   // The underlying integer inserter handles the base, fill, and field width.
   out << "\nRequest ID: " << std::hex << std::right << std::setfill('0')
-      << std::setw(4) << tjg::color::styled(42, fg(tc::bright_cyan))
+      << std::setw(4) << styled(42, fg(tc::bright_cyan))
       << std::dec << std::setfill(' ') << " — completed\n";
 } // main

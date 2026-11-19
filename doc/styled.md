@@ -2,13 +2,17 @@
 
 ## Structured styled text
 
-Use `styled_text` to compose text with independently styled parts. Include
-`<tjg/color/styled_text.hpp>` for the owning type and its composition operations.
-Include `<tjg/color.hpp>` to use it with `std::format`,
-`std::format_to`, or `std::println`. Use `{:?}` to inspect the tree.
+Use `styled_text` to concatenate text with independently styled parts and
+arrange it into nested groups. Grouping works like parentheses: a style applied
+to a group provides the surrounding style for its contents. Include
+`<tjg/color/styled_text.hpp>` to create and combine text that keeps its own
+contents. Include `<tjg/color.hpp>` to use it with `std::format`,
+`std::format_to`, or `std::println`. Use `{:?}` to inspect the text and its
+groups.
 
-The tree owns its text. Copies share immutable leaf strings and have their own
-styles and child lists. Moves leave the source empty and unstyled.
+Styled text keeps its own text, so the original strings need not remain alive.
+Copies can be styled and regrouped independently; their unchanged text is
+shared. Moves leave the source empty and unstyled.
 
 ### Concatenation preserves each part's style
 
@@ -18,9 +22,10 @@ span's style over the text added after it, even if that span contains several
 styled parts.
 
 ```cpp
-auto red_text = tjg::color::underlay(tjg::color::fg(tjg::color::rgb::red),
-    "red text with " + tjg::color::bold("nested bold") + " still red");
-auto line = tjg::color::styled_text{"plain | "} + red_text + " | plain again";
+using namespace tjg::color;
+auto red_text = underlay(fg(rgb::red),
+    "red text with " + bold("nested bold") + " still red");
+auto line = styled_text{"plain | "} + red_text + " | plain again";
 std::println("{}", line);
 ```
 
@@ -43,18 +48,20 @@ combined text. Empty text adds nothing.
 
 ### Use `underlay` to supply group defaults
 
-Concatenate the parts first, then use `underlay(style, text)` to supply defaults
-for the combined text. Existing foreground and background colors are preserved.
-The supplied colors fill unspecified channels in the root style. During
-formatting, each relative child inherits colors it does not specify; explicit
-child colors take precedence. Emphasis combines by OR.
+Concatenate the parts first, then use `underlay(style, text)` to supply
+defaults for the combined text. Existing foreground and background colors are
+preserved. The supplied colors fill unspecified channels in the outermost
+style. During formatting, each relative part inherits colors it does not
+specify; explicit colors within the group take precedence. Emphasis combines by
+OR.
 
 ```cpp
-auto words = tjg::color::styled_text{"red", tjg::color::fg(tjg::color::rgb::red)}
-    + " " + tjg::color::styled_text{"green", tjg::color::fg(tjg::color::rgb::green)}
-    + " " + tjg::color::styled_text{"blue", tjg::color::fg(tjg::color::rgb::blue)};
-auto defaults = tjg::color::fg(tjg::color::rgb::black).bg(tjg::color::rgb::light_gray);
-auto group = tjg::color::underlay(defaults, words);
+using namespace tjg::color;
+auto words =       styled_text{"red",   fg(rgb::red)}
+           + " " + styled_text{"green", fg(rgb::green)}
+           + " " + styled_text{"blue",  fg(rgb::blue)};
+auto defaults = fg(rgb::black).bg(rgb::light_gray);
+auto group = underlay(defaults, words);
 std::println("{}", group);
 ```
 
@@ -65,25 +72,28 @@ Expected output (followed by a newline):
 Each word keeps its foreground color. The spaces use the black default
 foreground, and the light-gray background covers the whole group.
 
-The free function returns an owning value; named inputs are copied and rvalues
-can be moved. The member updates the value in place:
+The free function returns an independent styled-text value; named inputs are
+copied and rvalues can be moved. The member updates the value in place:
 
 ```cpp
 words.underlay(defaults);
 ```
 
-Underlay modifies only the root style. Formatting carries those defaults to
-relative descendants without changing their stored styles. An absolute scope
-starts from terminal initial conditions instead of inheriting outer defaults.
+Underlay modifies only the outermost style. Formatting carries those defaults
+to relative text and nested groups without changing their stored styles. An
+absolute group starts from terminal initial conditions instead of inheriting
+outer defaults.
 
 ### Use `overlay` for explicit overrides
 
 `overlay(overrides, text)` replaces the specified colors throughout the text
-tree, adding emphasis by OR. It skips existing absolute nodes and their entire
-subtrees. Use it when the supplied colors should replace explicit choices:
+and its nested groups, adding emphasis by OR. It skips existing absolute groups
+and everything inside them. Use it when the supplied colors should replace
+explicit choices:
 
 ```cpp
-auto all_red = tjg::color::overlay(tjg::color::fg(tjg::color::rgb::red), words);
+using namespace tjg::color;
+auto all_red = overlay(fg(rgb::red), words);
 std::println("{}", all_red);
 ```
 
@@ -93,48 +103,51 @@ Expected output (followed by a newline):
 
 Here `words` has the defaults added by the preceding member call. All relative
 parts become red, and the gray background remains. `words` itself is unchanged.
-The member `words.overlay(overrides)` applies the same recursive modification
-in place. Unlike `underlay`, overlay changes stored styles in descendants.
-Neither operation changes how formatting combines enclosing and inner styles.
+The member `words.overlay(overrides)` applies the same overrides throughout the
+group in place. Unlike `underlay`, overlay changes styles stored within nested
+groups. Neither operation changes how formatting combines enclosing and inner
+styles.
 
-To overlay only the root style, use the style getter and setter:
+To overlay only the outermost style, use the style getter and setter:
 
 ```cpp
-words.style(words.style().overlay(tjg::color::fg(tjg::color::rgb::red)));
+words.style(words.style().overlay(fg(rgb::red)));
 ```
 
-That changes the root foreground; the words' explicit foregrounds still take
-precedence during formatting. Appending text with `+` or `+=` adds a separate
-span. Concatenate before underlaying defaults or applying overrides if the new
-text should be included.
+That changes the outermost foreground; the words' explicit foregrounds still
+take precedence during formatting. Appending text with `+` or `+=` adds a
+separate span. Concatenate before underlaying defaults or applying overrides if
+the new text should be included.
 
 ### Absolute spans ignore the surrounding style
 
 Use `absolute(text)` to make a span independent of its enclosing style. It
-preserves the span's colors, emphasis, and children, and marks only its root
-absolute. Like `overlay`, it returns an owning value: named inputs are copied
-and temporaries can be moved. Narrow and wide strings are also accepted.
-For a style value, `absolute(style)` returns an absolute copy of that style.
+preserves the span's colors, emphasis, and nested groups, and makes the span as
+a whole absolute. Like `overlay`, it returns an independent styled-text value:
+named inputs are copied and temporaries can be moved. Narrow and wide strings
+are also accepted. For a style value, `absolute(style)` returns an absolute
+copy of that style.
 
 An absolute style describes the complete appearance of its span. Missing
 foreground and background colors mean terminal defaults, and absent emphasis
-means off. Children inside an absolute group can inherit from that group as
-usual. Outer recursive overlays also skip the absolute node and its entire
-subtree.
-After the absolute span, the surrounding appearance resumes.
+means off. Text and nested groups inside an absolute group can inherit from
+that group as usual. Overlays applied from outside also skip the absolute group
+and everything inside it. After the absolute span, the surrounding appearance
+resumes.
 
-On entry to an absolute group, the formatter emits an SGR reset and applies
-the group's style before visiting its children. This can emit SGR even when
-the remaining precision clips all of the group's text. An absolute leaf resets
-when it writes text or padding. These resets occur even when the terminal
-already has the same attributes. Relative descendants inherit the group's
-style, and an absolute descendant establishes its own reset boundary.
+On entry to an absolute group, the formatter emits an SGR reset and applies the
+group's style before formatting its contents. This can emit SGR even when the
+remaining precision clips all of the group's text. An absolute text span with
+no nested groups resets when it writes text or padding. These resets occur even
+when the terminal already has the same attributes. Relative text and nested
+groups inherit the group's style, and an absolute group nested within it
+establishes its own reset boundary.
 
 ```cpp
-auto underline_only = tjg::color::absolute(tjg::color::underline("underline only"));
-auto sentence = tjg::color::styled_text{"before "} + underline_only + " after";
-auto decorated = tjg::color::strike(
-    tjg::color::underlay(tjg::color::bg(tjg::color::gray_color{12}), sentence));
+using namespace tjg::color;
+auto underline_only = absolute(underline("underline only"));
+auto sentence = styled_text{"before "} + underline_only + " after";
+auto decorated = strike(underlay(bg(rgb::gray), sentence));
 std::println("{}", decorated);
 ```
 
@@ -148,23 +161,24 @@ it resumes both surrounding properties.
 
 ### Formatting and plain text
 
-Formatting leaves the value unchanged. Relative roots inherit the enclosing
-shared terminal state's colors and emphasis. After the complete replacement field,
-the enclosing style is restored. The shared state initially assumes terminal
-defaults. See the [shared-state rules](index.md) for single-threaded use and
-nested formatting calls.
+Formatting leaves the value unchanged. Relative styled text inherits the
+enclosing shared terminal state's colors and emphasis. After the complete
+replacement field, the enclosing style is restored. The shared state initially
+assumes terminal defaults. See the [shared-state rules](index.md) for
+single-threaded use and nested formatting calls.
 
-The formatter tracks the last style emitted to the terminal separately from
-the enclosing group style. Relative groups emit no SGR on entry or exit.
-Immediately before writing a leaf's text or padding, it emits the transition
-from the recorded terminal state to the required style. Successive leaves
+The formatter tracks the last style emitted to the terminal separately from the
+enclosing group style. Relative groups emit no SGR on entry or exit.
+Immediately before writing a text span or its padding, it emits the transition
+from the recorded terminal state to the required style. Successive text spans
 therefore transition directly without first restoring intermediate group
-styles. At field completion, it restores the enclosing shared
-style from the last emitted state.
+styles. At field completion, it restores the enclosing shared style from the
+last emitted state.
 
 ```cpp
-tjg::color::print(tjg::color::underline(), "The result is {} after rounding.",
-           tjg::color::styled_text{"42", tjg::color::fg(tjg::color::term_color::bright_red)});
+using namespace tjg::color;
+print(underline(), "The result is {} after rounding.",
+                    styled_text{"42", fg(term_color::bright_red)});
 ```
 
 Expected output (without a trailing newline):
@@ -172,28 +186,29 @@ Expected output (without a trailing newline):
 <pre class="color-output"><span style="text-decoration: underline">The result is <span style="color: #FF0000">42</span> after rounding.</span></pre>
 
 The whole sentence is underlined, and `42` is also bright red. An absolute
-root temporarily replaces the enclosing style, then restores it on completion.
+group temporarily replaces the enclosing style, then restores it on completion.
 
-Styled text accepts ordinary string fill, alignment (`<`, `>`, `^`), width,
-and precision, with optional `s` presentation. Width and precision may also be
-dynamic arguments. For tree inspection, use the separate `?` presentation
-described below.
+Styled text accepts ordinary string fill, alignment (`<`, `>`, `^`), width, and
+precision, with optional `s` presentation. Width and precision may also be
+dynamic arguments. To inspect the text and its groups, use the separate `?`
+presentation described below.
 
 ```cpp
-std::println("{:*>12.9}", tjg::color::bold("hello " + tjg::color::styled_text{"world", tjg::color::fg(tjg::color::rgb::blue)}));
-// Three '*' characters followed by "hello wor", all bold; "wor" is blue.
+using namespace tjg::color;
+std::println("{:*>13.9}", bold("hello " + styled_text{"world", fg(rgb::blue)}));
+// Four '*' characters followed by "hello wor", all bold; "wor" is blue.
 ```
 
 Expected output (followed by a newline):
 
-<pre class="color-output"><span style="font-weight: bold">***hello <span style="color: #0000FF">wor</span></span></pre>
+<pre class="color-output"><span style="font-weight: bold">&#42;&#42;&#42;&#42;hello <span style="color: #0000FF">wor</span></span></pre>
 
-One precision limit applies across the whole tree. If the next character
-does not fit, traversal stops. Width sets a minimum for the displayed field
-after truncation. Padding uses the root style, including for empty text or
-precision zero. Child styles apply to their own text. After any right padding,
-the formatter restores the enclosing shared style directly from the last
-emitted style.
+One precision limit applies across the complete styled text. If the next
+character does not fit, formatting stops adding text. Width sets a minimum for
+the displayed field after truncation. Padding uses the outermost style,
+including for empty text or precision zero. Styles within the group apply to
+their own text. After any right padding, the formatter restores the enclosing
+shared style directly from the last emitted style.
 
 Use `plain_text` when you need an independent string containing just the stored
 text, without applying the styles:
@@ -217,25 +232,27 @@ The formatter estimates display width for narrow text from UTF-8 code points
 using tables generated from Unicode 18.0.0. For example, `Café` occupies four
 columns and `界` occupies two. Each malformed UTF-8 byte counts as one column.
 Wide text uses code-unit counts. With 16-bit `wchar_t`, truncation keeps
-surrogate pairs together within a leaf.
+surrogate pairs together within a text span.
 
-Each leaf is measured independently, so keep encoded characters within one
-leaf. Generated SGR sequences take no columns. Raw escape sequences stored in
-leaves are measured as text.
+Each concatenated text span is measured independently, so keep each encoded
+character within a single span. Generated SGR sequences take no columns. Raw
+escape sequences stored in text spans are measured as text.
 
 ### Debug output
 
-Use `{:?}` to inspect stored styles and tree structure without rendering SGR.
-Each node shows its [readable style](text-style.md#readable-style-output), a
-space, then either its quoted debug string or an opening `{` and newline.
-An empty node style and its following space are omitted. Children are indented
-two spaces per level; each closing `}` aligns with its node's style. Leaf
-strings use the library's debug escaping, including quotes, backslashes,
-embedded nulls, and control characters.
+Use `{:?}` to inspect stored styles and nested groups without rendering SGR.
+Each text span or group shows its [readable
+style](text-style.md#readable-style-output), a space, then either its quoted
+debug string or an opening `{` and newline. An empty style and its following
+space are omitted. Contents of a group are indented two spaces per level; each
+closing `}` aligns with the group's style. Text strings use the library's debug
+escaping, including quotes, backslashes, embedded nulls, and control
+characters.
 
 ```cpp
-auto text = tjg::color::bold(tjg::color::styled_text{"hello\n", tjg::color::fg(tjg::color::term_color::red)}
-                      + (tjg::color::underline("world") + "!"));
+using namespace tjg::color;
+auto text = bold(styled_text{"hello\n", fg(term_color::red)}
+                      + (underline("world") + "!"));
 std::print("{:?}", text);
 ```
 
@@ -251,18 +268,19 @@ b {
 }
 ```
 
-Every child leaf and every closing brace ends with a newline. A top-level leaf
-has no trailing newline: an empty unstyled leaf displays `""`, and a bold leaf
-displays `b "hello"`. No additional outer enclosure is added. Debug output
-shows stored node styles, without resolving inheritance or modifying the tree.
-Wide trees support the same presentation. Use `{:?}` for the complete tree.
+Every text span inside a group and every closing brace ends with a newline. A
+single text span outside any group has no trailing newline: an empty unstyled
+span displays `""`, and a bold span displays `b "hello"`. No additional outer
+enclosure is added. Debug output shows the styles stored on text spans and
+groups, without resolving inheritance or modifying the styled text. Wide styled
+text supports the same presentation. Use `{:?}` for the complete styled text.
 Combining `?` with a width or precision is a format error, including with
 dynamic arguments.
 
 ### Stream insertion
 
-Include `<tjg/color.hpp>` to insert a `styled_text` tree into a narrow
-stream or a `wstyled_text` tree into a wide stream. Insertion uses the same ANSI
+Include `<tjg/color.hpp>` to insert a `styled_text` value into a narrow stream
+or a `wstyled_text` value into a wide stream. Insertion uses the same ANSI
 rendering as the styled-text formatter.
 
 ```cpp
@@ -278,15 +296,15 @@ os << std::left << std::setfill('*') << std::setw(14)
 
 Stream width, fill, and alignment control padding. Left alignment pads after
 the text. Right, internal, and default alignment pad before it. Padding uses
-the effective root style, and generated SGR takes no columns. A negative or
-zero width adds no padding. Stream precision has no effect on the tree. Use
-the styled-text formatter with an explicit precision to truncate it.
+the effective outermost style, and generated SGR takes no columns. A negative
+or zero width adds no padding. Stream precision has no effect on the styled
+text. Use the styled-text formatter with an explicit precision to truncate it.
 
 Insertion consumes the field width and resets it to zero. It preserves fill,
 precision, and flags. A stream already in an error state keeps its pending
 width. A short write sets `badbit`, and the stream's exception mask controls
-whether the failure throws. For a debug tree dump, insert the result of
-`std::format("{:?}", text)` or its wide equivalent.
+whether the failure throws. For a debug view of the text and its groups, insert
+the result of `std::format("{:?}", text)` or its wide equivalent.
 
 ### Table demonstration
 
@@ -294,6 +312,11 @@ The complete [TableDemo.cpp](https://github.com/tjgolubi/color/blob/dev/demo/Tab
 example combines column backgrounds, independently colored cell contents, row
 emphasis, and an absolute warning span. It also demonstrates UTF-8 display
 widths and fixed-width padding and truncation.
+
+The [demo README](https://github.com/tjgolubi/color/tree/dev/demo) also lists
+three versions of the dashboard for comparison. `TableDemoCpp` uses standard
+C++23 and raw SGR sequences, `TableDemoFmt` uses {fmt}, and `TableDemoOstream`
+uses {color} with stream insertion.
 
 From the repository root, build and run the table demo with:
 
@@ -312,17 +335,17 @@ Each column supplies a foreground and background. The cell helper uses
 `underlay` so explicit colors in a cell take precedence:
 
 ```cpp
-constexpr auto notes_color =
-    tjg::color::fg(tjg::color::term_color::white).bg(tjg::color::rgb::indigo);
+using namespace tjg::color;
 
-auto cell(tjg::color::styled_text text, tjg::color::text_style column) -> tjg::color::styled_text {
-  return tjg::color::underlay(column, text);
+constexpr auto notes_color = fg(term_color::white).bg(rgb::indigo);
+
+auto cell(styled_text text, text_style column) -> styled_text {
+  return underlay(column, text);
 }
 
-auto nas_note = tjg::color::styled_text{"All",
-                   tjg::color::fg(tjg::color::term_color::red).bg(tjg::color::term_color::cyan)}
-    + " volumes "
-    + tjg::color::styled_text{"healthy", tjg::color::fg(tjg::color::term_color::green)};
+auto nas_note = styled_text{"All", fg(term_color::red).bg(term_color::cyan)}
+              + " volumes "
+              + styled_text{"healthy", fg(term_color::green)};
 ```
 
 With `cell(nas_note, notes_color)`, `All` keeps its red foreground and cyan
@@ -338,10 +361,10 @@ four cells:
 
 ```cpp
 tjg::color::println(row, "{:<16.16} {:^12.12} {:>12.12} {:<30.30}",
-             cell(std::move(service), service_color),
-             cell(std::move(status), status_color),
-             cell(std::move(latency), latency_color),
-             cell(std::move(notes), notes_color));
+                         cell(std::move(service), service_color),
+                         cell(std::move(status),  status_color),
+                         cell(std::move(latency), latency_color),
+                         cell(std::move(notes),   notes_color));
 ```
 
 Service and Notes are left-aligned, Status is centered, and Latency is
@@ -359,11 +382,12 @@ column backgrounds.
 The Database row contains an absolute red-on-white warning:
 
 ```cpp
-constexpr auto critical_style = tjg::color::fg(tjg::color::rgb::red)
-    .bg(tjg::color::rgb::white).bold().blink().absolute();
-auto db_note = tjg::color::styled_text{"Connection refused: "}
-    + tjg::color::styled_text{"CRITICAL!", critical_style}
-    + " Database service is unavailable";
+using namespace tjg::color;
+constexpr auto critical_style =
+                          fg(rgb::red).bg(rgb::white).bold().blink().absolute();
+auto db_note = styled_text{"Connection refused: "}
+             + styled_text{"CRITICAL!", critical_style}
+             + " Database service is unavailable";
 ```
 
 `CRITICAL!` uses its own foreground, background, and emphasis. The column style
@@ -381,21 +405,55 @@ styling, including blink where supported.
 Include `<tjg/color.hpp>` and call `parse_styled_text` to turn text containing
 ordinary ANSI SGR into an owned `styled_text` (or `wstyled_text` for wide input).
 
+Start with `group` from [the `underlay` example](#use-underlay-to-supply-group-defaults).
+Print its debug representation, then use `std::format` to capture the SGR
+output in a string. `backslash_escape` from `<tjg/backslash.hpp>` makes the
+escape bytes visible as `\e`. Parse the original string and print the parsed
+value with `{:?}` as well.
+
 ```cpp
-auto message = tjg::color::parse_styled_text("plain \x1b[31mred\x1b[0m plain");
-std::println("{}", message);
+std::println("{:?}", group);
+auto encoded = std::format("{}", group);
+std::println("{}", tjg::backslash_escape(encoded));
+auto parsed = tjg::color::parse_styled_text(encoded);
+std::println("{:?}", parsed);
 ```
+
+```text
+#000000/#d3d3d3 {
+  #ff0000 "red"
+  " "
+  #008000 "green"
+  " "
+  #0000ff "blue"
+}
+
+\e[38;2;255;0;0;48;2;211;211;211mred\e[38;2;0;0;0m \e[38;2;0;128;0mgreen\e[38;2;0;0;0m \e[38;2;0;0;255mblue\e[0m
+{
+  #ff0000/#d3d3d3 "red"
+  #000000/#d3d3d3 " "
+  #008000/#d3d3d3 "green"
+  #000000/#d3d3d3 " "
+  #0000ff/#d3d3d3 "blue"
+}
+```
+
+The original group stores the background once and supplies the black
+foreground to the spaces. SGR records the active style as the text is written.
+The parsed value therefore stores the foreground and background on each
+piece of text, including the spaces.
 
 The parser follows the SGR state changes; it does not add an initial reset.
 Before the first reset, parsed spans are relative and can inherit an enclosing
 formatting style. A reset establishes terminal defaults for **all following
 text**, not just the next span.
 
-If a reset occurs before any text, the returned root is absolute. Otherwise,
-earlier text remains relative and the suffix beginning at the reset forms an
-absolute group. Its children have relative styles based on terminal defaults.
-Later resets clear the current style within that same group; they do not create
-additional nested groups. A single run can be represented directly by a leaf.
+If a reset occurs before any text, the returned text is absolute as a whole.
+Otherwise, earlier text remains relative and the suffix beginning at the reset
+forms an absolute group. Its contents have relative styles based on terminal
+defaults. Later resets clear the current style within that same group; they do
+not create additional nested groups. A single run of text needs no enclosing
+group.
 
 For example, a reset prevents an enclosing underline from returning on later
 text, even when that text enables another attribute:
@@ -418,12 +476,12 @@ not cancel an inherited attribute; selective clearing of an unknown enclosing
 state cannot be represented by these relative style values. Use an explicit
 reset when the input must establish a complete state independent of its context.
 
-Consecutive SGR sequences update one current style. No empty leaves are emitted;
-adjacent text with equal styles is combined within each group. A trailing SGR
-without text creates no span or empty group. The result represents styled text,
-not the original escape bytes or a trailing command's effect on terminal state.
-Input text is copied, including embedded nulls when supplied through a sized
-string or string view.
+Consecutive SGR sequences update one current style. No empty text spans are
+created; adjacent text with equal styles is combined within each group. A
+trailing SGR without text creates no span or empty group. The result represents
+styled text, not the original escape bytes or a trailing command's effect on
+terminal state. Input text is copied, including embedded nulls when supplied
+through a sized string or string view.
 
 Recognized codes cover the library's eight emphasis attributes and their
 removal, normal/bright terminal colors, indexed colors, truecolor, and
@@ -442,8 +500,8 @@ can affect the terminal outside the style model; parsing is not sanitization.
 
 ## Stripping ANSI sequences
 
-Include `<tjg/strip_ansi.hpp>` and call `strip_ansi` to obtain an owning string
-with complete ESC-prefixed ANSI sequences removed:
+Include `<tjg/strip_ansi.hpp>` and call `strip_ansi` to obtain an independent
+string with complete ESC-prefixed ANSI sequences removed:
 
 ```cpp
 auto plain = tjg::strip_ansi("\x1b[31mred\x1b[0m"); // "red"
@@ -469,30 +527,29 @@ without Unicode decoding.
 This function does not simulate cursor movement, erase commands, carriage
 returns, or other terminal behavior, and is not a security sanitizer. Unlike
 `parse_styled_text(...).plain_text()`, it removes non-SGR escapes too, without
-constructing a styled tree.
+constructing styled text.
 
-Include `<tjg/color.hpp>` for the styled-text overload. It
-returns a new `basic_styled_text<Char>` with the same
-tree structure, styles, and absolute boundaries. It strips ANSI sequences from
-each leaf independently, retaining leaves that become empty and sharing
-unchanged leaf strings. The input is unchanged. Sequences split across leaves
-are preserved.
+Include `<tjg/color.hpp>` for the styled-text overload. It returns a new
+`basic_styled_text<Char>` with the same nested groups, styles, and absolute
+boundaries. It strips ANSI sequences from each text span independently,
+retaining spans that become empty and sharing unchanged text. The input is
+unchanged. Sequences split across text spans are preserved.
 
 ```cpp
 auto text = tjg::color::bold("\x1b[31mred\x1b[0m");
 auto clean = tjg::color::strip_ansi(text); // Bold "red", with raw escapes removed.
-auto plain = clean.plain_text();   // "red", without the tree's styling.
+auto plain = clean.plain_text();   // "red", without the text's styling.
 ```
 
-Both narrow and wide styled text are supported. To strip sequences after joining
-all leaves, call `strip_ansi(text.plain_text())` instead; this also removes any
-complete sequences formed across leaf boundaries.
+Both narrow and wide styled text are supported. To strip sequences after
+joining all text spans, call `strip_ansi(text.plain_text())` instead; this also
+removes any complete sequences formed across text-span boundaries.
 
 ## Backslash escaping and unescaping
 
 Include `<tjg/backslash.hpp>` for `backslash_escape` and `backslash_unescape`.
-These independent text utilities return owning strings and support narrow and
-wide text, including embedded NULs when passed a string or a length-bearing view.
+These text utilities return independent strings and support narrow and wide
+text, including embedded NULs when passed a string or a length-bearing view.
 They require neither ANSI parsing nor styled text.
 
 ```cpp
@@ -569,10 +626,10 @@ tjg::backslash_escape_to(std::back_inserter(log), "\x1b[31mred\n");
 // log contains: Received: \e[31mred\n
 ```
 
-The iterator and owning-string functions support constant evaluation when the
-standard library and output iterator support it. Any dynamic storage allocated
-during constant evaluation must be released within that
-constant evaluation; these functions can produce temporary strings for a
+The iterator functions and functions returning strings support constant
+evaluation when the standard library and output iterator support it. Any
+dynamic storage allocated during constant evaluation must be released within
+that constant evaluation; these functions can produce temporary strings for a
 compile-time check.
 
 The output must not invalidate or overwrite unread input. In particular, do not
@@ -598,8 +655,8 @@ Expected output for the example above (without a trailing newline):
 <pre class="color-output">Elapsed time: <span style="color: #008000; background-color: #191970">1.23</span> seconds</pre>
 
 ```cpp
-std::println("Amount: {:>8.2f}",
-             tjg::color::styled(1.23, tjg::color::fg(tjg::color::rgb::green)));
+using namespace tjg::color;
+std::println("Amount: {:>8.2f}", styled(1.23, fg(rgb::green)));
 ```
 
 Expected output (followed by a newline):
@@ -624,9 +681,10 @@ formatting, wide streams, and the wrapper's reference lifetime.
 #include <iostream>
 #include <numbers>
 
-auto style = tjg::color::fg(tjg::color::rgb::green).bold();
+using namespace tjg::color;
+auto style = fg(rgb::green).bold();
 std::cout << "Pi: " << std::fixed << std::setprecision(2)
-          << tjg::color::styled(std::numbers::pi, style) << '\n';
+          << styled(std::numbers::pi, style) << '\n';
 ```
 
 Expected output (followed by a newline):

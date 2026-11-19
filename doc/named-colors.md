@@ -3,8 +3,8 @@
 These constexpr `tjg::color::rgb` constants are static members of `tjg::color::rgb`.
 Use them directly, for example `tjg::color::fg(tjg::color::rgb::coral)`.
 The `term_*` names are fixed Xterm-default RGB counterparts of `term_color`
-values, including `term_bright_*` for bright colors. They emit truecolor;
-they do not follow changes to the terminal's palette.
+values, including `rgb::term_gray` for `term_color::gray`. They emit fixed
+truecolor values regardless of the terminal's palette.
 See [Colors](colors.md) for the color types and [the overview](index.md) for
 styling examples.
 
@@ -87,16 +87,16 @@ terminal's palette entry, whose appearance depends on its theme.
 
 ## Gray palette colors
 
-Use `tjg::color::gray_color{index}` to select one of these 24 gray levels, shown
+Use `tjg::color::gray{index}` to select one of these 24 gray levels, shown
 from darkest to lightest. The labels use zero-based indices 0–23;
 terminal palette entries are 232–255. Each swatch shows the fixed RGB
 equivalent, with every channel equal to `8 + 10 * index`.
 
 ```cpp
-auto style = tjg::color::fg(tjg::color::gray_color{12}); // RGB equivalent {128, 128, 128}.
+auto style = tjg::color::fg(tjg::color::gray{12}); // RGB equivalent {128, 128, 128}.
 ```
 
-::: gray_color
+::: gray
     options:
       color_reference: true
       color_swatch_group: gray
@@ -107,13 +107,13 @@ The table shows all 216 cube colors. Red indices select rows; green indices
 select columns. Within each cell, six three-character fields show blue indices
 ` 0  1  2  3  4  5 ` in a fixed-width font. Each field's background is its RGB
 equivalent, with contrasting text. Hover over a field for the full
-`cube_color{r, g, b}`, RGB value, and terminal palette index.
+`cube{r, g, b}`, RGB value, and terminal palette index.
 
 The table scrolls horizontally on narrow screens. See
 [Cube palette colors](colors.md#cube-palette-colors) for construction and
 conversion details.
 
-::: cube_color
+::: cube
     options:
       color_reference: true
       color_swatch_group: cube

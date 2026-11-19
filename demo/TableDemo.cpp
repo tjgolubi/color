@@ -9,6 +9,9 @@ using tjg::color::fg;
 using tjg::color::bg;
 using tc = tjg::color::term_color;
 using tjg::color::rgb;
+using tjg::color::styled;
+using tjg::color::bold;
+using tjg::color::faint;
 
 namespace {
 
@@ -69,20 +72,19 @@ int main() {
   const auto warn = styled_text{"WARN", fg(tc::yellow)};
   const auto backup_note = styled_text{"Slow", fg(rgb::yellow)}
                          + " - retry scheduled";
-  print_row("Backup", warn, "215 ms", backup_note, tjg::color::bold());
+  print_row("Backup", warn, "215 ms", backup_note, bold());
 
   // An absolute red-on-white fragment within the Notes column.
   const auto fail = styled_text{"FAIL", fg(tc::bright_red)};
   const auto db_note = "Connection refused: "
                      + styled_text{"CRITICAL!", critical_style}
                      + " Database service is unavailable";
-  print_row("Database", fail, "--", db_note, tjg::color::bold());
+  print_row("Database", fail, "--", db_note, bold());
 
   // Faint row emphasis, retaining the column backgrounds.
-  print_row("Old server", "OFFLINE", "--", "Maintenance mode", tjg::color::faint());
+  print_row("Old server", "OFFLINE", "--", "Maintenance mode", faint());
 
   // Style only the hexadecimal ID; the suffix uses the surrounding style.
   std::println("\nRequest ID: {:04x} — completed",
-               tjg::color::styled(42,
-                   tjg::color::fg(tjg::color::term_color::bright_cyan)));
+               styled(42, fg(tc::bright_cyan)));
 } // main

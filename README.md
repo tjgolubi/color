@@ -20,25 +20,25 @@ int main() {
 The whole line is bold, and `passed` is green. Styled arguments inherit and
 restore their enclosing style. An ANSI-capable terminal displays the colors.
 
-Run `make -C demo FmtColorDemo1` and then `./demo/FmtColorDemo1` to try the
-[first demo](demo/FmtColorDemo1.cpp). See the [demo README](demo/README.md) for
-the full set of examples and the {fmt} comparison builds.
+Run `make -C demo StyledDemo` and then `./demo/StyledDemo` to try the
+[styled formatting demo](demo/StyledDemo.cpp). See the [demo README](demo/README.md)
+for the full set of examples and the {fmt} comparison builds.
 
 ## Headers
 
 | Header                        | Provides                                                             |
 | ----------------------------- | -------------------------------------------------------------------- |
 | `<tjg/color.hpp>`             | Full library, including formatting, printing, streams, and SGR tools |
-| `<tjg/color/colors.hpp>`      | Named RGB colors, terminal and palette colors, and `color_t`         |
+| `<tjg/color/colors.hpp>`      | Named RGB colors, `term_color`, `cube`, `gray`, and `color_t`         |
 | `<tjg/color/text_style.hpp>`  | Color values, emphasis, `text_style`, and style composition          |
-| `<tjg/color/styled_text.hpp>` | Owning styled-text trees and their composition                       |
+| `<tjg/color/styled_text.hpp>` | Nested groups of styled text and their composition                       |
 | `<tjg/backslash.hpp>`         | Backslash escaping and unescaping                                    |
 | `<tjg/strip_ansi.hpp>`        | ANSI escape sequence removal from strings                            |
 
-Use `<tjg/color.hpp>` for formatted output, SGR generation and parsing, or
-ANSI stripping on a styled-text tree. The narrower headers support code
-that only needs the value types or string utilities. Headers in `tjg/color/bits/`
-are implementation headers.
+Use `<tjg/color.hpp>` for formatted output, SGR generation and parsing, or ANSI
+stripping on nested groups of styled text. The narrower headers support code
+that only needs the value types or string utilities. Headers in
+`tjg/color/bits/` are implementation headers.
 
 ## CMake
 

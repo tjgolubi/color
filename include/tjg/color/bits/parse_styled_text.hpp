@@ -50,8 +50,8 @@ struct sgr_fields {
 
 inline auto sgr_index_color(int index) -> color_t {
   if (index <  16) return enum_cast<term_color>(index);
-  if (index < 232) return cube_color{index - 16};
-  return gray_color{index - 232};
+  if (index < 232) return cube{index - 16};
+  return gray{index - 232};
 }
 
 template<CharType Char>

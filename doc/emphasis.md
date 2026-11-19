@@ -23,15 +23,15 @@ The result is an `emphasis` value containing both sets of attribute bits.
 An `emphasis` value converts implicitly to `text_style`.
 
 ```cpp
-auto style = tjg::color::emphasis::bold
-           | tjg::color::emphasis::underline;
-tjg::color::println(style, "Important: {}", 42);
+using namespace tjg::color;
+auto style = emphasis::bold | emphasis::underline;
+println(style, "Important: {}", 42);
 ```
 
 ```cpp
-tjg::color::text_style style = tjg::color::emphasis::bold | tjg::color::emphasis::underline;
+text_style style = emphasis::bold | emphasis::underline;
 if (style.has_emph())
-  tjg::color::println(style, "Important");
+  println(style, "Important");
 ```
 
 Bold and faint remain independent bits: combining them preserves both and
@@ -42,11 +42,10 @@ emits both SGR attributes. Their combined appearance depends on the terminal.
 The underlying representation of `tjg::color::emphasis` is `uint8_t`.
 
 ```cpp
-using emphasis_t = std::underlying_type_t<tjg::color::emphasis>;
-constexpr auto bold_bit
-                   = std::to_underlying(tjg::color::emphasis::bold); // 1
-constexpr auto attributes = tjg::color::emphasis::bold
-                          | tjg::color::emphasis::faint;
+using namespace tjg::color;
+using emphasis_t = std::underlying_type_t<emphasis>;
+constexpr auto bold_bit = std::to_underlying(emphasis::bold); // 1
+constexpr auto attributes = emphasis::bold | emphasis::faint;
 constexpr auto bits = std::to_underlying(attributes);         // 3
 static_assert(std::is_same_v<const emphasis_t, decltype(bits)>);
 static_assert(bold_bit == 1);

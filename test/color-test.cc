@@ -26,7 +26,7 @@ TEST(color_test, absolute_style_flag) {
                     noexcept(tjg::color::text_style{}.is_absolute()),
                 "absolute accessors do not throw");
   auto style = tjg::color::fg(tjg::color::term_color::red)
-                   .bg(tjg::color::gray_color{12}).underline();
+                   .bg(tjg::color::gray{12}).underline();
   const auto original = style;
   EXPECT_EQ(&style.absolute(), &style);
   EXPECT_TRUE(style.is_absolute());
@@ -50,7 +50,7 @@ TEST(color_test, absolute_style_helper) {
   static_assert(noexcept(tjg::color::absolute(tjg::color::text_style{})),
                 "absolute style helper does not throw");
   const auto source = tjg::color::fg(tjg::color::term_color::red)
-                          .bg(tjg::color::gray_color{12}).underline();
+                          .bg(tjg::color::gray{12}).underline();
   auto expected = source;
   expected.absolute();
   EXPECT_EQ(tjg::color::absolute(source), expected);
@@ -63,7 +63,7 @@ TEST(color_test, absolute_style_helper) {
 
 TEST(color_test, absolute_style_composition) {
   const tjg::color::color_t colors[] = {tjg::color::no_color, tjg::color::rgb{1, 2, 3},
-      tjg::color::term_color::red, tjg::color::cube_color{1, 2, 3}, tjg::color::gray_color{12}};
+      tjg::color::term_color::red, tjg::color::cube{1, 2, 3}, tjg::color::gray{12}};
   for (auto foreground : colors) {
     for (auto background : colors) {
       const auto base = tjg::color::text_style{foreground, background,
@@ -95,7 +95,7 @@ TEST(color_test, absolute_style_composition) {
 }
 
 TEST(color_test, absolute_style_blend) {
-  const auto full = tjg::color::text_style{tjg::color::rgb{10, 20, 30}, tjg::color::gray_color{12},
+  const auto full = tjg::color::text_style{tjg::color::rgb{10, 20, 30}, tjg::color::gray{12},
                                    tjg::color::emphasis::bold}.absolute();
   auto relative = full;
   relative.absolute(false);
@@ -140,7 +140,7 @@ TEST(color_test, absolute_style_constexpr) {
   static_assert(reset.is_absolute() && !reset.empty(),
                 "a reset-only style is absolute and nonempty");
   constexpr auto full = tjg::color::text_style{tjg::color::rgb{10, 20, 30},
-                                       tjg::color::gray_color{12}}.absolute();
+                                       tjg::color::gray{12}}.absolute();
   constexpr auto modified = tjg::color::text_style{full}.overlay(tjg::color::bold());
   static_assert(modified.is_absolute() && modified.is_bold(),
                 "explicit overlays preserve absolute during evaluation");
@@ -239,76 +239,76 @@ TEST(color_test, rgb_comparisons) {
   check_color_comparisons(values, sizeof(values) / sizeof(values[0]));
 }
 
-TEST(color_test, gray_color) {
-  using tjg::color::gray_color;
-  static_assert(noexcept(std::declval<const gray_color&>().index()));
+TEST(color_test, gray) {
+  using tjg::color::gray;
+  static_assert(noexcept(std::declval<const gray&>().index()));
 
-  static_assert(std::is_same<decltype(gray_color{}.index()),
+  static_assert(std::is_same<decltype(gray{}.index()),
                              int>::value,
                 "numeric access returns the zero-based index");
-  static_assert(std::is_convertible<gray_color, tjg::color::rgb>::value &&
-                    !std::is_convertible<int, gray_color>::value,
+  static_assert(std::is_convertible<gray, tjg::color::rgb>::value &&
+                    !std::is_convertible<int, gray>::value,
                 "RGB conversion is implicit; index construction is explicit");
-  static_assert(noexcept(static_cast<tjg::color::rgb>(gray_color{})),
+  static_assert(noexcept(static_cast<tjg::color::rgb>(gray{})),
                 "RGB conversion must be noexcept");
-  constexpr gray_color first{0}, last{23};
+  constexpr gray first{0}, last{23};
   static_assert(first.index() == 0 &&
                     last.index() == 23,
                 "boundary indices must support C++11 constant evaluation");
   constexpr tjg::color::rgb dark = first, light = last;
   static_assert(dark == tjg::color::rgb{8, 8, 8} && light == tjg::color::rgb{238, 238, 238},
                 "grayscale conversion supports C++11 constant evaluation");
-  constexpr tjg::color::rgb middle = gray_color{12};
+  constexpr tjg::color::rgb middle = gray{12};
   static_assert(middle == tjg::color::rgb{128, 128, 128},
                 "a temporary gray color supports C++11 RGB conversion");
-  EXPECT_EQ(gray_color{}.index(), 0);
+  EXPECT_EQ(gray{}.index(), 0);
   const int indices[] = {0, 1, 12, 22, 23};
   const unsigned levels[] = {8, 18, 128, 228, 238};
   for (size_t i = 0; i != sizeof(indices) / sizeof(indices[0]); ++i) {
     SCOPED_TRACE(indices[i]);
-    gray_color color{indices[i]};
+    gray color{indices[i]};
     tjg::color::rgb converted = color;
     EXPECT_EQ(color.index(), indices[i]);
     EXPECT_EQ(converted.r, levels[i]);
     EXPECT_EQ(converted.g, levels[i]);
     EXPECT_EQ(converted.b, levels[i]);
     auto copy = color;
-    gray_color assigned;
+    gray assigned;
     assigned = color;
     EXPECT_EQ(copy, color);
     EXPECT_EQ(assigned, color);
   }
-  static_assert(noexcept(gray_color{0}), "gray construction must be noexcept");
+  static_assert(noexcept(gray{0}), "gray construction must be noexcept");
 #ifdef NDEBUG
   const int invalid[] = {-1, 24, 255, 256,
                          (std::numeric_limits<int>::min)(),
                          (std::numeric_limits<int>::max)()};
   for (auto index : invalid) {
     SCOPED_TRACE(index);
-    EXPECT_EQ(gray_color{index}, gray_color{index < 0 ? 0 : 23});
+    EXPECT_EQ(gray{index}, gray{index < 0 ? 0 : 23});
   }
 #endif
-  const gray_color ordered[] = {gray_color{0}, gray_color{1}, gray_color{23}};
+  const gray ordered[] = {gray{0}, gray{1}, gray{23}};
   check_color_comparisons(ordered, sizeof(ordered) / sizeof(ordered[0]));
 }
 
-TEST(color_test, cube_color) {
-  using tjg::color::cube_color;
-  static_assert(noexcept(std::declval<const cube_color&>().index()));
+TEST(color_test, cube) {
+  using tjg::color::cube;
+  static_assert(noexcept(std::declval<const cube&>().index()));
 
-  static_assert(std::is_same<decltype(cube_color{}.index()),
+  static_assert(std::is_same<decltype(cube{}.index()),
                              int>::value,
                 "numeric access returns the zero-based index");
-  static_assert(std::is_convertible<cube_color, tjg::color::rgb>::value &&
-                    !std::is_convertible<unsigned, cube_color>::value,
+  static_assert(std::is_convertible<cube, tjg::color::rgb>::value &&
+                    !std::is_convertible<unsigned, cube>::value,
                 "RGB conversion is implicit; index construction is explicit");
-  static_assert(std::is_same<decltype(cube_color{}.r()), int>::value &&
-                    std::is_same<decltype(cube_color{}.g()), int>::value &&
-                    std::is_same<decltype(cube_color{}.b()), int>::value,
+  static_assert(std::is_same<decltype(cube{}.r()), int>::value &&
+                    std::is_same<decltype(cube{}.g()), int>::value &&
+                    std::is_same<decltype(cube{}.b()), int>::value,
                 "cube channel getters return int");
-  static_assert(noexcept(static_cast<tjg::color::rgb>(cube_color{})),
+  static_assert(noexcept(static_cast<tjg::color::rgb>(cube{})),
                 "RGB conversion must be noexcept");
-  constexpr cube_color first{0}, last{215}, middle{1, 2, 3};
+  constexpr cube first{0}, last{215}, middle{1, 2, 3};
   constexpr tjg::color::rgb converted = middle;
   static_assert(first.index() == 0 &&
                     last.index() == 215 && last.r() == 5 &&
@@ -317,12 +317,12 @@ TEST(color_test, cube_color) {
   static_assert(converted == tjg::color::rgb{95, 135, 175} &&
                     middle.index() == 51,
                 "cube encoding and RGB conversion support C++11");
-  EXPECT_EQ(cube_color{}.index(), 0);
-  static_assert(noexcept(cube_color{0}) && noexcept(cube_color{0, 0, 0}),
+  EXPECT_EQ(cube{}.index(), 0);
+  static_assert(noexcept(cube{0}) && noexcept(cube{0, 0, 0}),
                 "cube construction must be noexcept");
-  static_assert(noexcept(std::declval<cube_color&>().r(0)) &&
-                    noexcept(std::declval<cube_color&>().g(0)) &&
-                    noexcept(std::declval<cube_color&>().b(0)),
+  static_assert(noexcept(std::declval<cube&>().r(0)) &&
+                    noexcept(std::declval<cube&>().g(0)) &&
+                    noexcept(std::declval<cube&>().b(0)),
                 "cube setters must be noexcept");
 #ifdef NDEBUG
   const int invalid_indices[] = {(std::numeric_limits<int>::min)(), -1,
@@ -330,7 +330,7 @@ TEST(color_test, cube_color) {
                                  (std::numeric_limits<int>::max)()};
   for (auto index : invalid_indices) {
     SCOPED_TRACE(index);
-    EXPECT_EQ(cube_color{index}, cube_color{index < 0 ? 0 : 215});
+    EXPECT_EQ(cube{index}, cube{index < 0 ? 0 : 215});
   }
   const int invalid_channels[] = {-1, 6, 255, 256,
                                  (std::numeric_limits<int>::min)(),
@@ -338,37 +338,37 @@ TEST(color_test, cube_color) {
   for (auto channel : invalid_channels) {
     SCOPED_TRACE(channel);
     const int clamped = channel < 0 ? 0 : 5;
-    EXPECT_EQ((cube_color{channel, 2, 3}), (cube_color{clamped, 2, 3}));
-    EXPECT_EQ((cube_color{1, channel, 3}), (cube_color{1, clamped, 3}));
-    EXPECT_EQ((cube_color{1, 2, channel}), (cube_color{1, 2, clamped}));
+    EXPECT_EQ((cube{channel, 2, 3}), (cube{clamped, 2, 3}));
+    EXPECT_EQ((cube{1, channel, 3}), (cube{1, clamped, 3}));
+    EXPECT_EQ((cube{1, 2, channel}), (cube{1, 2, clamped}));
     auto color = middle;
     EXPECT_EQ(&color.r(channel), &color);
-    EXPECT_EQ(color, (cube_color{clamped, 2, 3}));
+    EXPECT_EQ(color, (cube{clamped, 2, 3}));
     color = middle;
     EXPECT_EQ(&color.g(channel), &color);
-    EXPECT_EQ(color, (cube_color{1, clamped, 3}));
+    EXPECT_EQ(color, (cube{1, clamped, 3}));
     color = middle;
     EXPECT_EQ(&color.b(channel), &color);
-    EXPECT_EQ(color, (cube_color{1, 2, clamped}));
+    EXPECT_EQ(color, (cube{1, 2, clamped}));
   }
 #endif
   auto color = middle;
   EXPECT_EQ(&color.r(5), &color);
-  EXPECT_EQ(color, (cube_color{5, 2, 3}));
+  EXPECT_EQ(color, (cube{5, 2, 3}));
   EXPECT_EQ(&color.g(0), &color);
-  EXPECT_EQ(color, (cube_color{5, 0, 3}));
+  EXPECT_EQ(color, (cube{5, 0, 3}));
   EXPECT_EQ(&color.b(4), &color);
-  EXPECT_EQ(color, (cube_color{5, 0, 4}));
-  cube_color assigned;
+  EXPECT_EQ(color, (cube{5, 0, 4}));
+  cube assigned;
   assigned = color;
   EXPECT_EQ(assigned, color);
-  const cube_color ordered[] = {cube_color{0}, cube_color{1}, cube_color{5},
-                                cube_color{6}, cube_color{35}, cube_color{36},
-                                cube_color{215}};
+  const cube ordered[] = {cube{0}, cube{1}, cube{5},
+                                cube{6}, cube{35}, cube{36},
+                                cube{215}};
   check_color_comparisons(ordered, sizeof(ordered) / sizeof(ordered[0]));
 }
 
-TEST(color_test, cube_color_xterm_rgb) {
+TEST(color_test, cube_xterm_rgb) {
   // Independent truth source: Xterm FAQ, "Can I set a color by its number?"
   // https://invisible-island.net/xterm/xterm.faq.html#color_by_number
   // Use its arithmetic formula, never the implementation's cube_levels table.
@@ -378,12 +378,12 @@ TEST(color_test, cube_color_xterm_rgb) {
       for (int blue = 0; blue != 6; ++blue) {
         auto index = 36 * red + 6 * green + blue;
         SCOPED_TRACE(index);
-        tjg::color::cube_color color{index};
+        tjg::color::cube color{index};
         EXPECT_EQ(color.r(), red);
         EXPECT_EQ(color.g(), green);
         EXPECT_EQ(color.b(), blue);
         EXPECT_EQ(color.index(), index);
-        EXPECT_EQ(color, (tjg::color::cube_color{red, green, blue}));
+        EXPECT_EQ(color, (tjg::color::cube{red, green, blue}));
         tjg::color::rgb converted = color;
         EXPECT_EQ(converted.r, red   == 0 ? 0 : 55 + 40 * red);
         EXPECT_EQ(converted.g, green == 0 ? 0 : 55 + 40 * green);
@@ -404,7 +404,7 @@ TEST(color_test, terminal_color_xterm_rgb) {
       tjg::color::rgb::term_black, tjg::color::rgb::term_red, tjg::color::rgb::term_green,
       tjg::color::rgb::term_yellow, tjg::color::rgb::term_blue, tjg::color::rgb::term_magenta,
       tjg::color::rgb::term_cyan, tjg::color::rgb::term_white,
-      tjg::color::rgb::term_bright_black, tjg::color::rgb::term_bright_red,
+      tjg::color::rgb::term_gray, tjg::color::rgb::term_bright_red,
       tjg::color::rgb::term_bright_green, tjg::color::rgb::term_bright_yellow,
       tjg::color::rgb::term_bright_blue, tjg::color::rgb::term_bright_magenta,
       tjg::color::rgb::term_bright_cyan, tjg::color::rgb::term_bright_white};
@@ -437,8 +437,8 @@ TEST(color_test, color_type_comparisons) {
       {}, tjg::color::no_color, tjg::color::rgb{}, tjg::color::term_color::black,
       tjg::color::rgb{0xFFFFFF}, tjg::color::term_color::bright_white,
       tjg::color::rgb{0x123456}, tjg::color::rgb::coral, tjg::color::rgb{0xFF7F50},
-      tjg::color::cube_color{0}, tjg::color::cube_color{215}, tjg::color::gray_color{0},
-      tjg::color::gray_color{23}};
+      tjg::color::cube{0}, tjg::color::cube{215}, tjg::color::gray{0},
+      tjg::color::gray{23}};
   check_color_comparisons(values, sizeof(values) / sizeof(values[0]));
 }
 
@@ -453,8 +453,8 @@ TEST(color_test, text_style_comparisons) {
       tjg::color::emphasis::bold, tjg::color::emphasis::strike,
       tjg::color::fg(tjg::color::rgb::coral).bg(tjg::color::term_color::bright_white)
           .bold().strike(),
-      tjg::color::fg(tjg::color::cube_color{0}), tjg::color::bg(tjg::color::cube_color{215}),
-      tjg::color::fg(tjg::color::gray_color{0}), tjg::color::bg(tjg::color::gray_color{23})};
+      tjg::color::fg(tjg::color::cube{0}), tjg::color::bg(tjg::color::cube{215}),
+      tjg::color::fg(tjg::color::gray{0}), tjg::color::bg(tjg::color::gray{23})};
   check_color_comparisons(values, sizeof(values) / sizeof(values[0]));
 }
 
@@ -498,13 +498,13 @@ TEST(color_test, color_type_hash) {
   const color_t values[] = {
       {}, tjg::color::no_color, tjg::color::rgb{}, tjg::color::term_color::black,
       tjg::color::rgb{0xFFFFFF}, tjg::color::term_color::bright_white,
-      tjg::color::rgb::coral, tjg::color::rgb{0xFF7F50}, tjg::color::cube_color{0},
-      tjg::color::cube_color{215}, tjg::color::gray_color{0}, tjg::color::gray_color{23}};
+      tjg::color::rgb::coral, tjg::color::rgb{0xFF7F50}, tjg::color::cube{0},
+      tjg::color::cube{215}, tjg::color::gray{0}, tjg::color::gray{23}};
   check_color_hashes(values, sizeof(values) / sizeof(values[0]));
   const auto hash = std::hash<color_t>{};
   // Same numeric payload, different alternatives must influence the hash.
   EXPECT_NE(hash(color_t{tjg::color::rgb{}}), hash(color_t{tjg::color::term_color::black}));
-  EXPECT_NE(hash(color_t{tjg::color::cube_color{0}}), hash(color_t{tjg::color::gray_color{0}}));
+  EXPECT_NE(hash(color_t{tjg::color::cube{0}}), hash(color_t{tjg::color::gray{0}}));
 }
 
 TEST(color_test, text_style_hash) {
@@ -518,8 +518,8 @@ TEST(color_test, text_style_hash) {
       tjg::color::fg(tjg::color::rgb{0xFF7F50}),
       tjg::color::fg(tjg::color::rgb::coral).bg(tjg::color::term_color::bright_white)
           .bold().strike(),
-      tjg::color::fg(tjg::color::cube_color{0}), tjg::color::bg(tjg::color::cube_color{215}),
-      tjg::color::fg(tjg::color::gray_color{0}), tjg::color::bg(tjg::color::gray_color{23})};
+      tjg::color::fg(tjg::color::cube{0}), tjg::color::bg(tjg::color::cube{215}),
+      tjg::color::fg(tjg::color::gray{0}), tjg::color::bg(tjg::color::gray{23})};
   check_color_hashes(values, sizeof(values) / sizeof(values[0]));
 }
 
@@ -618,8 +618,8 @@ const blend_sample blend_samples[] = {
     {tjg::color::no_color, {0, 0, 0}},
     {tjg::color::rgb{1, 2, 3}, {1, 2, 3}},
     {tjg::color::term_color::red, {205, 0, 0}},
-    {tjg::color::cube_color{1, 2, 3}, {95, 135, 175}},
-    {tjg::color::gray_color{12}, {128, 128, 128}}};
+    {tjg::color::cube{1, 2, 3}, {95, 135, 175}},
+    {tjg::color::gray{12}, {128, 128, 128}}};
 
 // Expected RGB values above are independent of the conversion implementation.
 }  // namespace
@@ -640,7 +640,7 @@ TEST(color_test, color_sentinels) {
                 "the unspecified sentinel must be constructible");
   static_assert(std::is_same_v<
                 tjg::color::color_t, std::variant<no_color_t, tjg::color::rgb, tjg::color::term_color,
-                                           tjg::color::cube_color, tjg::color::gray_color>>);
+                                           tjg::color::cube, tjg::color::gray>>);
 }
 
 TEST(color_test, text_style_empty_and_clear) {
@@ -661,7 +661,7 @@ TEST(color_test, text_style_empty_and_clear) {
                 "empty returns bool and clear returns a style reference");
 
   const tjg::color::color_t colors[] = {tjg::color::no_color, tjg::color::rgb{},
-      tjg::color::term_color::black, tjg::color::cube_color{0}, tjg::color::gray_color{0}};
+      tjg::color::term_color::black, tjg::color::cube{0}, tjg::color::gray{0}};
   const tjg::color::emphasis attributes[] = {
       tjg::color::emphasis{}, tjg::color::emphasis::bold, tjg::color::emphasis::strike,
       static_cast<tjg::color::emphasis>(255)};
@@ -680,8 +680,8 @@ TEST(color_test, text_style_empty_and_clear) {
         EXPECT_EQ(tjg::color::format(style, "plain"), "plain");
         EXPECT_EQ(&style.clear(), &style);
         EXPECT_TRUE(style.empty());
-        style.clear().fg(tjg::color::gray_color{12}).underline();
-        EXPECT_EQ(style, (tjg::color::text_style{tjg::color::gray_color{12}, tjg::color::no_color,
+        style.clear().fg(tjg::color::gray{12}).underline();
+        EXPECT_EQ(style, (tjg::color::text_style{tjg::color::gray{12}, tjg::color::no_color,
                                          tjg::color::emphasis::underline}));
       }
     }
@@ -706,10 +706,10 @@ TEST(color_test, text_style_overlay) {
 
   const tjg::color::color_t base_colors[] = {
       tjg::color::no_color, tjg::color::rgb{200, 10, 30}, tjg::color::term_color::red,
-      tjg::color::cube_color{5, 4, 3}, tjg::color::gray_color{23}};
+      tjg::color::cube{5, 4, 3}, tjg::color::gray{23}};
   const tjg::color::color_t overlay_colors[] = {
       tjg::color::no_color, tjg::color::rgb{}, tjg::color::term_color::black,
-      tjg::color::cube_color{0}, tjg::color::gray_color{0}};
+      tjg::color::cube{0}, tjg::color::gray{0}};
   for (auto base_fg : base_colors) {
     for (auto base_bg : base_colors) {
       const auto base = text_style{base_fg, base_bg, emphasis::bold};
@@ -753,10 +753,10 @@ TEST(color_test, text_style_overlay) {
   EXPECT_EQ(tjg::color::overlay(empty, empty), empty);
   EXPECT_EQ(&empty.overlay(empty), &empty);
   EXPECT_TRUE(empty.empty());
-  auto style = text_style{tjg::color::term_color::red, tjg::color::gray_color{12},
+  auto style = text_style{tjg::color::term_color::red, tjg::color::gray{12},
                           emphasis::bold};
   style.overlay(text_style{tjg::color::rgb{}}).underline();
-  EXPECT_EQ(style, (text_style{tjg::color::rgb{}, tjg::color::gray_color{12},
+  EXPECT_EQ(style, (text_style{tjg::color::rgb{}, tjg::color::gray{12},
                               emphasis::bold | emphasis::underline}));
   const auto first = text_style{tjg::color::term_color::red};
   const auto second = text_style{tjg::color::term_color::blue};
@@ -766,11 +766,11 @@ TEST(color_test, text_style_overlay) {
 
 TEST(color_test, text_style_overlay_constexpr) {
   constexpr auto base = tjg::color::text_style{tjg::color::term_color::red,
-                                       tjg::color::gray_color{12}, tjg::color::emphasis::bold};
+                                       tjg::color::gray{12}, tjg::color::emphasis::bold};
   constexpr auto overlaid = tjg::color::text_style{base}.overlay(
       tjg::color::text_style{tjg::color::rgb{}, tjg::color::no_color, tjg::color::emphasis::faint});
   static_assert(overlaid == tjg::color::text_style{
-                                tjg::color::rgb{}, tjg::color::gray_color{12},
+                                tjg::color::rgb{}, tjg::color::gray{12},
                                 tjg::color::emphasis::bold | tjg::color::emphasis::faint},
                 "overlay must support constant evaluation");
   constexpr auto unchanged = tjg::color::text_style{base}.overlay(tjg::color::text_style{});
@@ -815,9 +815,9 @@ TEST(color_test, bitwise_composition_constraints) {
 
 TEST(color_test, palette_style_replacement) {
   const tjg::color::color_t replacements[] = {
-      tjg::color::gray_color{23}, tjg::color::cube_color{215}, tjg::color::term_color::black,
+      tjg::color::gray{23}, tjg::color::cube{215}, tjg::color::term_color::black,
       tjg::color::rgb{}, tjg::color::no_color};
-  auto style = tjg::color::text_style{tjg::color::gray_color{0}, tjg::color::gray_color{23},
+  auto style = tjg::color::text_style{tjg::color::gray{0}, tjg::color::gray{23},
                               static_cast<tjg::color::emphasis>(0xFF)};
   for (auto replacement : replacements) {
     const auto background = style.bg();
@@ -827,11 +827,11 @@ TEST(color_test, palette_style_replacement) {
     EXPECT_EQ(style.has_fg(), replacement.index() != 0);
     EXPECT_EQ(std::to_underlying(style.emph()), 0xFF);
   }
-  style.fg(tjg::color::gray_color{23});
+  style.fg(tjg::color::gray{23});
   for (auto replacement : replacements) {
     EXPECT_EQ(&style.bg(replacement), &style);
     EXPECT_EQ(style.bg(), replacement);
-    EXPECT_EQ(style.fg(), tjg::color::color_t{tjg::color::gray_color{23}});
+    EXPECT_EQ(style.fg(), tjg::color::color_t{tjg::color::gray{23}});
     EXPECT_EQ(style.has_bg(), replacement.index() != 0);
     EXPECT_EQ(std::to_underlying(style.emph()), 0xFF);
   }
@@ -891,9 +891,9 @@ TEST(color_test, sgr_transition) {
       "\x1b[34m");
   check_sgr_transition(tjg::color::fg(tjg::color::rgb{1, 2, 3}), red,
       "\x1b[38;2;1;2;3m");
-  check_sgr_transition(tjg::color::bg(tjg::color::cube_color{0}), red,
+  check_sgr_transition(tjg::color::bg(tjg::color::cube{0}), red,
       "\x1b[0;48;5;16m");
-  check_sgr_transition(tjg::color::fg(tjg::color::gray_color{0}), {},
+  check_sgr_transition(tjg::color::fg(tjg::color::gray{0}), {},
       "\x1b[38;5;232m");
   check_sgr_transition(tjg::color::bold(), {}, "\x1b[1m");
   check_sgr_transition(red, {}, "\x1b[31m");
@@ -949,7 +949,7 @@ TEST(color_test, sgr_transition_terminal_defaults) {
 TEST(color_test, sgr_transition_absolute_target) {
   const tjg::color::text_style states[] = {
       {}, tjg::color::underline(), tjg::color::fg(tjg::color::term_color::red),
-      tjg::color::text_style{tjg::color::rgb{1, 2, 3}, tjg::color::gray_color{12},
+      tjg::color::text_style{tjg::color::rgb{1, 2, 3}, tjg::color::gray{12},
                       tjg::color::emphasis::bold}};
   for (auto target : states) {
     target.absolute();
@@ -1023,10 +1023,10 @@ TEST(color_test, palette_ansi_escape) {
       {tjg::color::rgb{1, 2, 3}, "38;2;1;2;3;", "48;2;1;2;3;"},
       {tjg::color::term_color::red, "31;", "41;"},
       {tjg::color::term_color::bright_white, "97;", "107;"},
-      {tjg::color::cube_color{0}, "38;5;16;", "48;5;16;"},
-      {tjg::color::cube_color{215}, "38;5;231;", "48;5;231;"},
-      {tjg::color::gray_color{0}, "38;5;232;", "48;5;232;"},
-      {tjg::color::gray_color{23}, "38;5;255;", "48;5;255;"}};
+      {tjg::color::cube{0}, "38;5;16;", "48;5;16;"},
+      {tjg::color::cube{215}, "38;5;231;", "48;5;231;"},
+      {tjg::color::gray{0}, "38;5;232;", "48;5;232;"},
+      {tjg::color::gray{23}, "38;5;255;", "48;5;255;"}};
   for (const auto& sample : samples) {
     for (bool background : {false, true}) {
       const auto expected = std::string{background ? sample.background
@@ -1100,8 +1100,8 @@ void check_color_access(T value) {
   EXPECT_EQ(std::get<Index>(std::move(constant)), value);
 
   const color_t alternatives[] = {tjg::color::no_color, tjg::color::rgb{},
-                                 tjg::color::term_color::black, tjg::color::cube_color{0},
-                                 tjg::color::gray_color{0}};
+                                 tjg::color::term_color::black, tjg::color::cube{0},
+                                 tjg::color::gray{0}};
   for (auto other : alternatives) {
     if (other.index() == Index) continue;
     const auto& const_other = other;
@@ -1125,7 +1125,7 @@ template<typename T>
 void check_color_assignment(T replacement) {
   const tjg::color::color_t original[] = {tjg::color::no_color, tjg::color::rgb{1, 2, 3},
                                   tjg::color::term_color::bright_white,
-                                  tjg::color::cube_color{215}, tjg::color::gray_color{23}};
+                                  tjg::color::cube{215}, tjg::color::gray{23}};
   for (auto color : original) {
     const tjg::color::color_t expected = replacement;
     EXPECT_EQ(&(color = replacement), &color);
@@ -1140,8 +1140,8 @@ struct color_kind_visitor {
   constexpr size_t operator()(const tjg::color::no_color_t&) const { return 0; }
   constexpr size_t operator()(tjg::color::rgb) const { return 1; }
   constexpr size_t operator()(tjg::color::term_color) const { return 2; }
-  constexpr size_t operator()(tjg::color::cube_color) const { return 3; }
-  constexpr size_t operator()(tjg::color::gray_color) const { return 4; }
+  constexpr size_t operator()(tjg::color::cube) const { return 3; }
+  constexpr size_t operator()(tjg::color::gray) const { return 4; }
 };
 
 template<typename T, size_t Index>
@@ -1176,13 +1176,13 @@ struct color_mutating_visitor {
     ++calls;
     value.r = 42;
   }
-  void operator()(tjg::color::cube_color& value) const {
+  void operator()(tjg::color::cube& value) const {
     ++calls;
     value.r(5);
   }
-  void operator()(tjg::color::gray_color& value) const {
+  void operator()(tjg::color::gray& value) const {
     ++calls;
-    value = tjg::color::gray_color{23};
+    value = tjg::color::gray{23};
   }
   void operator()(tjg::color::term_color& value) const {
     ++calls;
@@ -1208,10 +1208,10 @@ constexpr bool check_color_constexpr_assignment() {
   color = tjg::color::term_color::black;
   bool terminal_ok = std::holds_alternative<tjg::color::term_color>(color) &&
                      std::get<2>(color) == tjg::color::term_color::black;
-  color = tjg::color::cube_color{215};
-  bool cube_ok = std::get<3>(color) == tjg::color::cube_color{215};
-  color = tjg::color::gray_color{23};
-  bool gray_ok = std::get<4>(color) == tjg::color::gray_color{23};
+  color = tjg::color::cube{215};
+  bool cube_ok = std::get<3>(color) == tjg::color::cube{215};
+  color = tjg::color::gray{23};
+  bool gray_ok = std::get<4>(color) == tjg::color::gray{23};
   color = tjg::color::no_color;
   return rgb_ok && terminal_ok && cube_ok && gray_ok &&
          std::holds_alternative<tjg::color::no_color_t>(color);
@@ -1224,10 +1224,10 @@ TEST(color_test, color_variant_access) {
   check_color_access<tjg::color::rgb, 1>(tjg::color::rgb::coral);
   check_color_access<tjg::color::term_color, 2>(tjg::color::term_color::black);
   check_color_access<tjg::color::term_color, 2>(tjg::color::term_color::bright_white);
-  check_color_access<tjg::color::cube_color, 3>(tjg::color::cube_color{0});
-  check_color_access<tjg::color::cube_color, 3>(tjg::color::cube_color{215});
-  check_color_access<tjg::color::gray_color, 4>(tjg::color::gray_color{0});
-  check_color_access<tjg::color::gray_color, 4>(tjg::color::gray_color{23});
+  check_color_access<tjg::color::cube, 3>(tjg::color::cube{0});
+  check_color_access<tjg::color::cube, 3>(tjg::color::cube{215});
+  check_color_access<tjg::color::gray, 4>(tjg::color::gray{0});
+  check_color_access<tjg::color::gray, 4>(tjg::color::gray{23});
   auto color = tjg::color::color_t{tjg::color::rgb{1, 2, 3}};
   std::get<tjg::color::rgb>(color).r = 4;
   std::get<1>(color).g = 5;
@@ -1235,7 +1235,7 @@ TEST(color_test, color_variant_access) {
   std::get_if<1>(&color)->r = 7;
   EXPECT_EQ(std::get<tjg::color::rgb>(color), (tjg::color::rgb{7, 5, 6}));
   EXPECT_EQ(std::get_if<2>(&color), nullptr);
-  EXPECT_EQ(std::get_if<tjg::color::gray_color>(&color), nullptr);
+  EXPECT_EQ(std::get_if<tjg::color::gray>(&color), nullptr);
   EXPECT_THROW((void)std::get<2>(color), std::bad_variant_access);
 }
 
@@ -1245,11 +1245,11 @@ TEST(color_test, color_variant_assignment) {
   check_color_assignment(tjg::color::rgb::coral);
   check_color_assignment(tjg::color::term_color::black);
   check_color_assignment(tjg::color::term_color::bright_white);
-  check_color_assignment(tjg::color::cube_color{215});
-  check_color_assignment(tjg::color::gray_color{23});
+  check_color_assignment(tjg::color::cube{215});
+  check_color_assignment(tjg::color::gray{23});
   const tjg::color::color_t colors[] = {tjg::color::no_color, tjg::color::rgb{1, 2, 3},
-                                tjg::color::term_color::black, tjg::color::cube_color{1, 2, 3},
-                                tjg::color::gray_color{12}};
+                                tjg::color::term_color::black, tjg::color::cube{1, 2, 3},
+                                tjg::color::gray{12}};
   for (const auto& source : colors) {
     tjg::color::color_t copy(source);
     tjg::color::color_t moved(std::move(copy));
@@ -1267,11 +1267,11 @@ TEST(color_test, color_variant_assignment) {
 
 TEST(color_test, color_variant_visit) {
   const tjg::color::color_t colors[] = {tjg::color::no_color, tjg::color::rgb{1, 2, 3},
-                                tjg::color::term_color::black, tjg::color::cube_color{1, 2, 3},
-                                tjg::color::gray_color{12}};
+                                tjg::color::term_color::black, tjg::color::cube{1, 2, 3},
+                                tjg::color::gray{12}};
   const tjg::color::color_t changed[] = {tjg::color::no_color, tjg::color::rgb{42, 2, 3},
                                  tjg::color::term_color::bright_white,
-                                 tjg::color::cube_color{5, 2, 3}, tjg::color::gray_color{23}};
+                                 tjg::color::cube{5, 2, 3}, tjg::color::gray{23}};
   for (size_t i = 0; i < 5; ++i) {
     auto color = colors[i];
     const auto& constant = color;
@@ -1303,16 +1303,16 @@ TEST(color_test, color_variant_constexpr) {
       check_color_constexpr_access<tjg::color::no_color_t, 0>(tjg::color::no_color) &&
           check_color_constexpr_access<tjg::color::rgb, 1>(tjg::color::rgb{1, 2, 3}) &&
           check_color_constexpr_access<tjg::color::term_color, 2>(tjg::color::term_color::red) &&
-          check_color_constexpr_access<tjg::color::cube_color, 3>(tjg::color::cube_color{215}) &&
-          check_color_constexpr_access<tjg::color::gray_color, 4>(tjg::color::gray_color{23}),
+          check_color_constexpr_access<tjg::color::cube, 3>(tjg::color::cube{215}) &&
+          check_color_constexpr_access<tjg::color::gray, 4>(tjg::color::gray{23}),
       "mutable access, visitation, and style factories must be constexpr in C++11");
   constexpr tjg::color::color_t empty;
   constexpr tjg::color::color_t rgb = tjg::color::rgb{1, 2, 3};
   constexpr tjg::color::color_t terminal = tjg::color::term_color::black;
-  constexpr tjg::color::color_t cube = tjg::color::cube_color{215};
-  constexpr tjg::color::color_t gray = tjg::color::gray_color{23};
-  static_assert(std::get<3>(cube) == tjg::color::cube_color{215} &&
-                    std::get<4>(gray) == tjg::color::gray_color{23},
+  constexpr tjg::color::color_t cube = tjg::color::cube{215};
+  constexpr tjg::color::color_t gray = tjg::color::gray{23};
+  static_assert(std::get<3>(cube) == tjg::color::cube{215} &&
+                    std::get<4>(gray) == tjg::color::gray{23},
                 "palette access must be constexpr in C++11");
   constexpr auto palette_style = tjg::color::text_style{cube, gray, tjg::color::emphasis::bold};
   static_assert(palette_style.fg() == cube && palette_style.bg() == gray &&
@@ -1417,6 +1417,34 @@ TEST(color_test, rgb) {
   EXPECT_EQ(static_cast<uint32_t>(tjg::color::rgb::white), 0xFFFFFFu);
 }
 
+TEST(color_test, normalized_rgb) {
+  using tjg::color::color;
+  using tjg::color::rgb;
+
+  static_assert(color(0.1, 0.6, 1.0) == rgb{25, 153, 255});
+
+  constexpr double infinity = std::numeric_limits<double>::infinity();
+  constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_EQ(color(-0.1, 0.5, 1.1), (rgb{0, 128, 255}));
+  EXPECT_EQ(color(nan, -infinity, infinity), (rgb{0, 0, 255}));
+  EXPECT_EQ(color(0.5 - 1.0 / 512, 0.5, 1.0 - 1.0 / 512),
+            (rgb{127, 128, 255}));
+}
+
+TEST(color_test, normalized_grayscale) {
+  using tjg::color::color;
+  using tjg::color::rgb;
+
+  static_assert(color(0.0) == rgb{0, 0, 0});
+  static_assert(color(1.0) == rgb{255, 255, 255});
+  static_assert(rgb::gray_25 == rgb{64, 64, 64});
+  static_assert(rgb::gray_50 == rgb{128, 128, 128});
+  static_assert(rgb::gray_75 == rgb{192, 192, 192});
+  EXPECT_EQ(color(0.25), rgb::gray_25);
+  EXPECT_EQ(color(0.5), rgb::gray_50);
+  EXPECT_EQ(color(0.75), rgb::gray_75);
+}
+
 TEST(color_test, rgb_or) {
   constexpr auto lhs = tjg::color::rgb{0xC0F000};
   constexpr auto rhs = tjg::color::rgb{0x000FEE};
@@ -1484,9 +1512,9 @@ TEST(color_test, to_rgb) {
   static_assert(std::is_same<decltype(tjg::color::to_rgb(tjg::color::rgb{})), tjg::color::rgb>::value &&
                     std::is_same<decltype(tjg::color::to_rgb(tjg::color::term_color::red)),
                                  tjg::color::rgb>::value &&
-                    std::is_same<decltype(tjg::color::to_rgb(std::declval<tjg::color::gray_color>())),
+                    std::is_same<decltype(tjg::color::to_rgb(std::declval<tjg::color::gray>())),
                                  tjg::color::rgb>::value &&
-                    std::is_same<decltype(tjg::color::to_rgb(std::declval<tjg::color::cube_color>())),
+                    std::is_same<decltype(tjg::color::to_rgb(std::declval<tjg::color::cube>())),
                                  tjg::color::rgb>::value,
                 "plain colors convert to RGB values");
   static_assert(std::is_same<decltype(tjg::color::to_rgb(tjg::color::no_color)),
@@ -1501,18 +1529,18 @@ TEST(color_test, to_rgb) {
                 "to_rgb rejects non-color arguments");
   static_assert(noexcept(tjg::color::to_rgb(tjg::color::rgb{})) &&
                     noexcept(tjg::color::to_rgb(tjg::color::term_color::red)) &&
-                    noexcept(tjg::color::to_rgb(std::declval<tjg::color::gray_color>())) &&
-                    noexcept(tjg::color::to_rgb(std::declval<tjg::color::cube_color>())) &&
+                    noexcept(tjg::color::to_rgb(std::declval<tjg::color::gray>())) &&
+                    noexcept(tjg::color::to_rgb(std::declval<tjg::color::cube>())) &&
                     noexcept(tjg::color::to_rgb(tjg::color::no_color)) &&
                     noexcept(tjg::color::to_rgb(tjg::color::color_t{})),
                 "all to_rgb overloads must be noexcept");
   static_assert(tjg::color::to_rgb(tjg::color::rgb{0x123456}) == tjg::color::rgb{0x123456} &&
                     tjg::color::to_rgb(tjg::color::term_color::red) == tjg::color::rgb{205, 0, 0} &&
                     tjg::color::to_rgb(tjg::color::term_color::bright_blue) == tjg::color::rgb{92, 92, 255} &&
-                    tjg::color::to_rgb(tjg::color::gray_color{0}) == tjg::color::rgb{8, 8, 8} &&
-                    tjg::color::to_rgb(tjg::color::gray_color{23}) == tjg::color::rgb{238, 238, 238} &&
-                    tjg::color::to_rgb(tjg::color::cube_color{0}) == tjg::color::rgb{} &&
-                    tjg::color::to_rgb(tjg::color::cube_color{215}) == tjg::color::rgb{255, 255, 255},
+                    tjg::color::to_rgb(tjg::color::gray{0}) == tjg::color::rgb{8, 8, 8} &&
+                    tjg::color::to_rgb(tjg::color::gray{23}) == tjg::color::rgb{238, 238, 238} &&
+                    tjg::color::to_rgb(tjg::color::cube{0}) == tjg::color::rgb{} &&
+                    tjg::color::to_rgb(tjg::color::cube{215}) == tjg::color::rgb{255, 255, 255},
                 "plain conversion supports C++11 constant evaluation");
   constexpr auto unspecified = tjg::color::to_rgb(tjg::color::no_color);
   static_assert(tjg::color::color_t{unspecified} == tjg::color::color_t{},
@@ -1522,9 +1550,9 @@ TEST(color_test, to_rgb) {
                         tjg::color::color_t{tjg::color::rgb{1, 2, 3}} &&
                     tjg::color::to_rgb(tjg::color::color_t{tjg::color::term_color::black}) ==
                         tjg::color::color_t{tjg::color::rgb{}} &&
-                    tjg::color::to_rgb(tjg::color::color_t{tjg::color::gray_color{12}}) ==
+                    tjg::color::to_rgb(tjg::color::color_t{tjg::color::gray{12}}) ==
                         tjg::color::color_t{tjg::color::rgb{128, 128, 128}} &&
-                    tjg::color::to_rgb(tjg::color::color_t{tjg::color::cube_color{1, 2, 3}}) ==
+                    tjg::color::to_rgb(tjg::color::color_t{tjg::color::cube{1, 2, 3}}) ==
                         tjg::color::color_t{tjg::color::rgb{95, 135, 175}},
                 "all variant alternatives support C++11 constant conversion");
   for (const auto& sample : blend_samples) {
@@ -1535,16 +1563,16 @@ TEST(color_test, to_rgb) {
     EXPECT_EQ(source, sample.color);
     EXPECT_EQ(tjg::color::to_rgb(converted), converted);
   }
-  EXPECT_EQ(tjg::color::to_rgb(tjg::color::gray_color{12}), (tjg::color::rgb{128, 128, 128}));
-  EXPECT_EQ(tjg::color::to_rgb(tjg::color::cube_color{1, 2, 3}), (tjg::color::rgb{95, 135, 175}));
+  EXPECT_EQ(tjg::color::to_rgb(tjg::color::gray{12}), (tjg::color::rgb{128, 128, 128}));
+  EXPECT_EQ(tjg::color::to_rgb(tjg::color::cube{1, 2, 3}), (tjg::color::rgb{95, 135, 175}));
 }
 
 TEST(color_test, blend_overloads) {
   static_assert(std::is_same<decltype(tjg::color::blend(tjg::color::term_color::red,
                                                 tjg::color::term_color::red)),
                              tjg::color::rgb>::value &&
-                    std::is_same<decltype(tjg::color::blend(tjg::color::cube_color{0},
-                                                     tjg::color::gray_color{0})),
+                    std::is_same<decltype(tjg::color::blend(tjg::color::cube{0},
+                                                     tjg::color::gray{0})),
                                  tjg::color::rgb>::value,
                 "plain palette arguments return RGB");
   static_assert(std::is_same<decltype(tjg::color::blend(tjg::color::rgb{}, tjg::color::color_t{})),
@@ -1561,17 +1589,17 @@ TEST(color_test, blend_overloads) {
                     !CanBlend<tjg::color::color_t, const char*>,
                 "blending requires valid color arguments");
   static_assert(noexcept(tjg::color::blend(tjg::color::term_color::red,
-                                    std::declval<tjg::color::gray_color>())) &&
+                                    std::declval<tjg::color::gray>())) &&
                     noexcept(tjg::color::blend(tjg::color::color_t{}, tjg::color::rgb{})),
                 "both blend overloads must be noexcept");
   static_assert(tjg::color::Color<const tjg::color::rgb&> && tjg::color::Color<tjg::color::term_color> &&
-                    tjg::color::Color<tjg::color::cube_color> && tjg::color::Color<tjg::color::gray_color> &&
+                    tjg::color::Color<tjg::color::cube> && tjg::color::Color<tjg::color::gray> &&
                     !tjg::color::Color<tjg::color::color_t> && !tjg::color::Color<tjg::color::no_color_t> &&
                     !tjg::color::Color<int>,
                 "Color identifies only plain color types");
   constexpr auto mixed = tjg::color::blend(tjg::color::term_color::red,
-                                    tjg::color::cube_color{1, 2, 3},
-                                    tjg::color::gray_color{12});
+                                    tjg::color::cube{1, 2, 3},
+                                    tjg::color::gray{12});
   static_assert(mixed == tjg::color::rgb{142, 87, 101},
                 "plain palette promotion and averaging must be constexpr");
   constexpr auto terminal = tjg::color::blend(tjg::color::term_color::red,
@@ -1584,8 +1612,8 @@ TEST(color_test, blend_minimum_arity) {
   static_assert(!CanBlend<> &&
                     !CanBlend<tjg::color::rgb> &&
                     !CanBlend<tjg::color::term_color> &&
-                    !CanBlend<tjg::color::cube_color> &&
-                    !CanBlend<tjg::color::gray_color> &&
+                    !CanBlend<tjg::color::cube> &&
+                    !CanBlend<tjg::color::gray> &&
                     !CanBlend<tjg::color::color_t> &&
                     !CanBlend<tjg::color::no_color_t> &&
                     !CanBlend<tjg::color::text_style>,
@@ -1601,12 +1629,12 @@ TEST(color_test, blend_minimum_arity) {
 TEST(color_test, color_variant_blend) {
   constexpr auto empty = tjg::color::blend(tjg::color::no_color, tjg::color::color_t{}, tjg::color::no_color);
   static_assert(empty == tjg::color::color_t{}, "all unspecified colors remain empty");
-  constexpr auto single = tjg::color::blend(tjg::color::no_color, tjg::color::gray_color{12},
+  constexpr auto single = tjg::color::blend(tjg::color::no_color, tjg::color::gray{12},
                                      tjg::color::color_t{});
-  static_assert(single == tjg::color::color_t{tjg::color::gray_color{12}},
+  static_assert(single == tjg::color::color_t{tjg::color::gray{12}},
                 "one specified color retains its palette kind");
-  constexpr auto same = tjg::color::blend(tjg::color::color_t{tjg::color::gray_color{12}},
-                                   tjg::color::gray_color{12});
+  constexpr auto same = tjg::color::blend(tjg::color::color_t{tjg::color::gray{12}},
+                                   tjg::color::gray{12});
   static_assert(same == tjg::color::color_t{tjg::color::rgb{128, 128, 128}},
                 "two specified palette colors produce RGB");
   constexpr auto average = tjg::color::blend(
@@ -1614,8 +1642,8 @@ TEST(color_test, color_variant_blend) {
       tjg::color::color_t{tjg::color::rgb{2, 4, 255}}, tjg::color::no_color);
   static_assert(average == tjg::color::color_t{tjg::color::rgb{0, 2, 254}},
                 "ignore unspecified colors and divide once after summation");
-  constexpr auto palette = tjg::color::blend(tjg::color::cube_color{1, 2, 3},
-                                      tjg::color::color_t{tjg::color::gray_color{12}});
+  constexpr auto palette = tjg::color::blend(tjg::color::cube{1, 2, 3},
+                                      tjg::color::color_t{tjg::color::gray{12}});
   static_assert(palette == tjg::color::color_t{tjg::color::rgb{111, 131, 151}},
                 "a trailing variant selects RGB promotion of plain arguments");
 
@@ -1655,22 +1683,22 @@ TEST(color_test, text_style_blend) {
                 "style blending must be noexcept");
   constexpr auto empty = tjg::color::blend(tjg::color::text_style{}, tjg::color::text_style{});
   static_assert(empty == tjg::color::text_style{}, "empty styles blend to an empty style");
-  constexpr auto single = tjg::color::text_style{tjg::color::cube_color{1, 2, 3},
-                                         tjg::color::gray_color{12},
+  constexpr auto single = tjg::color::text_style{tjg::color::cube{1, 2, 3},
+                                         tjg::color::gray{12},
                                          tjg::color::emphasis::bold};
   static_assert(tjg::color::blend(tjg::color::text_style{}, single) == single &&
                     tjg::color::blend(tjg::color::text_style{}, single, tjg::color::text_style{}) == single,
                 "one specified color per channel retains its kind");
   constexpr auto first = tjg::color::text_style{tjg::color::term_color::red, tjg::color::no_color,
                                         tjg::color::emphasis::bold};
-  constexpr auto second = tjg::color::text_style{tjg::color::gray_color{12},
-                                         tjg::color::cube_color{1, 2, 3},
+  constexpr auto second = tjg::color::text_style{tjg::color::gray{12},
+                                         tjg::color::cube{1, 2, 3},
                                          tjg::color::emphasis::underline};
   constexpr auto third = tjg::color::text_style{tjg::color::rgb{}, tjg::color::no_color,
                                         tjg::color::emphasis::strike};
   constexpr auto averaged = tjg::color::blend(first, second, third);
   static_assert(averaged.fg() == tjg::color::color_t{tjg::color::rgb{111, 42, 42}} &&
-                    averaged.bg() == tjg::color::color_t{tjg::color::cube_color{1, 2, 3}} &&
+                    averaged.bg() == tjg::color::color_t{tjg::color::cube{1, 2, 3}} &&
                     averaged.emph() == (tjg::color::emphasis::bold |
                                         tjg::color::emphasis::underline |
                                         tjg::color::emphasis::strike),
@@ -1687,17 +1715,17 @@ TEST(color_test, text_style_blend) {
               static_cast<uint8_t>((unsigned{a.g} + b.g) / 2),
               static_cast<uint8_t>((unsigned{a.b} + b.b) / 2)}};
       const auto lhs = tjg::color::text_style{blend_samples[i].color,
-                                       tjg::color::gray_color{12}, tjg::color::emphasis::bold};
+                                       tjg::color::gray{12}, tjg::color::emphasis::bold};
       const auto rhs = tjg::color::text_style{blend_samples[j].color, tjg::color::no_color,
                                        tjg::color::emphasis::underline};
       EXPECT_EQ(tjg::color::blend(lhs, rhs),
-                (tjg::color::text_style{foreground, tjg::color::gray_color{12},
+                (tjg::color::text_style{foreground, tjg::color::gray{12},
                                  tjg::color::emphasis::bold | tjg::color::emphasis::underline}));
-      EXPECT_EQ(tjg::color::blend(lhs, rhs, tjg::color::bg(tjg::color::cube_color{1, 2, 3})),
+      EXPECT_EQ(tjg::color::blend(lhs, rhs, tjg::color::bg(tjg::color::cube{1, 2, 3})),
                 (tjg::color::text_style{foreground, tjg::color::rgb{111, 131, 151},
                                  tjg::color::emphasis::bold | tjg::color::emphasis::underline}));
       EXPECT_EQ(lhs.fg(), blend_samples[i].color);
-      EXPECT_EQ(lhs.bg(), tjg::color::color_t{tjg::color::gray_color{12}});
+      EXPECT_EQ(lhs.bg(), tjg::color::color_t{tjg::color::gray{12}});
       EXPECT_EQ(rhs.fg(), blend_samples[j].color);
       EXPECT_FALSE(rhs.has_bg());
     }
@@ -1737,8 +1765,8 @@ TEST(color_test, text_style_color_constructor) {
   const color_t colors[] = {
       tjg::color::no_color, tjg::color::rgb{}, tjg::color::rgb{0xFFFFFF},
       tjg::color::term_color::black, tjg::color::term_color::bright_white,
-      tjg::color::rgb::coral, tjg::color::cube_color{0}, tjg::color::cube_color{215},
-      tjg::color::gray_color{0}, tjg::color::gray_color{23}};
+      tjg::color::rgb::coral, tjg::color::cube{0}, tjg::color::cube{215},
+      tjg::color::gray{0}, tjg::color::gray{23}};
   const tjg::color::emphasis attributes[] = {
       tjg::color::emphasis{}, tjg::color::emphasis::bold | tjg::color::emphasis::faint,
       tjg::color::emphasis::strike, static_cast<tjg::color::emphasis>(0xFF)};
@@ -1823,8 +1851,8 @@ void check_free_emphasis(tjg::color::emphasis attribute,
   for (unsigned bits = 0; bits < 256; ++bits) {
     SCOPED_TRACE(bits);
     auto original = tjg::color::text_style{static_cast<tjg::color::emphasis>(bits),
-                                    tjg::color::cube_color{1, 2, 3},
-                                    tjg::color::gray_color{12}};
+                                    tjg::color::cube{1, 2, 3},
+                                    tjg::color::gray{12}};
     const auto saved = original;
     const auto mask = static_cast<unsigned>(attribute);
     for (bool enabled : {false, true}) {
@@ -1833,7 +1861,7 @@ void check_free_emphasis(tjg::color::emphasis attribute,
       EXPECT_EQ(result, (tjg::color::text_style{
                             static_cast<tjg::color::emphasis>(
                                 enabled ? bits | mask : bits & ~mask),
-                            tjg::color::cube_color{1, 2, 3}, tjg::color::gray_color{12}}));
+                            tjg::color::cube{1, 2, 3}, tjg::color::gray{12}}));
       EXPECT_EQ(original, saved);
       EXPECT_EQ(set(result, enabled), result);
     }
@@ -1899,8 +1927,8 @@ TEST(color_test, free_emphasis) {
 }
 
 TEST(color_test, free_emphasis_constexpr) {
-  constexpr auto base = tjg::color::text_style{tjg::color::cube_color{1, 2, 3},
-                                       tjg::color::gray_color{12}};
+  constexpr auto base = tjg::color::text_style{tjg::color::cube{1, 2, 3},
+                                       tjg::color::gray{12}};
 #define CHECK_FREE_CONSTEXPR(name)                                          \
   constexpr auto name##_style = tjg::color::name(base);                            \
   static_assert(name##_style.is_##name(), "default must enable attribute"); \
@@ -2164,7 +2192,7 @@ TEST(color_test, term_color_boundaries) {
   using tjg::color::term_color;
   EXPECT_EQ(static_cast<int>(term_color::black), 0);
   EXPECT_EQ(static_cast<int>(term_color::white), 7);
-  EXPECT_EQ(static_cast<int>(term_color::bright_black), 8);
+  EXPECT_EQ(static_cast<int>(term_color::gray), 8);
   EXPECT_EQ(static_cast<int>(term_color::bright_white), 15);
 
   EXPECT_TRUE(fg(term_color::black).has_fg());
@@ -2178,10 +2206,10 @@ TEST(color_test, term_color_boundaries) {
             "\x1b[37mwhite\x1b[0m");
   EXPECT_EQ(tjg::color::format(bg(term_color::white), "white"),
             "\x1b[47mwhite\x1b[0m");
-  EXPECT_EQ(tjg::color::format(fg(term_color::bright_black), "bright black"),
-            "\x1b[90mbright black\x1b[0m");
-  EXPECT_EQ(tjg::color::format(bg(term_color::bright_black), "bright black"),
-            "\x1b[100mbright black\x1b[0m");
+  EXPECT_EQ(tjg::color::format(fg(term_color::gray), "gray"),
+            "\x1b[90mgray\x1b[0m");
+  EXPECT_EQ(tjg::color::format(bg(term_color::gray), "gray"),
+            "\x1b[100mgray\x1b[0m");
   EXPECT_EQ(tjg::color::format(fg(term_color::bright_white), "bright white"),
             "\x1b[97mbright white\x1b[0m");
   EXPECT_EQ(tjg::color::format(bg(term_color::bright_white), "bright white"),
@@ -2291,7 +2319,7 @@ TEST(color_test, println) {
 
 TEST(color_test, compact_sgr_combined_style) {
   const auto style = tjg::color::text_style{static_cast<tjg::color::emphasis>(0xff),
-                                    tjg::color::rgb{0, 9, 255}, tjg::color::cube_color{0}};
+                                    tjg::color::rgb{0, 9, 255}, tjg::color::cube{0}};
   const auto sgr = std::string{
       "\x1b[1;2;3;4;5;7;8;9;38;2;0;9;255;48;5;16m"};
   check_to_sgr(style, sgr);
@@ -2316,8 +2344,8 @@ TEST(color_test, compact_sgr_empty_and_single_components) {
   check_to_sgr(tjg::color::text_style{tjg::color::emphasis::bold}, "\x1b[1m");
   check_to_sgr(tjg::color::fg(tjg::color::term_color::black), "\x1b[30m");
   check_to_sgr(tjg::color::bg(tjg::color::term_color::bright_white), "\x1b[107m");
-  check_to_sgr(tjg::color::fg(tjg::color::gray_color{0}), "\x1b[38;5;232m");
-  check_to_sgr(tjg::color::bg(tjg::color::gray_color{23}), "\x1b[48;5;255m");
+  check_to_sgr(tjg::color::fg(tjg::color::gray{0}), "\x1b[38;5;232m");
+  check_to_sgr(tjg::color::bg(tjg::color::gray{23}), "\x1b[48;5;255m");
 }
 
 TEST(color_test, compact_sgr_decimal_channels) {
@@ -2368,7 +2396,7 @@ TEST(color_test, wrap_sgr) {
   check_wrap_sgr(tjg::color::text_style{tjg::color::term_color::black,
                                  tjg::color::term_color::bright_white},
                  "value", "\x1b[30;107mvalue\x1b[0m");
-  check_wrap_sgr(tjg::color::text_style{tjg::color::cube_color{0}, tjg::color::gray_color{23}},
+  check_wrap_sgr(tjg::color::text_style{tjg::color::cube{0}, tjg::color::gray{23}},
                  "value", "\x1b[38;5;16;48;5;255mvalue\x1b[0m");
   check_wrap_sgr(tjg::color::text_style{static_cast<tjg::color::emphasis>(0xff),
                                  tjg::color::rgb{255, 255, 255},
@@ -2432,7 +2460,7 @@ TEST(color_test, absolute_style_sgr) {
 TEST(color_test, text_style_underlay) {
   using tc = tjg::color::term_color;
   const tjg::color::color_t colors[] = {tjg::color::no_color, tc::black, tc::red,
-      tjg::color::rgb{1, 2, 3}, tjg::color::cube_color{3}, tjg::color::gray_color{12}};
+      tjg::color::rgb{1, 2, 3}, tjg::color::cube{3}, tjg::color::gray{12}};
   for (auto foreground : colors) {
     for (auto background : colors) {
       for (auto supplied : colors) {

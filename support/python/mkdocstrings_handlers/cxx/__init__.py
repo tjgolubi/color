@@ -311,7 +311,7 @@ def render_cube_palette() -> str:
             for blue in range(6):
                 packed = (levels[red] << 16) | (levels[green] << 8) | levels[blue]
                 background = f'#{packed:06X}'
-                label = (f'cube_color{{{red}, {green}, {blue}}}: '
+                label = (f'cube{{{red}, {green}, {blue}}}: '
                          f'rgb{{{levels[red]}, {levels[green]}, {levels[blue]}}} '
                          f'({background}); palette index {16 + 36 * red + 6 * green + blue}')
                 text += (f'<span class="cube-index" '
@@ -336,7 +336,11 @@ def render_color_swatches(
         hue, saturation, _ = colorsys.rgb_to_hsv(*rgb)
         category = "neutral" if saturation == 0 else groups[int((hue * 6 + 0.5) % 6)]
         if name.startswith("term_"):
-            category = "terminal-bright" if name.startswith("term_bright_") else "terminal-normal"
+            category = (
+                "terminal-bright"
+                if name == "term_gray" or name.startswith("term_bright_")
+                else "terminal-normal"
+            )
         if category != group and not (group == "terminal" and category.startswith("terminal-")):
             continue
         luminance = swatch_luminance(packed)
@@ -583,11 +587,11 @@ class CxxHandler(BaseHandler):
         d = data
         swatch_group = options.get("color_swatch_group")
         if swatch_group is not None:
-            if d.name == "cube_color" and swatch_group == "cube":
+            if d.name == "cube" and swatch_group == "cube":
                 return render_cube_palette()
-            if d.name == "gray_color" and swatch_group == "gray":
+            if d.name == "gray" and swatch_group == "gray":
                 values: "list[tuple[str, str, list[ET.Element[str]]]]" = [
-                    (f"gray_color{{{index}}}",
+                    (f"gray{{{index}}}",
                      f"= 0x{(8 + 10 * index) * 0x010101:06X}", [])
                     for index in range(24)]
                 return render_color_swatches(values, "neutral")

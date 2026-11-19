@@ -167,9 +167,8 @@ class text_style {
   /**
    * Replaces the foreground color and returns a reference to this style.
    * Accepts named RGB constants, RGB, terminal, cube, or gray values, or
-   * `no_color`. Passing `no_color` clears the foreground to unspecified; it
-   * does not store a terminal reset. Preserves the background color and
-   * emphasis attributes.
+   * `no_color`. Passing `no_color` clears the foreground to unspecified.
+   * Preserves the background color and emphasis attributes.
    */
   constexpr auto fg(color_t color) noexcept -> text_style& {
     _fg = color;
@@ -179,9 +178,8 @@ class text_style {
   /**
    * Replaces the background color and returns a reference to this style.
    * Accepts named RGB constants, RGB, terminal, cube, or gray values, or
-   * `no_color`. Passing `no_color` clears the background to unspecified; it
-   * does not store a terminal reset. Preserves the foreground color and
-   * emphasis attributes.
+   * `no_color`. Passing `no_color` clears the background to unspecified.
+   * Preserves the foreground color and emphasis attributes.
    */
   constexpr auto bg(color_t color) noexcept -> text_style& {
     _bg = color;

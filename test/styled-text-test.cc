@@ -317,13 +317,13 @@ void check_overlay() {
   const auto left = node{text<Char>("left"), tjg::color::italic()};
   const auto right = node{text<Char>("right"), tjg::color::faint()};
   auto source = left + right;
-  source.style(tjg::color::fg(tjg::color::rgb::blue).bg(tjg::color::gray_color{5}).underline());
+  source.style(tjg::color::fg(tjg::color::rgb::blue).bg(tjg::color::gray{5}).underline());
   const auto snapshot = source;
   const auto overrides = tjg::color::fg(tjg::color::term_color::red).bold();
   auto expected = node{text<Char>("left"),
                        tjg::color::fg(tjg::color::term_color::red).italic().bold()}
       + node{text<Char>("right"), tjg::color::fg(tjg::color::term_color::red).faint().bold()};
-  expected.style(tjg::color::fg(tjg::color::term_color::red).bg(tjg::color::gray_color{5})
+  expected.style(tjg::color::fg(tjg::color::term_color::red).bg(tjg::color::gray{5})
                      .underline().bold());
   auto member = source;
   EXPECT_EQ(&member.overlay(overrides), &member);
@@ -441,10 +441,10 @@ TEST(styled_text_test, modifier_literals_and_composition) {
             (tjg::color::styled_text{"text", tjg::color::bold().underline()}));
   EXPECT_EQ(tjg::color::overlay(tjg::color::italic(), L"wide"),
             (tjg::color::wstyled_text{L"wide", tjg::color::italic()}));
-  const auto wide = tjg::color::overlay(tjg::color::bg(tjg::color::gray_color{12}),
+  const auto wide = tjg::color::overlay(tjg::color::bg(tjg::color::gray{12}),
       L"prefix " + tjg::color::bold(L"bold") + L" suffix");
   EXPECT_EQ(wide.plain_text(), L"prefix bold suffix");
-  EXPECT_EQ(wide.style(), tjg::color::bg(tjg::color::gray_color{12}));
+  EXPECT_EQ(wide.style(), tjg::color::bg(tjg::color::gray{12}));
   EXPECT_TRUE(tjg::color::bold("").empty());
   EXPECT_EQ(tjg::color::bold("").style(), tjg::color::bold());
 }

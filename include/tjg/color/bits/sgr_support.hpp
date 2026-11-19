@@ -100,10 +100,10 @@ class ansi_color_escape {
   constexpr void append(no_color_t, bool) noexcept {}
 
   constexpr void append(term_color clr, bool is_bg) noexcept {
-    constexpr auto BrightBlack =
-        static_cast<int>(std::to_underlying(term_color::bright_black));
+    constexpr auto gray_value =
+                        static_cast<int>(std::to_underlying(term_color::gray));
     auto value = static_cast<int>(std::to_underlying(clr));
-    value += (value < BrightBlack) ? 30 : 90 - BrightBlack;
+    value += (value < gray_value) ? 30 : 90 - gray_value;
 
     // Background ASCII codes are the same as the foreground ones + 10.
     if (is_bg) value += 10;
@@ -124,14 +124,14 @@ class ansi_color_escape {
     append(clr.b, ';');
   }
 
-  constexpr void append(cube_color clr, bool is_bg) noexcept {
+  constexpr void append(cube clr, bool is_bg) noexcept {
     append("38;5;");
     if (is_bg) *_buf.data() = '4';
     auto index = narrow_cast<uint8_t>(clr.index() + 16);
     append(index, ';');
   }
 
-  constexpr void append(gray_color clr, bool is_bg) noexcept {
+  constexpr void append(gray clr, bool is_bg) noexcept {
     append("38;5;");
     if (is_bg) *_buf.data() = '4';
     auto index = narrow_cast<uint8_t>(clr.index() + 232);

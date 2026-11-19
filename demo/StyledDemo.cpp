@@ -5,7 +5,6 @@
 int main() {
   using namespace tjg::color;
   using enum tjg::color::term_color;
-  using tjg::color::styled;
 
   std::println("{} {} {} | {} | {} | {}",
             styled("red text with", fg(red)),
@@ -15,7 +14,7 @@ int main() {
             styled("reset+underline only", text_style{}.absolute().underline()),
             styled("reverse red", fg(red).reverse()));
 
-  constexpr auto surrounding = fg(white).bg(gray_color{12}).strike();
+  constexpr auto surrounding = fg(white).bg(gray).strike();
 
   tjg::color::println(surrounding, "{} {} {} | {} | {} | {}",
             styled("red text with", fg(red)),
@@ -24,9 +23,4 @@ int main() {
             styled("blue background", bg(blue)),
             styled("reset+underline only", text_style{}.absolute().underline()),
             styled("reverse red", fg(red).reverse()));
-
-  // Style only the hexadecimal ID; the suffix uses the surrounding style.
-  std::println("\nRequest ID: {:04x} — completed",
-               tjg::color::styled(42,
-                   tjg::color::fg(tjg::color::term_color::bright_cyan)));
 } // main

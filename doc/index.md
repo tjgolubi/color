@@ -27,10 +27,11 @@ configuration.
 #include <print>
 
 int main() {
-  auto style = tjg::color::fg(tjg::color::rgb::forest_green).bold();
-  tjg::color::println(style, "The result is {}.", 42);
-  std::println("The result is {}.",
-               tjg::color::styled(42, tjg::color::fg(tjg::color::term_color::red)));
+  using namespace tjg::color;
+  auto result = 42;
+  auto style = fg(rgb::forest_green).bold();
+  println(style, "The result is {}.", result);
+  std::println("The result is {}.", styled(result, fg(term_color::red)));
 }
 ```
 
@@ -48,7 +49,7 @@ The first call styles the entire message. The second styles only `42`.
 | `<tjg/color.hpp>`             | The full library, including formatting and streams |
 | `<tjg/color/colors.hpp>`      | Color values, named colors, and `color_t`          |
 | `<tjg/color/text_style.hpp>`  | Color values, emphasis, and `text_style`           |
-| `<tjg/color/styled_text.hpp>` | Owning styled-text trees and their composition     |
+| `<tjg/color/styled_text.hpp>` | Nested groups of styled text and their composition     |
 | `<tjg/backslash.hpp>`         | Backslash escaping and unescaping for strings      |
 | `<tjg/strip_ansi.hpp>`        | ANSI escape removal from strings                   |
 | `<tjg/inline_buffer.hpp>`     | Fixed-capacity character buffers                   |
@@ -74,17 +75,16 @@ stream support. Headers under `tjg/color/bits/` are implementation headers.
 Use constants in the [`color`](colors.md#named-rgb-colors) namespace for named
 RGB values, [`rgb`](colors.md#rgb-values) for explicit RGB components, and
 [`term_color`](colors.md#terminal-palette-colors) for the terminal's 16 named
-palette colors.  Use [`cube_color`](colors.md#cube-palette-colors) for its
-6×6×6 cube and [`gray_color`](colors.md#gray-palette-colors) for its 24 gray
+palette colors.  Use [`cube`](colors.md#cube-palette-colors) for its
+6×6×6 cube and [`gray`](colors.md#gray-palette-colors) for its 24 gray
 levels.  Pass a color to [`fg`](text-style.md#foreground-and-background) or
 [`bg`](text-style.md#foreground-and-background) to create a foreground or
 background style.
 
 ```cpp
-auto style = tjg::color::text_style{tjg::color::rgb{30, 144, 255},
-                             tjg::color::term_color::black,
-                             tjg::color::emphasis::bold |
-                             tjg::color::emphasis::underline};
+using namespace tjg::color;
+auto style = text_style{rgb::coral, term_color::black,
+                        emphasis::bold | emphasis::underline};
 ```
 
 A default-constructed [`text_style`](text-style.md#text_style) has no colors or
@@ -103,10 +103,11 @@ These examples convert terminal colors to RGB using the fixed Xterm-default
 palette, which may differ from the user's terminal theme.
 
 ```cpp
-auto red = tjg::color::to_rgb(tjg::color::term_color::bright_red);
-auto blue = tjg::color::to_rgb(tjg::color::term_color::blue);
-auto averaged = tjg::color::blend(red, blue); // RGB {127, 0, 119}.
-auto combined = red | blue;           // RGB {255, 0, 238}.
+using namespace tjg::color;
+auto red  = to_rgb(term_color::bright_red);
+auto blue = to_rgb(term_color::blue);
+auto averaged = blend(red, blue); // rgb{127, 0, 119}.
+auto combined = red | blue;       // rgb{255, 0, 238}.
 ```
 
 <table class="color-comparison">
@@ -150,9 +151,9 @@ Relative styled arguments and structured text inherit missing colors and combine
 emphasis with that style. Each field restores the enclosing style afterward:
 
 ```cpp
-tjg::color::print(tjg::color::emphasis::underline,
-           "The result is {} after rounding.",
-           tjg::color::styled(42, tjg::color::fg(tjg::color::term_color::bright_red)));
+using namespace tjg::color;
+print(emphasis::underline, "The result is {} after rounding.",
+                           styled(42, fg(term_color::bright_red)));
 ```
 
 <pre class="color-output"><span style="text-decoration: underline">The result is <span style="color: #FF0000">42</span> after rounding.</span></pre>
@@ -171,11 +172,11 @@ active. The outer call resets to terminal defaults at the end. An absolute
 replacement field temporarily uses its own complete style, then also restores
 the enclosing style.
 
-The same rules apply to
-[structured styled text](styled.md#structured-styled-text):
-concatenate complete spans with `+` or `+=`, and use `underlay` to supply group
-defaults while preserving explicit colors. Use `overlay` to replace specified
-colors throughout relative nodes; absolute scopes are protected.
+The same rules apply to [structured styled
+text](styled.md#structured-styled-text): concatenate complete spans with `+` or
+`+=`, and use `underlay` to supply group defaults while preserving explicit
+colors. Use `overlay` to replace specified colors throughout relative text and
+nested groups; absolute scopes are protected.
 
 See the [table demonstration](styled.md#table-demonstration) for a complete
 example combining column defaults, row emphasis, absolute spans, UTF-8 display
@@ -202,32 +203,33 @@ sequences in their result. For format string syntax, see the
 ## Standard formatting
 
 Include `<tjg/color.hpp>` to use colors, `color_t`, `text_style`, `emphasis`,
-and borrowed `styled` arguments with `std::format` and `std::format_to`.
-Both narrow and wide formatting are supported.
+and `styled` arguments that refer to existing values with `std::format` and
+`std::format_to`. Both narrow and wide formatting are supported.
 
 ```cpp
 #include <format>
 #include <tjg/color.hpp>
 
-auto color = std::format("{}", tjg::color::rgb::red); // "#ff0000"
-auto style = std::format("{:?}", tjg::color::bold());  // "b"
-auto names = std::format("{}", tjg::color::emphasis::bold); // "{bold}"
-auto text = std::format("{:04}", tjg::color::styled(42, tjg::color::bold()));
+using namespace tjg::color;
+auto color = std::format("{}", rgb::red); // "#ff0000"
+auto style = std::format("{:?}", bold());  // "b"
+auto names = std::format("{}", emphasis::bold); // "{bold}"
+auto text  = std::format("{:04}", styled(42, bold()));
 // Bold "0042", followed by restoration of the enclosing style.
 ```
 
 Colors retain the same unquoted notation for `{}` and `{:?}`. Emphasis uses
 names with `{}` and compact codes with `{:?}`. A `text_style` emits SGR with
-`{}` and uses readable notation with `{:?}`. String fill, alignment, width,
-and precision apply to the readable forms, including dynamic arguments.
-`styled` uses its underlying type's standard formatter, including padding and
-numeric specifications. Nested styled fields inherit and restore the shared
-terminal state; absolute fields temporarily replace it. The wrapper still
-borrows its value, so stored wrappers need a surviving referent.
+`{}` and uses readable notation with `{:?}`. String fill, alignment, width, and
+precision apply to the readable forms, including dynamic arguments. `styled`
+uses its underlying type's standard formatter, including padding and numeric
+specifications. Nested styled fields inherit and restore the shared terminal
+state; absolute fields temporarily replace it. The wrapper refers to the
+original value, so that value must remain alive while a stored wrapper is used.
 
-The same header enables standard formatting of owning `styled_text` and
-`wstyled_text` trees, including nested styles, padding,
-truncation, dynamic specifications, and `?` tree inspection. The `?`
+The same header enables standard formatting of `styled_text` and `wstyled_text`
+values that keep their own text, including nested styles, padding, truncation,
+dynamic specifications, and `?` inspection of text and groups. The `?`
 presentation rejects width and precision. Formatting reports invalid runtime
 specifications through `std::format_error`.
 

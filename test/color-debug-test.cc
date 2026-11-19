@@ -42,7 +42,7 @@ TEST(color_debug_test, color_notation) {
                          "green",        "yellow",
                          "blue",         "magenta",
                          "cyan",         "white",
-                         "bright_black", "bright_red",
+                         "gray",         "bright_red",
                          "bright_green", "bright_yellow",
                          "bright_blue",  "bright_magenta",
                          "bright_cyan",  "bright_white"};
@@ -52,7 +52,7 @@ TEST(color_debug_test, color_notation) {
     check_output(tjg::color::color_t{color}, names[i]);
   }
   for (int i = 0; i < 24; ++i) {
-    const auto color = tjg::color::gray_color{i};
+    const auto color = tjg::color::gray{i};
     const auto expected = std::format("gray{}", i);
     check_output(color, expected);
     check_output(tjg::color::color_t{color}, expected);
@@ -60,7 +60,7 @@ TEST(color_debug_test, color_notation) {
   for (int r = 0; r < 6; ++r) {
     for (int g = 0; g < 6; ++g) {
       for (int b = 0; b < 6; ++b) {
-        const auto color = tjg::color::cube_color{r, g, b};
+        const auto color = tjg::color::cube{r, g, b};
         const auto expected = std::format("cube{}{}{}", r, g, b);
         check_output(color, expected);
         check_output(tjg::color::color_t{color}, expected);
@@ -100,7 +100,7 @@ TEST(color_debug_test, style_notation) {
       check_style(tjg::color::absolute(colored), "=" + marks + " " + colors);
     }
   }
-  check_style(tjg::color::fg(tjg::color::cube_color{5, 0, 3}).bg(tjg::color::gray_color{12}),
+  check_style(tjg::color::fg(tjg::color::cube{5, 0, 3}).bg(tjg::color::gray{12}),
                "cube503/gray12");
 }
 
@@ -166,7 +166,7 @@ TEST(color_debug_test, tree_layout) {
   EXPECT_EQ(std::format("{:?}", tjg::color::bold("hello")), "b \"hello\"");
   const auto child =
       tjg::color::underline("world") +
-      tjg::color::absolute(tjg::color::styled_text{"!", tjg::color::bg(tjg::color::cube_color{5, 0, 3})});
+      tjg::color::absolute(tjg::color::styled_text{"!", tjg::color::bg(tjg::color::cube{5, 0, 3})});
   const auto tree = tjg::color::bold(
       tjg::color::styled_text{"hello\n", tjg::color::fg(tjg::color::term_color::red)} + child);
   const auto expected = std::string{

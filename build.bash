@@ -17,3 +17,4 @@ cmake -S . -B "$build_dir" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++ \
   -DTJG_TEST=ON -DTJG_WERROR=ON
 cmake --build "$build_dir" --parallel 4
 ctest --test-dir "$build_dir" --output-on-failure
+cmake --build "$build_dir" --target doc
