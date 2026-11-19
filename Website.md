@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md) · [Build and test](BuildAndTest.md)
 
-Updated November 17, 2026.
+Updated November 19, 2026.
 
 ## Purpose and audience
 
@@ -51,8 +51,7 @@ rather than its full code on the homepage.
 Each table page aligns eleven corresponding source sections, from setup and
 cell rendering through the dashboard rows and final Request ID example. The
 table screenshot and column labels stay pinned above the code while scrolling.
-Code remains
-visible, with a copy button for each block and complete-source downloads.
+Each code block has a copy button, and each program is available as a download.
 Individual blocks scroll horizontally on narrow screens. Compact viewport
 styles and measured reference height keep the pinned area and anchor spacing
 manageable. Terry reviewed the pages and confirmed the pinned output works.
@@ -70,77 +69,54 @@ No benchmark, adoption, or unrequested future-feature claims are established.
 
 ## Source and assets
 
-The separate site checkout is `/workspace/sites/color-kit`, on `main`. It is
-buildless HTML/CSS/JavaScript with static output under `dist/` and identity in
-`.openai/hosting.json` (`static.directory` is `dist`). The five HTML files are
-the homepage and the four comparison pages above. `dist/assets/style.css`
-and `site.js` implement styling, copying, and pinned-reference measurement.
+The site has a separate source checkout on `main`. It uses static HTML, CSS,
+and JavaScript under `dist/`. The tracked `.openai/hosting.json` declares the
+Site identity and static directory. `dist/assets/style.css` and `site.js`
+handle styling, copying, and pinned-reference measurement.
 
-`dist/assets/table-demo.png` matches library `demo/TableDemo.png` (1480 × 440),
-the cropped terminal screenshot including `Request ID: 002a — completed`;
-`dist/assets/nested-demo.png` matches library `demo/NestedDemo.png`.
-`dist/examples/` contains seven demos and the quick-start program.
-The screenshots' `東京` text is retained; Terry considered Beijing but did not
-request that change. Preserve text and screenshots together. Terminal palettes,
-themes, and attribute support affect appearance.
+`dist/assets/table-demo.png` matches `demo/TableDemo.png` (1480 × 440), the
+cropped terminal screenshot with `Request ID: 002a — completed`.
+`dist/assets/result42.png` matches `demo/Result42.png`. The larger pinned
+dashboard screenshot display introduced in version 9 is in the current site.
+Preserve the screenshots and matching demo text together, including 東京.
 
-Published source links and example downloads identify library snapshot
-`c84d85cbb7066812b8cc06ab67b7d4a5b6905861`. The displayed code reconstructs the
-complete programs without source changes. All seven copied demos and the table
-screenshot were checked against integrated `dev` at `e4b2730` and match exactly;
-the intervening guide cleanup did not alter those inputs. Refresh copied code,
-section boundaries, downloads, and source links together after an accepted
-demo update; do not rely on old line numbers.
+The published comparison source and links use the `dev` snapshot
+`68878d01e6270f0b96f07ea82b50167ad0151a83`. `dist/examples/` contains all seven
+demos and the site's quick-start program. The result page displays excerpts
+from `Result42Compare.cpp`. The three dashboard pages show complete sources
+using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
+`TableDemoOstream.cpp`. Refresh copied code, section boundaries, line labels,
+downloads, and source links together after an accepted demo update.
 
 ## Current public deployment
 
-Native Sites deployment confirmed version 8 succeeded November 17, 2026 at
-10:15:50 UTC. Current Sites metadata confirms version 8 and public access,
-authorized by Terry. The site has its own project and source repository;
-the earlier website was not modified.
+Sites confirmed that version 11 succeeded on November 19, 2026 at 09:50:13 UTC.
+The source commit was pushed and the matching archive was saved before
+deployment. Current Sites metadata confirms the public audience.
 
 | Item             | Value                                                                               |
 | ---------------- | ----------------------------------------------------------------------------------- |
 | Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
 | Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
-| Version          | 8                                                                                   |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_04dbe9dfb30c8191b93d619154baab15` |
-| Deployment ID    | `appgdep_6afc29513fd08191bd2223ef8c1a87f9`                                          |
-| Source commit    | `d474b9ec4c04aa83777352b62e6190c6b6d76123`                                          |
+| Version          | 11                                                                                  |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_6da78d06ab948191a3f4a609da53e6c0` |
+| Deployment ID    | `appgdep_6afec64e115881918f4cb51abf33aac5`                                          |
+| Source commit    | `504924a471686565d3543a74c658fddfc5b48da6`                                          |
 | Audience         | Public                                                                              |
-
-The exact source is committed and pushed. The deployed archive is
-`/workspace/sites/color-kit-acknowledgment.tar.gz`, created with `git archive` from
-that pushed commit. No credentials are stored in source or archives.
 
 ## Verification and current handoff
 
-The quick-start program compiled with GCC in C++23 mode and strict warnings;
-its output matched expected style transitions and newline. All five pages
-passed balanced-HTML, unique-ID, and local-link/asset/anchor checks. The table
-pages reconstruct both complete sources exactly across eleven section pairs.
-The seven source downloads and screenshots match their repository inputs.
-JavaScript syntax, copying, and pinned-reference height measurement passed
-checks. Browser tooling was unavailable to the assistant; visual review and
-confirmation of scrolling behavior came from Terry, not automated browser QA.
+All seven demo downloads and both screenshots matched the library snapshot
+byte for byte. Each dashboard page reconstructed both complete source files
+across eleven pairs of sections. Line labels matched the ranges in every code
+panel. Local links and anchors resolved, and the site JavaScript passed a
+syntax check. After deployment all five public pages returned HTTP 200 and
+served the updated code or pinned source links. This verification used the
+generated HTML and live HTTP responses.
 
-The user guide is now published at https://tjgolubi.github.io/color/ and uses
-`{color}` branding. Its latest verified `dev` build and deployment passed;
-see [BuildAndTest.md](BuildAndTest.md). The footer's guide-source fallback is
-still available, but the live guide no longer returns 404.
-
-The demo alignment, ostream comparison, new Request ID suffix, and cropped
-screenshot are already published. The final site checks verified unchanged
-code blocks for the SGR and acknowledgment edits, balanced HTML, unique IDs,
-76 local links/assets/anchors, exact demo downloads and screenshot, and compiled
-quick-start output. The latest squash merge into `dev` changed no demo content,
-so it requires no website refresh. All eight live guide pages were verified
-after publication of `dev` at `e4b2730`; no obsolete guide narrative remains.
-
-The library README website link was corrected, committed, and pushed on `dev`
-as `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b`. It now points to
-https://color-kit-cpp23.tjgolubi.chatgpt.site.
-This link-only change does not require a Sites update.
+The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was built and
+published separately from the same library commit. See
+[BuildAndTest.md](BuildAndTest.md) for the guide and CI results.
 
 ## Maintenance
 
@@ -149,10 +125,9 @@ and source before editing; preserve this project ID and public audience.
 Keep site source separate from library and coordination commits. An authorized
 site update includes normal source preparation and publication through Sites.
 
-The installed skill's source helper was unavailable in this workspace. Source
-synchronization used ordinary Git with short-lived credentials passed through
-hidden stdin and process-local authentication headers. No credentials were
-persisted. Prefer the supported helper when available in another environment.
+The current Sites source helper opened the checkout, pushed the exact source,
+and packaged the deployment archive. Pass source credentials through hidden
+stdin and keep them out of files and output.
 
 Validate affected copy, source sections, assets, links, and interactions. Push
 the exact source before saving its matching archive, then deploy that saved

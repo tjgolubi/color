@@ -2,7 +2,7 @@
 
 [Document map](README.md)
 
-Updated November 18, 2026.
+Updated November 19, 2026.
 
 ## Authorization and scope
 
@@ -25,7 +25,9 @@ and issue updates also require instructions for those actions.
 Before edits or branch changes, inspect the actual branch, commit, working
 tree, and affected files. Resolve unrelated tracked changes with Terry rather
 than discarding or stashing them automatically. Preserve concurrent edits and
-re-read a file if it changes while preparing an update.
+re-read a file if it changes while preparing an update. A vi swap file can
+indicate an active editing session. Coordinate with Terry before writing a
+file he has open with unsaved changes.
 
 Preserve untracked convenience scripts, archives, logs, and demo binaries.
 Mention them when they affect the task, could be included accidentally, or
@@ -105,11 +107,11 @@ cases. Terry wants to decide which explanations readers need and which corner
 cases to remove. Keep those details for his review. Do not assume that a
 behavior is common sense and delete its explanation.
 
-`REF/user-guide` contains the first pass and awaits Terry's review. "Text span"
-was used to distinguish pieces of text from groups; later discussion noted
-that "text" or "styled text" would usually suffice. Treat that as discussion,
-not authorization for another edit. Preserve the existing branch name as given
-by Terry, despite the general naming convention below.
+Use "text" or "styled text" where the distinction is clear. Use "text span"
+where an individual piece's boundary matters, such as measuring display width
+or handling escape sequences split across pieces. Use local namespace imports
+in examples when they make styling expressions easier to read. Check for
+names that hide API types or functions after qualification is removed.
 
 ### Teaching color choices
 
@@ -120,20 +122,17 @@ introduce `color(red, green, blue)` and `color(grayscale)` with inputs from
 same value for all three channels.
 
 The named neutral shades `rgb::gray_25`, `rgb::gray_50`, and `rgb::gray_75`
-are `#404040`, `#808080`, and `#C0C0C0`. The guide's Neutral swatches are
-generated from the named RGB constants. Existing CSS names retain their
-values, including `rgb::dark_gray`, which is lighter than `rgb::gray`.
-The chosen `gray_75` matches `rgb::silver`. The normalized call `color(0.75)`
-rounds to `#BFBFBF`.
+are `#404040`, `#808080`, and `#C0C0C0`. They match `color(0.25)`, `color(0.5)`,
+and `color(0.75)`, respectively. The numbered names express the shade directly.
+Existing CSS names retain their values, including `rgb::dark_gray`, which is
+lighter than `rgb::gray`. The guide generates Neutral swatches from the named
+RGB constants.
 
-Reserve direct `rgb{...}` construction and indexed palette colors for the
-advanced section at the end of the guide, where readers who need fine control
-over the generated SGR codes can find them. Use `gray` and `cube` after the
-palette type rename is integrated. Their appearance depends on the output
-platform and its active palette. Keep `term_color::bright_black` for slot 8.
-Most readers care about the appearance and can use the styling API throughout.
-Keep SGR helpers, hand-written escape sequences, threading, and implementation
-details out of the main explanation.
+Reserve direct `rgb{...}` construction, indexed `gray` and `cube` values, and
+raw SGR for advanced material or explicit comparisons. The appearance of
+indexed colors depends on the terminal palette. `term_color::gray` selects
+slot 8, and `rgb::term_gray` is its fixed Xterm RGB counterpart (`#7F7F7F`).
+Keep threading and implementation details out of the main explanation.
 
 Use **current style** for the style tracked during formatting and **default
 style** for `text_style{}`. Nested formatting inherits and restores the current
@@ -148,7 +147,7 @@ Coordination documents live at the root of the separate `docs/Coord` branch.
 Inspect actual refs and worktrees before acting rather than assuming recorded
 checkout state still holds.
 
-Use native Linux tools in this cloud workspace and the GitHub connector for
+Use the checkout's local toolchain and the GitHub connector for
 remote inspection where appropriate. Machine-specific paths and tool versions
 must be verified on the machine in use. Reuse existing Git identity, SSH
 configuration, and credentials; keep credentials out of output and documents.

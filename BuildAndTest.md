@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md)
 
-Updated November 18, 2026.
+Updated November 19, 2026.
 
 ## Requirements and standard build
 
@@ -18,9 +18,10 @@ From the library repository root, run:
 ```
 
 The script configures `build/` with GCC (`g++`), Debug, C++23 required,
-`TJG_TEST=ON`, and `TJG_WERROR=ON`; builds with four parallel jobs; and runs
-CTest with failure output enabled. Warnings are treated as errors for the
-project's test targets.
+`TJG_TEST=ON`, and `TJG_WERROR=ON`. It builds with four parallel jobs, runs
+CTest with failure output enabled, then builds the guide with the `doc` target.
+The full script requires Python 3 and Doxygen as well as the C++ toolchain.
+Use the configure, build, and CTest commands below for a tests-only run.
 
 For another compiler or build configuration, use a separate build directory:
 
@@ -89,159 +90,73 @@ MkDocs syntax, so their appearance in raw GitHub Markdown does not establish
 whether they render correctly. A successful guide build establishes generation,
 not visual review or deployment; record those checks separately.
 
-## User-guide terminology revision awaiting review
-
-`REF/user-guide` is pushed at
-`9f43e9bfab316965346d5812e871ac9adbfe4af7`. The change is limited to
-`README.md`, `doc/index.md`, `doc/styled.md`, `doc/print.md`, and
-`doc/text-style.md`. Library source and API behavior are unchanged.
-
-The terminology pass preserved corner-case explanations. `git diff --check`
-passed. A scripted comparison verified that all fenced examples and Markdown
-headings were preserved, apart from changing "the tree's styling" to "the
-text's styling" in one example comment. Heading preservation is not a full
-rendered-link check.
-
-No guide build, generated-HTML review, or CI check was performed for this
-revision. The earlier guide and CI results below do not validate this commit.
-Build and inspect the affected guide before integration; Terry's content
-review remains pending. The branch has not been integrated into `dev`, so it
-does not update the published GitHub Pages guide.
-
-## Topic branches awaiting integration
-
-`ref/ShortNames` is pushed at `fc3ec5b3d3e7ef5509964557d9b32c2511861462`.
-All 22 local regression tests passed. `FmtColorDemo1` and `FmtColorDemo2`
-built and ran, and `git diff --check` passed. The pushed tree matches local
-commit `b8aa0f2`. The rendered guide was not verified because Doxygen was
-unavailable.
-
-`feat/FloatColors` is pushed at `8164ae56e060469b3fd94b4cdfff14fd553d8216`.
-Focused GCC C++23 compile-time checks verified both `color()` overloads,
-the exact values of the three named gray constants, and use of the generated
-RGB values with `fg()` and `bg()`. Earlier checks also confirmed that removing
-the floating-point `fg()` and `bg()` overloads restored the empty-brace
-behavior of the free functions and member setters. The corrected guide
-examples compiled and produced the documented RGB values. The pushed tree
-matches local commit `9c49c5b`.
-
-GitHub CI and the rendered guide have not been verified for either topic
-branch. The full regression suite has not been run on `feat/FloatColors`.
-
 ## Current local validation
 
-Verified November 17, 2026, on `dev` at
-`c576f5df6b4b7d2ba8fa59a2ac9acf9239a6d687`.
+On November 19, 2026, `./build.bash` passed on MSYS2 with GCC 16.2.0 and CMake
+4.4.5 in Debug on the working tree committed as
+`3b6c4a8210f2541dec3b2a6b27bbb100239d3798`. The tree matches current `dev`.
+All 22 CTest entries passed and the HTML guide built. Both normalized color
+cases ran. They cover RGB and grayscale construction, rounding and clamping,
+NaN and infinities, and the exact numbered gray values.
 
-`./build.bash` completed successfully on Debian 13 with GCC 14.2.0 and CMake
-4.4.5. All 22 CTest entries passed, including the no-exceptions configuration,
-standalone API checks, and installed-package relocation test. The tracked
-library working tree remained clean.
-
-CMake is installed locally in this cloud workspace. Repeat the build here with:
-
-```sh
-cd /workspace/color
-PATH=/workspace/.build-tools/cmake/data/bin:$PATH ./build.bash
-```
-
-That local full-suite result covers the initial snapshot's Debug configuration;
-it is not a fresh full-suite run of later commits.
-
-The guide cleanup was built locally at feature tip
-`4ca3a80acea98785175a7f74887e55c86713d69e`, whose tree exactly matches the
-integrated `dev` commit. All eight generated pages passed the obsolete-reference
-scan: no {fmt} references, old repository links, changed-behavior notes, or
-older-language-mode guidance remain. Current API descriptions are retained.
-The documented direct C++23 compile command for `demo/TableDemo.cpp` compiled
-and ran successfully, producing the dashboard and Request ID suffix.
-The demo Makefile is tracked on `dev` again as of `084b241`. Guide generation is verified separately from visual review.
-
-Doxygen is installed locally under `/workspace/.build-tools/doxygen`. This
-workspace's executable needs
-`LD_LIBRARY_PATH=/workspace/.build-tools/doxygen/usr/lib/x86_64-linux-gnu`.
-The documentation virtual environment is `build/doc-venv`; use
-`TJG_DOXYGEN=/workspace/.build-tools/doxygen/usr/bin/doxygen` and
-`PYTHONPATH=support/python` for a direct MkDocs invocation. These paths are
-workspace-specific, not additional project dependencies.
+The three edited demos, `StyledTextDemo`, `TableDemo`, and `TableDemoOstream`,
+built with strict warnings and their output matched the previous library
+snapshot byte for byte. The revised blend examples compiled and produced
+the documented RGB values. The SGR walkthrough was compiled and run.
+Vim Markdown highlighting and generated HTML were checked after replacing
+the literal padding asterisks with character references in the output sample.
 
 ## Current GitHub CI validation
 
-Verified November 17, 2026: all 11 jobs passed for `dev` at
-`e4b2730d6a7d43c262958edf650e32802b97e4db`.
+Verified November 19, 2026, for `dev` at
+`68878d01e6270f0b96f07ea82b50167ad0151a83`. All nine platform jobs and both
+documentation jobs passed.
 
-| Workflow                                                                  | Configurations                                                        | Jobs | Result |
-| ------------------------------------------------------------------------- | --------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44067830595)       | GCC 14 and Clang 20/libc++ Debug and Release; GCC 14 Debug ASan/UBSan | 5    | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44067830559)       | LLVM 20/libc++ Debug and Release                                      | 2    | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44067830596)     | MSVC v143 x64 Debug and Release                                       | 2    | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44067830859) | Build and GitHub Pages publication                                    | 2    | Passed |
+| Workflow                                                                  | Configurations                                                             | Jobs | Result |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---: | ------ |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44497231364)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44497231166)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44497230994)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44497231152) | Build and GitHub Pages publication                                         |    2 | Passed |
 
-The nine platform jobs configure, build, and run the TJG regression suite in
-C++23 mode with test warnings treated as errors. Matrix fail-fast is disabled.
-CI evidence applies to the exact tested SHA, not later source or uncommitted
-changes.
+The nine platform jobs configure, build, and run the TJG suite in C++23 mode
+with warnings treated as errors. Matrix fail-fast is disabled. The results
+apply to this exact commit.
 
-After that integration, `b8cf03e2aa0ab08cdcbe486ac23c13d582dfbc3b` was a
-README-only correction to the marketing website URL after that integration.
-Its diff passed whitespace checks; no fresh local build was needed for this
-link edit. Terry confirmed no further CI check is needed for this link-only change.
-The recorded 11-job pass is for `e4b2730`; the library code is unchanged.
+The normalized RGB regression test exposed a constant-evaluation failure on
+Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
+positive-range cast preserves the quantization and supports constant evaluation
+on all tested toolchains. Keep the compile-time regression check.
 
-## Integrated demo comparisons
+## Demo comparisons
 
-All of `fix/Demos` was squash-merged into `dev` as `e4b2730`; the staged and
-committed integration trees were checked against the feature tip `4ca3a80`
-and matched exactly. The feature branch remains available; it is no longer
-awaiting integration. No library headers were changed by this integration.
-
-The seven demos include a Request ID example with a cyan `002a` followed by
-plain ` — completed`, demonstrating style recovery after `styled()`. Table
-comparisons use corresponding style names and comment sections, minimal extra
-spacing, and a named `bold_underline` sequence in C++23. The ostream table demo
-also has corresponding sections. The screenshot is the cropped original
-terminal capture at `demo/TableDemo.png` (1480 × 440).
-
-Earlier focused checks verified strict-warning demo builds and unchanged
-output for the naming/comment alignment. Those byte-for-byte checks predate
-the intentionally added Request ID line; do not claim the final demos have
-unchanged output relative to the initial snapshot. Final integration coverage
-is the 11 passing CI jobs recorded above. The full local regression suite was
-not rerun for the integration.
-
-Keep comparisons clear and idiomatic, with matching names and comments where
-appropriate, rather than making C++23 or {fmt} artificially cumbersome.
+`make -C demo run` builds and runs all seven demos. `Result42Compare` and
+`TableDemoFmt` require a built copy of {fmt}. The individual standalone targets
+use the C++ standard library, with {color} where applicable. The dashboard
+examples include the final cyan Request ID and plain suffix, and the original
+cropped screenshot is `demo/TableDemo.png` (1480 × 440). Keep comparisons clear
+and idiomatic, with corresponding style names and sections where appropriate.
 
 ## User-guide publication
 
-The repository's Pages source is now GitHub Actions. The `github-pages`
-environment permits `dev`. `.github/workflows/doc.yml` builds on pushes and
-pull requests, uploads the guide artifact only for pushes to `dev`, and runs
-a dependent Pages deployment job under the same condition. Deployments are
-serialized without cancelling an active publication. Other branches, including
-`docs/Coord` and feature branches, do not publish.
+The GitHub Pages guide is published by `.github/workflows/doc.yml`. The
+workflow builds on pushes and pull requests. Pushes to `dev` also upload the
+guide artifact and run the dependent Pages deployment. Deployments are
+serialized without cancelling an active publication.
 
-All eight live guide pages at https://tjgolubi.github.io/color/ returned
-HTTP 200 after the `e4b2730` deployment.
-The published pages passed the obsolete-reference scan, and the styled-text
-page links to `tjgolubi/color/blob/dev/demo/TableDemo.cpp`.
-Support configuration now uses this repository and `dev` edit links, and
-publication instructions are in library `support/color-pages.md`.
-
-The Pages upload action currently brings a nonfatal warning about its nested
-`actions/upload-artifact` Node.js 20 runtime being forced onto Node.js 24.
-Build and deployment still pass; this is not a deployment failure.
+Both jobs passed for the current `dev` commit. The live
+[Styled Arguments page](https://tjgolubi.github.io/color/styled.html#parsing-sgr-text)
+returned HTTP 200 and contained the revised SGR walkthrough and the HTML
+character references for the padding example. Publication instructions are in
+the library's `support/color-pages.md`.
 
 ## Other workflow coverage
 
 ### Inherited workflow configuration
 
-CodeQL and supply-chain workflows are enabled but their push triggers target
-`main`, so they did not run for this `dev` push. Lint runs only on pull
-requests. Recent Dependabot pull requests show failures in both the clang-format
-and cmake-format jobs; those are separate from the successful `dev` push runs.
-Dependabot and lint are inherited configuration that Terry has not adopted.
-No adoption or repair of those inherited checks has been requested.
+CodeQL and the supply-chain workflow have push triggers for `main`. Lint
+runs on pull requests. Those checks were outside the current `dev` push
+matrix. Dependabot and lint remain inherited configuration.
 
 ## Maintaining this document
 
