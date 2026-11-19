@@ -58,6 +58,11 @@ contrast.  Hover over a swatch to see its RGB hex value.
 
 ## Neutral
 
+The HTML color names `darkgray` and `lightgray` are available as
+`rgb::darkgray` (`#A9A9A9`) and `rgb::lightgray` (`#D3D3D3`).
+The underscore names `rgb::dark_gray` and `rgb::light_gray` are
+`#404040` and `#C0C0C0`, respectively.
+
 ::: rgb
     options:
       color_reference: true

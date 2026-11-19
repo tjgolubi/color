@@ -179,6 +179,7 @@ struct rgb {
   static const rgb dark_blue;
   static const rgb dark_cyan;
   static const rgb dark_golden_rod;
+  static const rgb darkgray;
   static const rgb dark_gray;
   static const rgb dark_green;
   static const rgb dark_khaki;
@@ -206,9 +207,6 @@ struct rgb {
   static const rgb gold;
   static const rgb golden_rod;
   static const rgb gray;
-  static const rgb gray_25;  ///< 25% gray (#404040), equal to `color(0.25)`.
-  static const rgb gray_50;  ///< 50% gray (#808080), equal to `color(0.50)`.
-  static const rgb gray_75;  ///< 75% gray (#C0C0C0), equal to `color(0.75)`.
   static const rgb green;
   static const rgb green_yellow;
   static const rgb honey_dew;
@@ -225,6 +223,7 @@ struct rgb {
   static const rgb light_coral;
   static const rgb light_cyan;
   static const rgb light_golden_rod_yellow;
+  static const rgb lightgray;
   static const rgb light_gray;
   static const rgb light_green;
   static const rgb light_pink;
@@ -672,7 +671,8 @@ inline constexpr rgb rgb::cyan                    {  0, 255, 255};
 inline constexpr rgb rgb::dark_blue               {  0,   0, 139};
 inline constexpr rgb rgb::dark_cyan               {  0, 139, 139};
 inline constexpr rgb rgb::dark_golden_rod         {184, 134,  11};
-inline constexpr rgb rgb::dark_gray               {169, 169, 169};
+inline constexpr rgb rgb::darkgray                {169, 169, 169};
+inline constexpr rgb rgb::dark_gray               { 64,  64,  64};
 inline constexpr rgb rgb::dark_green              {  0, 100,   0};
 inline constexpr rgb rgb::dark_khaki              {189, 183, 107};
 inline constexpr rgb rgb::dark_magenta            {139,   0, 139};
@@ -699,9 +699,6 @@ inline constexpr rgb rgb::ghost_white             {248, 248, 255};
 inline constexpr rgb rgb::gold                    {255, 215,   0};
 inline constexpr rgb rgb::golden_rod              {218, 165,  32};
 inline constexpr rgb rgb::gray                    {128, 128, 128};
-inline constexpr rgb rgb::gray_25                 { 64,  64,  64};
-inline constexpr rgb rgb::gray_50                 {128, 128, 128};
-inline constexpr rgb rgb::gray_75                 {192, 192, 192};
 inline constexpr rgb rgb::green                   {  0, 128,   0};
 inline constexpr rgb rgb::green_yellow            {173, 255,  47};
 inline constexpr rgb rgb::honey_dew               {240, 255, 240};
@@ -718,7 +715,8 @@ inline constexpr rgb rgb::light_blue              {173, 216, 230};
 inline constexpr rgb rgb::light_coral             {240, 128, 128};
 inline constexpr rgb rgb::light_cyan              {224, 255, 255};
 inline constexpr rgb rgb::light_golden_rod_yellow {250, 250, 210};
-inline constexpr rgb rgb::light_gray              {211, 211, 211};
+inline constexpr rgb rgb::lightgray               {211, 211, 211};
+inline constexpr rgb rgb::light_gray              {192, 192, 192};
 inline constexpr rgb rgb::light_green             {144, 238, 144};
 inline constexpr rgb rgb::light_pink              {255, 182, 193};
 inline constexpr rgb rgb::light_salmon            {255, 160, 122};

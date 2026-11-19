@@ -67,7 +67,7 @@ std::println("{}", group);
 
 Expected output (followed by a newline):
 
-<pre class="color-output"><span style="color: #000000; background-color: #D3D3D3"><span style="color: #FF0000">red</span> <span style="color: #008000">green</span> <span style="color: #0000FF">blue</span></span></pre>
+<pre class="color-output"><span style="color: #000000; background-color: #C0C0C0"><span style="color: #FF0000">red</span> <span style="color: #008000">green</span> <span style="color: #0000FF">blue</span></span></pre>
 
 Each word keeps its foreground color. The spaces use the black default
 foreground, and the light-gray background covers the whole group.
@@ -99,7 +99,7 @@ std::println("{}", all_red);
 
 Expected output (followed by a newline):
 
-<pre class="color-output"><span style="color: #FF0000; background-color: #D3D3D3">red green blue</span></pre>
+<pre class="color-output"><span style="color: #FF0000; background-color: #C0C0C0">red green blue</span></pre>
 
 Here `words` has the defaults added by the preceding member call. All relative
 parts become red, and the gray background remains. `words` itself is unchanged.
@@ -420,7 +420,7 @@ std::println("{:?}", parsed);
 ```
 
 ```text
-#000000/#d3d3d3 {
+#000000/#c0c0c0 {
   #ff0000 "red"
   " "
   #008000 "green"
@@ -428,13 +428,13 @@ std::println("{:?}", parsed);
   #0000ff "blue"
 }
 
-\e[38;2;255;0;0;48;2;211;211;211mred\e[38;2;0;0;0m \e[38;2;0;128;0mgreen\e[38;2;0;0;0m \e[38;2;0;0;255mblue\e[0m
+\e[38;2;255;0;0;48;2;192;192;192mred\e[38;2;0;0;0m \e[38;2;0;128;0mgreen\e[38;2;0;0;0m \e[38;2;0;0;255mblue\e[0m
 {
-  #ff0000/#d3d3d3 "red"
-  #000000/#d3d3d3 " "
-  #008000/#d3d3d3 "green"
-  #000000/#d3d3d3 " "
-  #0000ff/#d3d3d3 "blue"
+  #ff0000/#c0c0c0 "red"
+  #000000/#c0c0c0 " "
+  #008000/#c0c0c0 "green"
+  #000000/#c0c0c0 " "
+  #0000ff/#c0c0c0 "blue"
 }
 ```
 

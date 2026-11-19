@@ -1437,12 +1437,14 @@ TEST(color_test, normalized_grayscale) {
 
   static_assert(color(0.0) == rgb{0, 0, 0});
   static_assert(color(1.0) == rgb{255, 255, 255});
-  static_assert(rgb::gray_25 == rgb{64, 64, 64});
-  static_assert(rgb::gray_50 == rgb{128, 128, 128});
-  static_assert(rgb::gray_75 == rgb{192, 192, 192});
-  EXPECT_EQ(color(0.25), rgb::gray_25);
-  EXPECT_EQ(color(0.5), rgb::gray_50);
-  EXPECT_EQ(color(0.75), rgb::gray_75);
+  static_assert(rgb::dark_gray == rgb{64, 64, 64});
+  static_assert(rgb::gray == rgb{128, 128, 128});
+  static_assert(rgb::light_gray == rgb{192, 192, 192});
+  static_assert(rgb::darkgray == rgb{169, 169, 169});
+  static_assert(rgb::lightgray == rgb{211, 211, 211});
+  EXPECT_EQ(color(0.25), rgb::dark_gray);
+  EXPECT_EQ(color(0.5), rgb::gray);
+  EXPECT_EQ(color(0.75), rgb::light_gray);
 }
 
 TEST(color_test, rgb_or) {

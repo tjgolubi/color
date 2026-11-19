@@ -107,8 +107,9 @@ auto dim    = tjg::color::color(0.25);          // rgb{ 64,  64,  64}
 Both overloads return `rgb`. For each component between `0.0` and `1.0`,
 the function multiplies by 256 and rounds down. Values at or above `1.0`
 map to 255. Values at or below `0.0`, including negative infinity, and NaN
-map to 0. The grayscale values `0.25`, `0.5`, and `0.75` produce the named
-colors `rgb::gray_25`, `rgb::gray_50`, and `rgb::gray_75`, respectively.
+map to 0. The grayscale values `0.25`, `0.5`, and `0.75` produce
+`rgb::dark_gray` (`#404040`), `rgb::gray` (`#808080`), and
+`rgb::light_gray` (`#C0C0C0`), respectively.
 
 The three-channel constructor accepts `int` arguments and checks each against
 `0..255` before storing it as `uint8_t`. Invalid channels trigger `assert`.
