@@ -121,12 +121,9 @@ introduce `color(red, green, blue)` and `color(grayscale)` with inputs from
 `0.0` to `1.0`. Both overloads return `rgb`. The one-argument form uses the
 same value for all three channels.
 
-The named neutral shades `rgb::gray_25`, `rgb::gray_50`, and `rgb::gray_75`
-are `#404040`, `#808080`, and `#C0C0C0`. They match `color(0.25)`, `color(0.5)`,
-and `color(0.75)`, respectively. The numbered names express the shade directly.
-Existing CSS names retain their values, including `rgb::dark_gray`, which is
-lighter than `rgb::gray`. The guide generates Neutral swatches from the named
-RGB constants.
+The named neutral shades `rgb::dark_gray`, `rgb::gray`, and `rgb::light_gray`
+match `color(0.25)`, `color(0.5)`, and `color(0.75)`, respectively. The guide
+generates Neutral swatches from the named RGB constants.
 
 Reserve direct `rgb{...}` construction, indexed `gray` and `cube` values, and
 raw SGR for advanced material or explicit comparisons. The appearance of

@@ -26,21 +26,18 @@ the demo context. The user guide covers styled text; do not create a separate
 ## Current handoff
 
 The integration baseline is pushed on `dev` at
-`68878d01e6270f0b96f07ea82b50167ad0151a83`. The squash includes the work from
-`ref/Combined` and the follow-up on `ref/UserGuide`. Its file contents match
-`ref/UserGuide` at `3b6c4a8`. Earlier branches such as `fix/Demos`, the first
-user-guide revision, `ref/ShortNames`, and `feat/FloatColors` are historical
-sources for the integrated work.
+`15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. The squash of `fix/DarkGray`
+matches the source, guide, and tests at feature tip `4141518`.
 
 The library provides constexpr normalized RGB and grayscale `color(...)`
-overloads, three numbered RGB grays, the indexed `cube` and `gray` types, and
-`term_color::gray` for terminal palette slot 8. The user guide explains styling
+overloads, the indexed `cube` and `gray` types, and `term_color::gray` for
+terminal palette slot 8. The user guide explains styling
 with nested groups, uses shorter styling expressions, and includes an SGR
 format-and-parse walkthrough. The seven demos use the current names and source
 files. `build.bash` runs the regression suite and builds the HTML guide.
 
 The GitHub Pages guide and public marketing site are current. The marketing
-site is at version 11 and its demo downloads and comparisons match `dev`.
+site is at version 13 and its demo downloads and comparisons match `dev`.
 See [BuildAndTest.md](BuildAndTest.md) for checks and [Website.md](Website.md)
 for deployment provenance.
 

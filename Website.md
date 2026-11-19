@@ -81,7 +81,7 @@ dashboard screenshot display introduced in version 9 is in the current site.
 Preserve the screenshots and matching demo text together, including 東京.
 
 The published comparison source and links use the `dev` snapshot
-`68878d01e6270f0b96f07ea82b50167ad0151a83`. `dist/examples/` contains all seven
+`15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. `dist/examples/` contains all seven
 demos and the site's quick-start program. The result page displays excerpts
 from `Result42Compare.cpp`. The three dashboard pages show complete sources
 using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
@@ -90,7 +90,7 @@ downloads, and source links together after an accepted demo update.
 
 ## Current public deployment
 
-Sites confirmed that version 11 succeeded on November 19, 2026 at 09:50:13 UTC.
+Sites confirmed that version 13 succeeded on November 19, 2026 at 22:41:46 UTC.
 The source commit was pushed and the matching archive was saved before
 deployment. Current Sites metadata confirms the public audience.
 
@@ -98,21 +98,18 @@ deployment. Current Sites metadata confirms the public audience.
 | ---------------- | ----------------------------------------------------------------------------------- |
 | Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
 | Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
-| Version          | 11                                                                                  |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_6da78d06ab948191a3f4a609da53e6c0` |
-| Deployment ID    | `appgdep_6afec64e115881918f4cb51abf33aac5`                                          |
-| Source commit    | `504924a471686565d3543a74c658fddfc5b48da6`                                          |
+| Version          | 13                                                                                  |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_3b04613a0cd8819180676dbf7b9b4b16` |
+| Deployment ID    | `appgdep_6aff7b2573f48191a53dcd8458be825a`                                          |
+| Source commit    | `82f7b853144333e5738e159a9f1ee0b36c302ffc`                                          |
 | Audience         | Public                                                                              |
 
 ## Verification and current handoff
 
 All seven demo downloads and both screenshots matched the library snapshot
-byte for byte. Each dashboard page reconstructed both complete source files
-across eleven pairs of sections. Line labels matched the ranges in every code
-panel. Local links and anchors resolved, and the site JavaScript passed a
-syntax check. After deployment all five public pages returned HTTP 200 and
-served the updated code or pinned source links. This verification used the
-generated HTML and live HTTP responses.
+byte for byte. The homepage and comparisons page link to the current library
+snapshot, and their live HTML matched the deployed source. All five public
+pages were checked. Keep details about individual RGB names in the user guide.
 
 The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was built and
 published separately from the same library commit. See

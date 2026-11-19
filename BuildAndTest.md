@@ -92,32 +92,27 @@ not visual review or deployment; record those checks separately.
 
 ## Current local validation
 
-On November 19, 2026, `./build.bash` passed on MSYS2 with GCC 16.2.0 and CMake
-4.4.5 in Debug on the working tree committed as
-`3b6c4a8210f2541dec3b2a6b27bbb100239d3798`. The tree matches current `dev`.
-All 22 CTest entries passed and the HTML guide built. Both normalized color
-cases ran. They cover RGB and grayscale construction, rounding and clamping,
-NaN and infinities, and the exact numbered gray values.
-
-The three edited demos, `StyledTextDemo`, `TableDemo`, and `TableDemoOstream`,
-built with strict warnings and their output matched the previous library
-snapshot byte for byte. The revised blend examples compiled and produced
-the documented RGB values. The SGR walkthrough was compiled and run.
-Vim Markdown highlighting and generated HTML were checked after replacing
-the literal padding asterisks with character references in the output sample.
+On November 19, 2026, the focused `color-test` CTest entry passed for the
+`fix/DarkGray` working tree committed as
+`41415189bf96a6d4084c1cb9338c48c69370548b`, whose contents match current
+`dev`. The build used GCC 14.2.0 with libstdc++, CMake 4.4.5, Debug, C++23,
+`TJG_TEST=ON`, and `TJG_WERROR=ON`. The normalized grayscale case ran and
+passed. The MkDocs guide build succeeded with Doxygen 1.9.8 and the pinned
+Python dependencies. The generated HTML was checked for the five gray
+swatches and the updated styled-output samples.
 
 ## Current GitHub CI validation
 
 Verified November 19, 2026, for `dev` at
-`68878d01e6270f0b96f07ea82b50167ad0151a83`. All nine platform jobs and both
+`15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. All nine platform jobs and both
 documentation jobs passed.
 
 | Workflow                                                                  | Configurations                                                             | Jobs | Result |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44497231364)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44497231166)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44497230994)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44497231152) | Build and GitHub Pages publication                                         |    2 | Passed |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44628242613)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44628242555)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44628242835)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44628242552) | Build and GitHub Pages publication                                         |    2 | Passed |
 
 The nine platform jobs configure, build, and run the TJG suite in C++23 mode
 with warnings treated as errors. Matrix fail-fast is disabled. The results
@@ -145,10 +140,9 @@ guide artifact and run the dependent Pages deployment. Deployments are
 serialized without cancelling an active publication.
 
 Both jobs passed for the current `dev` commit. The live
-[Styled Arguments page](https://tjgolubi.github.io/color/styled.html#parsing-sgr-text)
-returned HTTP 200 and contained the revised SGR walkthrough and the HTML
-character references for the padding example. Publication instructions are in
-the library's `support/color-pages.md`.
+[Named Colors page](https://tjgolubi.github.io/color/named-colors.html#neutral)
+returned HTTP 200 and included the `rgb::dark_gray` swatch. Publication
+instructions are in the library's `support/color-pages.md`.
 
 ## Other workflow coverage
 
