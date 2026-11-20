@@ -55,6 +55,99 @@ nav:
   - Styled arguments: styled.md
   - Styled output: print.md
   - Styled formatting: format.md
+  - API reference:
+      - Overview: ref/index.md
+      - Color:
+          - Header: ref/color/index.md
+          - ref/color/format.md
+          - ref/color/format_to.md
+          - ref/color/formatter.md
+          - ref/color/operator-insertion.md
+          - ref/color/print.md
+          - ref/color/println.md
+          - ref/color/styled.md
+          - ref/color/vformat.md
+          - ref/color/vformat_to.md
+          - ref/color/vprint_nonunicode.md
+          - ref/color/vprint_unicode.md
+          - ref/color/write_debug_value.md
+          - ref/color/write_value.md
+          - Colors:
+              - Overview: ref/color/colors/index.md
+              - ref/color/colors/Color.md
+              - ref/color/colors/blend.md
+              - ref/color/colors/color.md
+              - ref/color/colors/color_t.md
+              - ref/color/colors/cube.md
+              - ref/color/colors/gray.md
+              - ref/color/colors/name_of.md
+              - ref/color/colors/no_color.md
+              - ref/color/colors/no_color_t.md
+              - ref/color/colors/rgb-constants.md
+              - ref/color/colors/rgb.md
+              - ref/color/colors/term_color.md
+              - ref/color/colors/to_rgb.md
+          - Text styles:
+              - Overview: ref/color/text_style/index.md
+              - ref/color/text_style/absolute.md
+              - ref/color/text_style/bg.md
+              - ref/color/text_style/blend.md
+              - ref/color/text_style/blink.md
+              - ref/color/text_style/bold.md
+              - ref/color/text_style/conceal.md
+              - ref/color/text_style/emphasis.md
+              - ref/color/text_style/faint.md
+              - ref/color/text_style/fg.md
+              - ref/color/text_style/italic.md
+              - ref/color/text_style/overlay.md
+              - ref/color/text_style/reverse.md
+              - ref/color/text_style/strike.md
+              - ref/color/text_style/text_style.md
+              - ref/color/text_style/underlay.md
+              - ref/color/text_style/underline.md
+          - Styled text:
+              - Overview: ref/color/styled_text/index.md
+              - ref/color/styled_text/absolute.md
+              - ref/color/styled_text/basic_styled_text.md
+              - ref/color/styled_text/blink.md
+              - ref/color/styled_text/bold.md
+              - ref/color/styled_text/conceal.md
+              - ref/color/styled_text/faint.md
+              - ref/color/styled_text/italic.md
+              - ref/color/styled_text/overlay.md
+              - ref/color/styled_text/reverse.md
+              - ref/color/styled_text/strike.md
+              - ref/color/styled_text/styled_text.md
+              - ref/color/styled_text/underlay.md
+              - ref/color/styled_text/underline.md
+              - ref/color/styled_text/wstyled_text.md
+          - SGR and ANSI:
+              - Overview: ref/color/sgr/index.md
+              - ref/color/sgr/basic_sgr_buffer.md
+              - ref/color/sgr/parse_styled_text.md
+              - ref/color/sgr/sgr_buffer.md
+              - ref/color/sgr/sgr_max_length.md
+              - ref/color/sgr/sgr_reset.md
+              - ref/color/sgr/sgr_reset_length.md
+              - ref/color/sgr/strip_ansi.md
+              - ref/color/sgr/to_sgr.md
+              - ref/color/sgr/wrap_sgr.md
+      - TJG utilities:
+          - Overview: ref/util/index.md
+          - ref/util/CharType.md
+          - ref/util/backslash_escape.md
+          - ref/util/backslash_escape_to.md
+          - ref/util/backslash_unescape.md
+          - ref/util/backslash_unescape_to.md
+          - ref/util/basic_inline_buffer.md
+          - ref/util/enum_cast.md
+          - ref/util/hash_combine.md
+          - ref/util/hash_t.md
+          - ref/util/hash_value.md
+          - ref/util/hash_values.md
+          - ref/util/inline_buffer.md
+          - ref/util/narrow_cast.md
+          - ref/util/strip_ansi.md
 
 extra:
   generator: false
