@@ -43,8 +43,8 @@ that only needs the value types or string utilities. Headers in
 
 ## CMake
 
-Configure and build the project from the repository root, then install the
-headers, static archive, and `tjg::tjg` CMake target.
+Use CMake 4.0 or later. Configure and build the project from the repository
+root, then install the headers, static archive, and `tjg::tjg` CMake target.
 
 ```sh
 cmake -S . -B build/color-install -DCMAKE_BUILD_TYPE=Release
