@@ -395,6 +395,7 @@ class CxxHandler(BaseHandler):
             XML_OUTPUT       = "{0}"
             QUIET            = YES
             AUTOLINK_SUPPORT = NO
+            JAVADOC_AUTOBRIEF = YES
             MACRO_EXPANSION  = YES
             PREDEFINED       = TJG_NOEXCEPT_UNLESS_BAD_ALLOC=
             """.format(xml_dir.as_posix()).encode("utf-8")
