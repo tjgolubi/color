@@ -1,7 +1,7 @@
 #include <tjg/color.hpp>
 
 #include <print>
-#include <string>
+#include <string_view>
 #include <array>
 #include <vector>
 #include <algorithm>
@@ -39,21 +39,22 @@ public:
     }
   }
 
-  void print_rule() const {
-    std::print("+");
-    for (const auto& col : _columns)
-      std::print("{}+", std::string(static_cast<std::size_t>(col.width) + 2,
-                                   '-'));
-    std::println();
+  void print_rule(std::string_view left, std::string_view joint,
+                  std::string_view right) const {
+    for (std::size_t i = 0; i < N; ++i) {
+      const auto width = static_cast<std::size_t>(_columns[i].width) + 2;
+      std::print("{}{:─<{}}", i == 0 ? left : joint, "", width);
+    }
+    std::println("{}", right);
   }
 
   void print_header() const {
     auto headings = row{};
     for (std::size_t i = 0; i < N; ++i)
       headings[i] = tjg::color::bold(_columns[i].heading);
-    print_rule();
+    print_rule("┌", "┬", "┐");
     print_row(headings);
-    print_rule();
+    print_rule("├", "┼", "┤");
   }
 
   void print_row(const row& cells) const {
@@ -66,7 +67,7 @@ public:
 
     const auto blank = styled_text{};
     for (std::size_t line = 0; line < height; ++line) {
-      std::print("|");
+      std::print("│");
       for (std::size_t i = 0; i < N; ++i) {
         const auto& value = line < wrapped[i].size() ? wrapped[i][line] : blank;
         const auto& col = _columns[i];
@@ -74,13 +75,13 @@ public:
         // bytes, and formatting a rendered ANSI string would count escapes.
         switch (col.align) {
         case alignment::left:
-          std::print(" {:<{}} |", value, col.width);
+          std::print(" {:<{}} │", value, col.width);
           break;
         case alignment::center:
-          std::print(" {:^{}} |", value, col.width);
+          std::print(" {:^{}} │", value, col.width);
           break;
         case alignment::right:
-          std::print(" {:>{}} |", value, col.width);
+          std::print(" {:>{}} │", value, col.width);
           break;
         }
       }
@@ -111,7 +112,7 @@ int main() {
     "Ready\nApproved by security",
     "3.5 h\n2 engineers",
   });
-  work.print_rule();
+  work.print_rule("├", "┼", "┤");
 
   work.print_row({
     bold("Restore rehearsal — 東京")
@@ -121,7 +122,7 @@ int main() {
       + "\nWaiting for temporary storage allocation",
     "6.0 h\n1 engineer",
   });
-  work.print_rule();
+  work.print_rule("├", "┼", "┤");
 
   work.print_row({
     bold("Café office network")
@@ -130,7 +131,7 @@ int main() {
     "Scheduled\nAfter 18:00",
     "1.5 h",
   });
-  work.print_rule();
+  work.print_rule("├", "┼", "┤");
 
   work.print_row({
     bold("Retire the legacy export job")
@@ -139,7 +140,7 @@ int main() {
     styled_text{"Complete", fg(green)},
     "2.0 h",
   });
-  work.print_rule();
+  work.print_rule("└", "┴", "┘");
 
   std::println("\nEffort estimates are person-hours; descriptions and status "
                "notes wrap independently.");
