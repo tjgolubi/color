@@ -43,6 +43,8 @@ TEST(allocation_noexcept_test, decoding_errors_still_throw) {
 template <typename Char> constexpr bool check_tree_policy() {
   using text = tjg::color::basic_styled_text<Char>;
   using string = std::basic_string<Char>;
+  static_assert(!noexcept(tjg::color::word_wrap(
+    std::declval<const text&>(), 16)));
   static_assert(std::is_nothrow_constructible_v<text, string> ==
                 allocation_noexcept);
   static_assert(std::is_nothrow_copy_constructible_v<text> ==

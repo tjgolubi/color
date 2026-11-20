@@ -33,9 +33,15 @@ Use an ANSI-capable terminal to see the styling.
 | [TableDemoCpp](TableDemoCpp.cpp)         | The dashboard with standard C++23 and raw SGR sequences.          |
 | [TableDemoFmt](TableDemoFmt.cpp)         | The dashboard with {fmt}.                                         |
 | [TableDemoOstream](TableDemoOstream.cpp) | The dashboard with {color} and stream insertion.                  |
+| [WrapTable](WrapTable.cpp)             | Wrapped cells with left, center, and right alignment.             |
 
 `StyledTextDemo` prints the same styled line with underlay first and overlay
 second, using a white foreground, `term_color::gray` background, and
 strikethrough. Underlay supplies defaults while preserving explicit colors.
 Overlay replaces the affected colors throughout relative text. Both preserve
 the absolute underline-only span.
+
+`WrapTable` wraps each cell with `word_wrap()`, then aligns each physical line
+using styled-text formatting. Shorter cells receive blank lines so row borders
+stay aligned. Headings and task titles are bold; only blocked and completed
+statuses use color. Build and run it with `make WrapTable && ./WrapTable`.

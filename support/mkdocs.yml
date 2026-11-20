@@ -206,6 +206,7 @@ nav:
               - ref/color/styled_text/strike.md
               - ref/color/styled_text/styled_text.md
               - ref/color/styled_text/underlay.md
+              - ref/color/styled_text/word_wrap.md
               - ref/color/styled_text/underline.md
               - ref/color/styled_text/wstyled_text.md
           - SGR and ANSI:

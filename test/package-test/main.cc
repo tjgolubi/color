@@ -34,5 +34,11 @@ int main() {
   std::wostringstream wide_output;
   wide_output << wide_text;
   if (wide_output.str() != L"wide") return 8;
+  const auto lines = tjg::color::word_wrap(
+    tjg::color::styled_text{"abcdefghijklmnop next"}, 16);
+  if (lines.size() != 2 || lines[1].plain_text() != "next") return 9;
+  const auto wide_lines = tjg::color::word_wrap(
+    tjg::color::wstyled_text{L"abcdefghijklmnop next"}, 16);
+  if (wide_lines.size() != 2 || wide_lines[1].plain_text() != L"next") return 10;
   std::println("{}", hello);
 }

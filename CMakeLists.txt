@@ -14,7 +14,8 @@ add_library(tjg STATIC
   src/parse_styled_text.cpp
   src/sgr.cpp
   src/styled_text_value.cpp
-  src/unicode.cpp)
+  src/unicode.cpp
+  src/word_wrap.cpp)
 add_library(tjg::tjg ALIAS tjg)
 set_target_properties(tjg PROPERTIES OUTPUT_NAME color)
 target_compile_features(tjg PUBLIC cxx_std_23)

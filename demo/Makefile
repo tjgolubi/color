@@ -7,7 +7,7 @@ FMT_LIB ?= $(FMT_ROOT)/build/libfmtd.a
 CXXFLAGS += -std=gnu++23 -Wall -Wextra -Werror
 
 TJG_DEMOS := StyledDemo StyledTextDemo
-TJG_DEMOS += TableDemo TableDemoCpp TableDemoOstream
+TJG_DEMOS += TableDemo TableDemoCpp TableDemoOstream WrapTable
 FMT_DEMOS := Result42Compare TableDemoFmt
 DEMOS := $(TJG_DEMOS) $(FMT_DEMOS)
 
@@ -43,6 +43,7 @@ run: all
 	./TableDemoCpp
 	./TableDemoFmt
 	./TableDemoOstream
+	./WrapTable
 
 clean:
 	$(RM) $(DEMOS)

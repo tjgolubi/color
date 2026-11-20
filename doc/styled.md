@@ -238,6 +238,43 @@ Each concatenated text span is measured independently, so keep each encoded
 character within a single span. Generated SGR sequences take no columns. Raw
 escape sequences stored in text spans are measured as text.
 
+### Wrapping text into lines
+
+Use `word_wrap(text, width)` to split styled text into display lines. Styles
+and nested groups stay with their text, and the original value is unchanged.
+The width must be at least 16 columns. The returned lines have no padding;
+your table or output code chooses how to align them.
+
+```cpp
+using namespace tjg::color;
+auto message = bold(styled_text{"Build completed; "}
+                  + styled_text{"all checks passed", fg(term_color::green)});
+for (const auto& line : word_wrap(message, 20))
+  std::println("{}", line);
+// Build completed; all
+// checks passed
+```
+
+Words that fit the column move intact to the next line. Longer words split
+with a hyphen that inherits the preceding character's style. Breaks can also
+follow punctuation, except opening punctuation and quotation marks, including
+apostrophes. Punctuation stays on the preceding line without an added hyphen.
+
+Newlines force line breaks. Other Unicode whitespace becomes ordinary spaces,
+one space per character. Leading and interior spaces are preserved, except
+separating spaces at automatic wrap boundaries. Trailing spaces and trailing
+blank lines are removed. Empty or whitespace-only input returns no lines.
+Raw ANSI sequences are stripped independently from each text span; remaining
+non-whitespace C0/C1 controls are discarded.
+
+Both `styled_text` and `wstyled_text` use the narrow formatter's estimated
+one/two-column Unicode width model for wrapping. Wide wrapping decodes UTF-16
+or UTF-32 according to `wchar_t` size. Keep each encoded character within one
+text span. Malformed code units are preserved and each counts as one column.
+Combining marks and emoji sequences do not receive grapheme-cluster handling.
+See the [`word_wrap` reference](ref/color/styled_text/word_wrap.md) for the
+complete rules, including blank lines and invalid widths.
+
 ### Debug output
 
 Use `{:?}` to inspect stored styles and nested groups without rendering SGR.

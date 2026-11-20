@@ -19,4 +19,5 @@ Owning styled text and operations that produce styled text.
 - [`tjg::color::styled_text`](styled_text.md)
 - [`tjg::color::underlay`](underlay.md)
 - [`tjg::color::underline`](underline.md)
+- [`tjg::color::word_wrap`](word_wrap.md)
 - [`tjg::color::wstyled_text`](wstyled_text.md)

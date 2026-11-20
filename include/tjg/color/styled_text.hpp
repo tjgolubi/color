@@ -15,11 +15,14 @@
 #include <concepts>
 #include <utility>
 
+#include <cstddef>
+
 namespace tjg::color {
 
 namespace detail {
 
 struct styled_text_ansi_stripper;
+struct styled_text_word_wrapper;
 template<CharType Char> class styled_text_renderer;
 
 } // detail
@@ -37,6 +40,7 @@ private:
   using branch = std::vector<basic_styled_text>;
   friend class detail::styled_text_renderer<Char>;
   friend struct detail::styled_text_ansi_stripper;
+  friend struct detail::styled_text_word_wrapper;
 
   text_style _style{};
   leaf       _text{};
@@ -147,6 +151,26 @@ private:
 
 using styled_text  = basic_styled_text<char>;
 using wstyled_text = basic_styled_text<wchar_t>;
+
+/**
+ * Wraps text into unpadded display lines, preserving nested and absolute styles.
+ * Width must be at least 16; otherwise throws std::invalid_argument, even for
+ * empty input. Leaves the input unchanged. Removes ANSI sequences per span,
+ * normalizes whitespace, and discards remaining C0/C1 controls. Newlines force
+ * breaks; trailing whitespace and trailing blank lines are removed.
+ * Breaks after eligible Unicode punctuation or at whitespace. Oversized words
+ * are split at decoded character boundaries with a styled ASCII hyphen.
+ * Uses the UTF-8 formatter's one/two-column model for both character types;
+ * malformed code units are preserved and count as one column each.
+ */
+[[nodiscard]]
+auto word_wrap(const styled_text& text, std::ptrdiff_t width)
+  -> std::vector<styled_text>;
+
+/// Wide-character overload; decodes UTF-16 or UTF-32 independently per span.
+[[nodiscard]]
+auto word_wrap(const wstyled_text& text, std::ptrdiff_t width)
+  -> std::vector<wstyled_text>;
 
 namespace detail {
 

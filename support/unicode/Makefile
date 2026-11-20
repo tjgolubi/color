@@ -2,6 +2,7 @@ PROJDIR := $(abspath ../..)
 
 CXXFLAGS += -std=c++23 -Wall -Wextra -Wpedantic -Werror
 BUILD_DIR ?= ./build
+PYTHON ?= python3
 
 ifneq ($(filter MSYS%,$(shell uname -s)),)
 # MSYS libstdc++ <print> needs stdio declarations hidden in strict C++ mode.
@@ -23,7 +24,11 @@ BINARIES := $(BIN1) $(BIN2)
 INCLUDE := $(PROJDIR)/include/tjg/color/bits
 
 .PHONY: all clean
-all: $(PROJDIR)/src/UnicodeData.hpp $(INCLUDE)/EastAsianWidth.hpp
+all: $(PROJDIR)/src/UnicodeData.hpp $(INCLUDE)/EastAsianWidth.hpp \
+     $(PROJDIR)/src/WrapData.hpp
+
+$(PROJDIR)/src/WrapData.hpp: gen-wrap-tables.py UnicodeData.txt PropList.txt
+	$(PYTHON) gen-wrap-tables.py
 
 $(BUILD_DIR)/%$(EXEEXT): %.cpp | $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) "$<" $(LDLIBS) -o "$@"
