@@ -68,14 +68,35 @@ automatically.
 
 ## Project and coding guidance
 
-Color is a standalone C++23 header library using standard formatting and
-printing. Verify descriptions of current behavior against the source and
-tests. Record uncertainty as a question. External-library comparisons belong
+Color is a standalone C++23 library with a compiled static archive, using
+standard formatting and printing. Public headers retain constexpr operations
+and templates that depend on caller types. Runtime implementations live in
+`src/`; consumers link the existing `tjg::tjg` CMake target. Verify descriptions
+of current behavior against the source and tests. Record uncertainty as a
+question. External-library comparisons belong
 in the demo context. The marketing homepage also credits
 {fmt}'s inspiration and recommends it for visitors who cannot use C++23.
 The user guide describes this initial release in the present tense: do not
 include old API behavior, migration notes, or an upstream-extension narrative.
 Keep required source attribution intact.
+
+Constexpr support and speed take priority over reducing header content.
+Before moving a function into a `.cpp` file, check whether it can be constexpr
+or needs its caller's concrete types for efficient code generation. Ordinary
+`char` and `wchar_t` runtime overloads can share private implementation code.
+Keep `backslash.hpp` and the string `strip_ansi.hpp` algorithms in headers to
+preserve their tested constexpr behavior.
+
+Do not reintroduce `detail::output` or an equivalent erased callback per
+output code unit. That bridge was removed because it added indirect calls
+to iterator-dependent rendering. Keep those paths templated in headers;
+discuss and measure performance tradeoffs before replacing them.
+
+Mark non-throwing operations `noexcept`. Use the existing
+`TJG_NOEXCEPT_UNLESS_BAD_ALLOC` policy where allocation failure is the sole
+intended escaping exception. Do not suppress validation or formatting errors
+with unconditional noexcept. Apply policy macros consistently to the compiled
+library and its consumers.
 
 Read the library README and relevant coordination documents before work.
 State when needed material is missing or stale. Newer explicit instructions
@@ -106,9 +127,14 @@ Use this order when adding or touching includes, following the existing
 `.clang-format` categories. Discuss configuration changes before making them.
 
 Terry prefers an 80-column limit. Keep a trailing return type and opening
-brace on the signature line when they fit; otherwise prefer:
+brace on the signature line when they fit. If a trailing return type would
+overflow, first move qualifiers before `auto` to a preceding line, preserving
+them so `auto` becomes the first keyword on the signature line. If the return
+type still does not fit, place `-> return_type` alone on the next line,
+indented two spaces relative to the signature:
 
 ```cpp
+[[nodiscard]] constexpr
 auto function(arguments)
   -> return_type
 {

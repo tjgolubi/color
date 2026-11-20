@@ -2,13 +2,13 @@
 
 [Document map](README.md) · [Workflow](Workflow.md) · [Build and test](BuildAndTest.md)
 
-Updated November 19, 2026.
+Updated November 20, 2026.
 
 ## Purpose and audience
 
 The {color} website is a marketing tool for the general C++23 community.
 Answer "Why should I use this?" before presenting technical details. Present
-{color} as a standalone header library using standard formatting and printing.
+{color} as a standalone C++23 library using standard formatting and printing.
 
 Welcome newer C++ programmers who want expressive terminal output but may not
 know ANSI or SGR codes. Show readable results, noticeable warnings, and nested
@@ -88,11 +88,11 @@ using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
 `TableDemoOstream.cpp`. Refresh copied code, section boundaries, line labels,
 downloads, and source links together after an accepted demo update.
 
-## Current public deployment
+## Last recorded public deployment
 
 Sites confirmed that version 13 succeeded on November 19, 2026 at 22:41:46 UTC.
 The source commit was pushed and the matching archive was saved before
-deployment. Current Sites metadata confirms the public audience.
+deployment. Sites metadata at that verification confirmed the public audience.
 
 | Item             | Value                                                                               |
 | ---------------- | ----------------------------------------------------------------------------------- |
@@ -106,7 +106,15 @@ deployment. Current Sites metadata confirms the public audience.
 
 ## Verification and current handoff
 
-All seven demo downloads and both screenshots matched the library snapshot
+The runtime refactor on `ref/RuntimeCpp` now builds a static color archive.
+The recorded version 13 publication represents the earlier `dev` snapshot;
+it has not been updated for the compiled-library requirement or API reference.
+On a future authorized site update, review header-only claims and provide
+matching build/link instructions for downloaded examples. This coordination
+update does not publish or modify the website.
+
+At the version 13 verification, all seven demo downloads and both screenshots
+matched the library snapshot
 byte for byte. The homepage and comparisons page link to the current library
 snapshot, and their live HTML matched the deployed source. All five public
 pages were checked. Keep details about individual RGB names in the user guide.
