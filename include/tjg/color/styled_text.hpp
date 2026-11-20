@@ -10,18 +10,19 @@
 #include <string_view>
 
 #include <vector>
-#include <algorithm>
 #include <memory>
 
 #include <concepts>
 #include <utility>
-#include <limits>
+
+#include <cstddef>
 
 namespace tjg::color {
 
 namespace detail {
 
 struct styled_text_ansi_stripper;
+struct styled_text_word_wrapper;
 template<CharType Char> class styled_text_renderer;
 
 } // detail
@@ -39,19 +40,16 @@ private:
   using branch = std::vector<basic_styled_text>;
   friend class detail::styled_text_renderer<Char>;
   friend struct detail::styled_text_ansi_stripper;
+  friend struct detail::styled_text_word_wrapper;
 
   text_style _style{};
   leaf       _text{};
   branch     _children{}; // A node is a leaf when this is empty.
 
-  void append_plain_text(string_type& result) const {
-    if (_text) result.append(*_text);
-    for (const auto& child : _children)
-      child.append_plain_text(result);
-  }
+  void append_plain_text(string_type& result) const;
 
  public:
-  basic_styled_text() = default;
+  constexpr basic_styled_text() noexcept = default;
 
   basic_styled_text(string_type text, const text_style& style = {})
     TJG_NOEXCEPT_UNLESS_BAD_ALLOC
@@ -90,9 +88,9 @@ private:
     return *this;
   }
 
-  auto style() const noexcept -> text_style { return _style; }
+  constexpr auto style() const noexcept -> text_style { return _style; }
 
-  auto style(text_style value) noexcept -> basic_styled_text& {
+  constexpr auto style(text_style value) noexcept -> basic_styled_text& {
     _style = value;
     return *this;
   }
@@ -100,24 +98,18 @@ private:
   /**
    * Applies `overrides` recursively in place, skipping absolute nodes and
    * their entire subtrees. Preserves text and tree structure. Specified
-   * colors replace matching channels; emphasis bits are combined by OR.
+   * colors replace matching channels; emphasis attributes are combined.
    * Returns this node for chaining.
    * To overlay only this node, use style(style().overlay(overrides)).
    */
-  auto overlay(text_style overrides) noexcept -> basic_styled_text& {
-    if (_style.is_absolute()) return *this;
-    _style.overlay(overrides);
-    for (auto& child : _children)
-      child.overlay(overrides);
-    return *this;
-  }
+  auto overlay(text_style overrides) noexcept -> basic_styled_text&;
 
   /**
    * Underlays this node's style in place, leaving its text and children intact.
-   * Specified colors replace unspecified matching channels; emphasis bits are
-   * combined by OR. Returns a reference to this node for chaining.
+   * Specified colors replace unspecified matching channels; emphasis attributes
+   * are combined. Returns a reference to this node for chaining.
    */
-  auto underlay(text_style style) noexcept -> basic_styled_text& {
+  constexpr auto underlay(text_style style) noexcept -> basic_styled_text& {
     _style.underlay(style);
     return *this;
   }
@@ -130,30 +122,14 @@ private:
    * applying styles. Preserves embedded nulls and escapes without interpreting
    * them. Does not modify this value. Allocation can throw.
    */
-  [[nodiscard]] auto plain_text() const -> string_type {
-    auto result = string_type{};
-    append_plain_text(result);
-    return result;
-  }
+  [[nodiscard]] auto plain_text() const -> string_type;
 
-  auto operator+=(basic_styled_text rhs) -> basic_styled_text& {
-    if (rhs.empty()) return *this;
-    if (empty()) return *this = std::move(rhs);
-    if (!_children.empty() && _style.empty()) {
-      _children.push_back(std::move(rhs));
-      return *this;
-    }
-    auto children = branch{};
-    // Allocate before moving either operand. The following moves cannot throw.
-    children.reserve(2);
-    children.push_back(std::move(*this));
-    children.push_back(std::move(rhs));
-    _children = std::move(children);
-    return *this;
-  } // operator+=
+  auto operator+=(basic_styled_text rhs) -> basic_styled_text&; // operator+=
 
   friend
-  bool operator==(const basic_styled_text& lhs, const basic_styled_text& rhs) {
+  bool operator==(const basic_styled_text& lhs, const basic_styled_text& rhs)
+    noexcept
+  {
     if (lhs._style != rhs._style || lhs._children != rhs._children)
       return false;
     return lhs._text == rhs._text
@@ -162,6 +138,7 @@ private:
 
   friend
   bool operator!=(const basic_styled_text& lhs, const basic_styled_text& rhs)
+    noexcept
   { return !(lhs == rhs); }
 
   friend auto operator+(basic_styled_text lhs, basic_styled_text rhs)
@@ -174,6 +151,26 @@ private:
 
 using styled_text  = basic_styled_text<char>;
 using wstyled_text = basic_styled_text<wchar_t>;
+
+/**
+ * Wraps text into unpadded display lines, preserving nested and absolute styles.
+ * Width must be at least 16; otherwise throws std::invalid_argument, even for
+ * empty input. Leaves the input unchanged. Removes ANSI sequences per span,
+ * normalizes whitespace, and discards remaining C0/C1 controls. Newlines force
+ * breaks; trailing whitespace and trailing blank lines are removed.
+ * Breaks after eligible Unicode punctuation or at whitespace. Oversized words
+ * are split at decoded character boundaries with a styled ASCII hyphen.
+ * Uses the UTF-8 formatter's one/two-column model for both character types;
+ * malformed code units are preserved and count as one column each.
+ */
+[[nodiscard]]
+auto word_wrap(const styled_text& text, std::size_t width)
+  -> std::vector<styled_text>;
+
+/// Wide-character overload; decodes UTF-16 or UTF-32 independently per span.
+[[nodiscard]]
+auto word_wrap(const wstyled_text& text, std::size_t width)
+  -> std::vector<wstyled_text>;
 
 namespace detail {
 
@@ -193,7 +190,7 @@ auto to_styled_text(S&& text) -> basic_styled_text<Char>
 /**
  * Returns styled text with `overrides` applied recursively, skipping absolute
  * nodes and their entire subtrees. Specified colors replace matching channels;
- * Emphasis bits are combined by OR. Accepts styled text, character strings,
+ * Emphasis attributes are combined. Accepts styled text, character strings,
  * and std::basic_string. String
  * inputs become owned leaves. Styled-text lvalues copy their structure;
  * rvalues move it. Only the returned value is modified.

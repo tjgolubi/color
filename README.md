@@ -1,12 +1,13 @@
 # {color}
 
-{color} is a standalone C++23 header library for terminal colors and text
+{color} is a standalone C++23 library for terminal colors and text
 styles. It uses `std::format` and `std::print`, with APIs in namespace `tjg::color`.
 
 ## Quick start
 
-Add this checkout's `include/` directory to your compiler's include path.
-Use a C++23 compiler and standard library with `<format>` and `<print>`.
+Build the static library and link your application to it using the
+[CMake instructions](#cmake) below. Use a C++23 compiler and standard library
+with `<format>` and `<print>`.
 
 ```cpp
 #include <tjg/color.hpp>
@@ -42,12 +43,13 @@ that only needs the value types or string utilities. Headers in
 
 ## CMake
 
-Configure the project from the repository root to install the headers and the
-`tjg::tjg` CMake target.
+Use CMake 3.31 or later. Configure and build the project from the repository
+root, then install the headers, static archive, and `tjg::tjg` CMake target.
 
 ```sh
-cmake -S . -B build/color-install
-cmake --install build/color-install --prefix /path/to/install
+cmake -S . -B build/color-install -DCMAKE_BUILD_TYPE=Release
+cmake --build build/color-install --config Release
+cmake --install build/color-install --config Release --prefix /path/to/install
 ```
 
 In your application, point `CMAKE_PREFIX_PATH` at the install prefix and add
@@ -57,6 +59,18 @@ the following to its CMake file.
 find_package(tjg CONFIG REQUIRED)
 target_link_libraries(my_app PRIVATE tjg::tjg)
 ```
+
+The target supplies the headers, C++23 requirement, and archive automatically.
+CMake uses the platform's standard static-library name: `libcolor.a` on
+Unix and MSYS2, or `color.lib` with MSVC. For a multi-configuration generator,
+use the same `--config Release` when installing as when building.
+
+For a direct GCC build, add the installed `include/` and `lib/` directories
+and link with `-lcolor` after your application's objects. Compile-time color
+and style operations and iterator-dependent formatting remain defined in
+headers. Runtime functions, text parsing, and private Unicode data are
+implemented in the archive. Policy macros must have consistent definitions
+when building the library and its consumers.
 
 ## Regression tests
 
@@ -79,6 +93,9 @@ cmake --build build --target doc
 
 Open `build/doc-html/index.html`. The first documentation build installs the
 pinned Python packages into a virtual environment under `build/`.
+
+For a local server that refreshes as you edit, see the
+[preview-server instructions](support/color-pages.md#local-preview-server).
 
 - [Color user guide](https://tjgolubi.github.io/color/)
 - [Color user guide source](doc/index.md)

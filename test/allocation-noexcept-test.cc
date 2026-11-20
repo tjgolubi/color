@@ -40,6 +40,8 @@ TEST(allocation_noexcept_test, decoding_errors_still_throw) {
 template <typename Char> constexpr bool check_tree_policy() {
   using text = tjg::color::basic_styled_text<Char>;
   using string = std::basic_string<Char>;
+  static_assert(!noexcept(tjg::color::word_wrap(
+    std::declval<const text&>(), 16)));
   static_assert(std::is_nothrow_constructible_v<text, string> ==
                 allocation_noexcept);
   static_assert(std::is_nothrow_copy_constructible_v<text> ==
@@ -48,14 +50,24 @@ template <typename Char> constexpr bool check_tree_policy() {
   static_assert(noexcept(tjg::color::strip_ansi(std::declval<text>())) ==
                 allocation_noexcept);
   // Existing unconditional guarantees stay intact.
+  static_assert(std::is_nothrow_default_constructible_v<text>);
   static_assert(std::is_nothrow_move_constructible_v<text>);
   static_assert(std::is_nothrow_move_assignable_v<text>);
+  static_assert(noexcept(std::declval<const text&>() ==
+                        std::declval<const text&>()));
+  static_assert(noexcept(std::declval<const text&>() !=
+                        std::declval<const text&>()));
   static_assert(!noexcept(std::declval<const text&>().plain_text()));
   static_assert(!noexcept(std::declval<text&>() += std::declval<text>()));
   return true;
 }
 static_assert(check_tree_policy<char>());
 static_assert(check_tree_policy<wchar_t>());
+
+TEST(allocation_noexcept_test, default_styled_text_is_empty) {
+  EXPECT_TRUE(tjg::color::styled_text{}.empty());
+  EXPECT_TRUE(tjg::color::wstyled_text{}.empty());
+}
 
 TEST(allocation_noexcept_test, copy_and_strip_tree) {
   auto original = tjg::color::styled_text{std::string{"left\x1b[31m"}, tjg::color::bold()};

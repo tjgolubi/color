@@ -12,8 +12,8 @@ With `<tjg/color.hpp>`, `{}` emits the style's SGR escape sequence.
 An empty style emits an empty string. Use `{:?}` for compact readable notation.
 Direct stream insertion writes the style's SGR sequence without a trailing
 reset. For this operation, an empty `text_style{}` writes a reset instead of
-an empty sequence. It uses a fixed-capacity inline buffer and preserves pending
-`std::setw`, fill, alignment, and precision settings.
+an empty sequence. Stream insertion preserves pending `std::setw`, fill,
+alignment, and precision settings.
 
 ```cpp
 using namespace tjg::color;
@@ -131,8 +131,8 @@ with attributes combines the reset and attributes in one sequence, such as
 returns `text_style&` for chaining. The incoming foreground and background
 replace their matching channels independently, preserving each color's kind.
 An incoming `no_color` leaves the existing channel unchanged; a specified black
-color replaces it. Emphasis bits combine by OR, so an overlay can add attributes
-but cannot remove them. An empty overlay leaves the style unchanged.
+color replaces it. Emphasis attributes are combined, so an overlay can add
+attributes but cannot remove them. An empty overlay leaves the style unchanged.
 
 The result is absolute if either input is absolute. This preserves the reset
 requirement while allowing explicit changes to an absolute style's attributes.
@@ -172,9 +172,9 @@ auto combined = overlay(base, overrides);
 ### Underlaying styles
 
 `style.underlay(defaults)` fills unspecified foreground and background channels
-from `defaults`, preserving colors already specified in `style`. Emphasis bits
-combine by OR, and the result is absolute if either input is absolute. This
-explicitly modifies a style value; it performs no inheritance or ANSI output.
+from `defaults`, preserving colors already specified in `style`. Emphasis
+attributes are combined, and the result is absolute if either input is absolute.
+This explicitly modifies a style value; it performs no inheritance or ANSI output.
 The member is `noexcept` and returns `text_style&` for chaining.
 
 The free `tjg::color::underlay(base, defaults)` returns the combined style without
@@ -200,9 +200,10 @@ For structured text, see
 
 Use constructors or fluent setters to select foreground, background, and emphasis.
 Use `overlay` to replace specified colors, `underlay` to fill unspecified colors,
-and `blend` to average them. These named operations combine emphasis bits by OR.
-Bitwise OR is available for [RGB values](colors.md#combining-rgb-values) and
-[emphasis masks](#combining-emphasis-attributes).
+and `blend` to average them. These named operations combine emphasis attributes.
+Use `operator|` and `operator|=` to combine
+[RGB values](colors.md#combining-rgb-values) or
+[emphasis attributes](#combining-emphasis-attributes).
 
 ```cpp
 using namespace tjg::color;

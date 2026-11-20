@@ -13,7 +13,6 @@
 #include <format>
 #include <iterator>
 #include <limits>
-#include <string>
 #include <string_view>
 #include <utility>
 
@@ -43,7 +42,7 @@ class styled_text_renderer {
   std::size_t _remaining = 0;
   bool _stopped = false;
 
-  void reset() {
+  void reset() noexcept {
     _remaining = _specs.precision;
     _stopped = false;
   }
@@ -96,14 +95,14 @@ class styled_text_renderer {
     std::size_t width;
   };
 
-  auto take(std::basic_string_view<Char> text) -> styled_text_prefix {
+  auto take(std::basic_string_view<Char> text) noexcept -> styled_text_prefix {
     const auto prefix = tjg::color::detail::unicode::text_prefix(text, _remaining);
     _remaining -= prefix.second;
     _stopped = (prefix.first < text.size() || _remaining == 0);
     return {prefix.first, prefix.second};
   } // take
 
-  auto measure(const basic_styled_text<Char>& node) -> std::size_t {
+  auto measure(const basic_styled_text<Char>& node) noexcept -> std::size_t {
     if (node.empty() || _stopped)
       return 0;
     if (node._children.empty())
@@ -155,15 +154,13 @@ class styled_text_renderer {
   } // write_node
 
  public:
-  explicit styled_text_renderer(const string_format_specs<Char>& specs)
+  explicit styled_text_renderer(const string_format_specs<Char>& specs) noexcept
     : _specs{specs}, _remaining{specs.precision}, _stopped{false} { }
 
   // Shared by the formatter and ostream bridge. Options are already resolved;
   // stream insertion never builds or parses a format-specification string.
   template<std::output_iterator<Char> OutputIt>
-  auto format(const basic_styled_text<Char>& value, OutputIt out)
-    -> OutputIt
-  {
+  auto format(const basic_styled_text<Char>& value, OutputIt out) -> OutputIt {
     if (_specs.debug)
       return write_debug(value, std::move(out));
 

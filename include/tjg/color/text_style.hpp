@@ -27,7 +27,7 @@ namespace tjg::color {
  *
  * Default construction produces an empty style. Use `fg()`, `bg()`, and
  * emphasis values to construct styles, and `blend()` to combine them.
- * Blending combines emphasis bits by OR and averages the specified colors
+ * Blending combines emphasis attributes and averages the specified colors
  * independently for the foreground and background, ignoring unspecified colors.
  *
  * **Example:
@@ -110,7 +110,7 @@ class text_style {
    *
    * Specified foreground and background colors in `other` replace the matching
    * channels, preserving their color kinds. Unspecified channels leave this
-   * style's colors unchanged. Emphasis bits are combined by OR. The result is
+   * style's colors unchanged. Emphasis attributes are combined. The result is
    * absolute if either input is absolute.
    */
   constexpr auto overlay(const text_style& other) noexcept -> text_style& {
@@ -125,8 +125,8 @@ class text_style {
    * Applies `other` under this style.
    *
    * Specified colors in `other` fill matching unspecified channels.
-   * Existing colors in this style are preserved. Emphasis bits are combined by
-   * OR. The result is absolute if either input is absolute.
+   * Existing colors in this style are preserved. Emphasis attributes are
+   * combined. The result is absolute if either input is absolute.
    */
   constexpr auto underlay(const text_style& other) noexcept -> text_style& {
     _absolute = _absolute || other._absolute;
@@ -412,7 +412,7 @@ auto strike(text_style style, bool enable = true) noexcept -> text_style
  * Returns a copy of `base` with `overrides` applied, leaving both inputs
  * unchanged. Specified colors in `overrides` replace matching channels and
  * preserve their kinds; unspecified channels retain the base colors.
- * Emphasis bits are combined by OR. The result is absolute if either input is.
+ * Emphasis attributes are combined. The result is absolute if either input is.
  */
 [[nodiscard]] constexpr inline
 auto overlay(text_style base, text_style overrides) noexcept -> text_style
@@ -422,7 +422,7 @@ auto overlay(text_style base, text_style overrides) noexcept -> text_style
  * Returns a copy of `base` with `defaults` applied, leaving both inputs
  * unchanged. Specified colors in `defaults` replace matching unspecified
  * channels and preserve their kinds. Other channels retain the base colors.
- * Emphasis bits are combined by OR. The result is absolute if either input is.
+ * Emphasis attributes are combined. The result is absolute if either input is.
  */
 [[nodiscard]] constexpr inline
 auto underlay(text_style base, text_style defaults) noexcept -> text_style
@@ -468,7 +468,7 @@ struct style_blend_state {
 
 /**
  * Blends two or more text styles, averaging each color channel independently
- * and combining emphasis bits by OR. Unspecified colors do not contribute.
+ * and combining emphasis attributes. Unspecified colors do not contribute.
  * Each channel preserves its kind with one specified color, holds RGB with
  * two or more, and remains unspecified with none. The arguments are unchanged.
  * The result is relative, even when an input is absolute.

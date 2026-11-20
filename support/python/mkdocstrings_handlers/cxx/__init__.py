@@ -43,6 +43,7 @@ class Definition:
         self.desc: "list[ET.Element[str]] | None" = None
         self.id: "str | None" = name if not is_member else None
         self.members: "list[Definition] | None" = None
+        self.member_group: "str | None" = None
         self.params: "list[Definition] | None" = None
         self.template_params: "list[Definition] | None" = None
         self.trailing_return_type: "str | None" = None
@@ -394,6 +395,7 @@ class CxxHandler(BaseHandler):
             XML_OUTPUT       = "{0}"
             QUIET            = YES
             AUTOLINK_SUPPORT = NO
+            JAVADOC_AUTOBRIEF = YES
             MACRO_EXPANSION  = YES
             PREDEFINED       = TJG_NOEXCEPT_UNLESS_BAD_ALLOC=
             """.format(xml_dir.as_posix()).encode("utf-8")
@@ -446,7 +448,18 @@ class CxxHandler(BaseHandler):
         ) + node.findall('sectiondef[@kind="public-func"]/memberdef')
         if color_reference:
             members += node.findall('sectiondef[@kind="friend"]/memberdef')
+        member_groups: "dict[str, str]" = {}
+        for section in node.findall('sectiondef[@kind="user-defined"]'):
+            title = section.findtext("header", "")
+            for m in section.findall("memberdef"):
+                member_groups[m.get("id", "")] = title
+                members.append(m)
+        seen_members: "set[str]" = set()
         for m in members:
+            member_id = m.get("id", "")
+            if member_id in seen_members:
+                continue
+            seen_members.add(member_id)
             if m.get("prot") == "private":
                 continue
             name = m.find("name")
@@ -464,6 +477,7 @@ class CxxHandler(BaseHandler):
             if kind == "friend":
                 kind = "function"
             member = Definition(name if name else "", kind=kind, is_member=True)
+            member.member_group = member_groups.get(member_id)
             type_ = m.find("type")
             if type_ is None:
                 raise ValueError
@@ -627,9 +641,16 @@ class CxxHandler(BaseHandler):
                     text += "</tr>"
                 text += "</tbody></table>"
         if d.members is not None:
+            last_group = None
             for m in d.members:
                 if m.name in options.get("exclude_members", []):
                     continue
+                if m.member_group and m.member_group != last_group:
+                    anchor = re.sub(r"[^a-z0-9]+", "-",
+                                    f"{d.id}-{m.member_group}".lower()).strip("-")
+                    text += str(self.do_heading(Markup(escape(m.member_group)), 3,
+                                                id=anchor, skip_inventory=True))
+                last_group = m.member_group
                 text += self.render(m, options, locale=locale)
         text += "</div>\n"
         text += "</div>\n"

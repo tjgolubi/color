@@ -6,7 +6,6 @@
 #pragma once
 
 #include <tjg/color/styled_text.hpp>
-#include <tjg/strip_ansi.hpp>
 
 #include <string>
 #include <string_view>
@@ -15,27 +14,8 @@ namespace tjg::color {
 
 namespace detail {
 
-struct styled_text_ansi_stripper {
-  template<CharType Char>
-  static void strip(basic_styled_text<Char>& text) TJG_NOEXCEPT_UNLESS_BAD_ALLOC
-  {
-    if (!text._children.empty()) {
-      for (auto& child : text._children)
-        strip(child);
-    } else if (text._text) {
-      auto stripped =
-              tjg::strip_ansi<Char>(std::basic_string_view<Char>{*text._text});
-      if (stripped == *text._text)
-        return;
-      if (stripped.empty()) {
-        text._text.reset();
-      } else {
-        text._text =
-          std::make_shared<const std::basic_string<Char>>(std::move(stripped));
-      }
-    }
-  }
-}; // styled_text_ansi_stripper
+void strip_styled_ansi(styled_text& text);
+void strip_styled_ansi(wstyled_text& text);
 
 } // detail
 
@@ -50,7 +30,7 @@ template<CharType Char>
 auto strip_ansi(basic_styled_text<Char> input) TJG_NOEXCEPT_UNLESS_BAD_ALLOC
   -> basic_styled_text<Char>
 {
-  detail::styled_text_ansi_stripper::strip(input);
+  detail::strip_styled_ansi(input);
   return input;
 }
 

@@ -1,19 +1,20 @@
 # Terminal Colors and Text Styles
 
-Include `<tjg/color.hpp>` to combine foreground and background
-colors with emphasis, style individual arguments, and produce formatted strings
-or output.
+This {color} library allows you to easily and readably add add color and
+emphasis, such as bold and underline, to your console C++23 programs.
+In this document, "text-style" means foreground and background color, together
+with emphasis attributes.  "Styled-text", means text along with its associated
+text-style.
 
-The library API lives in namespace `tjg::color` and targets C++23.
-Text utilities and SGR helpers use `std::basic_string_view`, including
-`std::string_view` and `std::wstring_view`. Formatting and printing use
-`std::format` and `std::print`. The library uses `<tjg/...>` headers.
-Color and styling APIs live in `tjg::color`; general utilities remain in `tjg`.
-Use `using namespace tjg::color;` locally for concise styled-text expressions.
-The repository's root CMake project provides the installable `tjg::tjg` target.
-The library implements styled-text format specs, UTF-8 decoding, width
-estimates, and debug escaping. `tjg::color::color_t` stores an unspecified color,
-an RGB value, or a terminal, cube, or gray palette color in one public type.
+The {color} library is enabled by using `#include <tjg/color.hpp>`.  The library
+API lives in namespace `tjg::color` and targets C++23.  Formatting and printing
+use `std::format` and `std::print`.  Color and styling APIs live in
+`tjg::color`.  Use `using namespace tjg::color;` locally for concise styled-text
+expressions.  The repository's root CMake project provides the installable
+`tjg::tjg` target.  The library implements styled-text format specs, UTF-8
+decoding, width estimates, and debug escaping. `tjg::color::color_t` stores an
+unspecified color, an RGB value, or a terminal, cube, or gray palette color in
+one public type.
 
 Convenience is a major design goal. The API deliberately provides several ways
 to express common styling operations: constructors for complete styles, fluent
@@ -28,19 +29,23 @@ configuration.
 
 int main() {
   using namespace tjg::color;
+  using enum term_color;
   auto result = 42;
   auto style = fg(rgb::forest_green).bold();
-  println(style, "The result is {}.", result);
-  std::println("The result is {}.", styled(result, fg(term_color::red)));
+  println(style, "The result is {} bytes.", result);
+  std::println("The result is {} bytes.", styled(result, fg(red)));
 }
 ```
 
-<pre class="color-output"><span style="color: #228B22; font-weight: bold">The result is 42.</span>
-The result is <span style="color: #CD0000">42</span>.</pre>
-
-Illustrative output using Xterm's default red (`#CD0000`) for the terminal color.
+<pre class="color-output"><span style="color: #228B22; font-weight: bold">The result is 42 bytes.</span>
+The result is <span style="color: #CD0000">42</span> bytes.</pre>
 
 The first call styles the entire message. The second styles only `42`.
+
+## Demonstration Programs
+
+The [Demos page](demos.md) lists all eight programs and includes walkthroughs
+for StyledTextDemo, TableDemo, and WrapTable.
 
 ## Headers
 
@@ -49,15 +54,14 @@ The first call styles the entire message. The second styles only `42`.
 | `<tjg/color.hpp>`             | The full library, including formatting and streams |
 | `<tjg/color/colors.hpp>`      | Color values, named colors, and `color_t`          |
 | `<tjg/color/text_style.hpp>`  | Color values, emphasis, and `text_style`           |
-| `<tjg/color/styled_text.hpp>` | Nested groups of styled text and their composition     |
+| `<tjg/color/styled_text.hpp>` | Nested groups of styled text and their composition |
 | `<tjg/backslash.hpp>`         | Backslash escaping and unescaping for strings      |
 | `<tjg/strip_ansi.hpp>`        | ANSI escape removal from strings                   |
-| `<tjg/inline_buffer.hpp>`     | Fixed-capacity character buffers                   |
 | `<tjg/hash_support.hpp>`      | Hash values and hash combination                   |
 | `<tjg/utility.hpp>`           | Character-type concept and cast helpers            |
 
 The narrower headers can be used without formatting, printing, or
-stream support. Headers under `tjg/color/bits/` are implementation headers.
+stream support.
 
 ## Reference
 
@@ -178,7 +182,7 @@ text](styled.md#structured-styled-text): concatenate complete spans with `+` or
 colors. Use `overlay` to replace specified colors throughout relative text and
 nested groups; absolute scopes are protected.
 
-See the [table demonstration](styled.md#table-demonstration) for a complete
+See the [TableDemo walkthrough](table-demo.md) for a complete
 example combining column defaults, row emphasis, absolute spans, UTF-8 display
 widths, and fixed-width formatting, with build and run instructions.
 
@@ -232,25 +236,3 @@ values that keep their own text, including nested styles, padding, truncation,
 dynamic specifications, and `?` inspection of text and groups. The `?`
 presentation rejects width and precision. Formatting reports invalid runtime
 specifications through `std::format_error`.
-
-## Inline buffer
-
-`<tjg/inline_buffer.hpp>` provides `tjg::basic_inline_buffer<Char, Size>` and
-its `char` alias, `tjg::inline_buffer`. The buffer stores up to `Size`
-characters inline, with a default capacity of 256. SGR construction uses a
-60-character buffer.
-
-Use `view()` to read the contents, `push_back` or `append` to write, and
-`clear()` to reuse the buffer. The caller supplies enough capacity for each
-write. Use the view or the buffer's size to determine the end of the output.
-
-Runtime construction leaves the character storage uninitialized. Copies copy
-only the populated characters. `resize(size, fill)` fills newly exposed
-characters with `fill`, which defaults to zero. Use
-`resize_and_overwrite(limit, op)` to let a producer such as `std::fread` write
-directly into the buffer. The callable receives a pointer and the limit, and
-returns the number of initialized characters to keep.
-
-::: tjg::basic_inline_buffer
-    options:
-      color_reference: true

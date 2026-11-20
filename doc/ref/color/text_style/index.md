@@ -1,0 +1,25 @@
+# [Header `<tjg/color/text_style.hpp>`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/text_style.hpp)
+
+Foreground, background, and emphasis value types and operations.
+
+[API reference](../../index.md) · [`<tjg/color.hpp>`](../index.md)
+
+## Declarations
+
+- [`tjg::color::absolute`](absolute.md)
+- [`tjg::color::bg`](bg.md)
+- [`tjg::color::blend`](blend.md)
+- [`tjg::color::blink`](blink.md)
+- [`tjg::color::bold`](bold.md)
+- [`tjg::color::conceal`](conceal.md)
+- [`tjg::color::emphasis`](emphasis.md)
+- [`tjg::color::faint`](faint.md)
+- [`tjg::color::fg`](fg.md)
+- [`tjg::color::italic`](italic.md)
+- [`tjg::color::overlay`](overlay.md)
+- [`tjg::color::reverse`](reverse.md)
+- [`tjg::color::strike`](strike.md)
+- [`tjg::color::text_style`](text_style/index.md)
+- [`tjg::color::underlay`](underlay.md)
+- [`tjg::color::underline`](underline.md)
+- [`std::hash<tjg::color::text_style>`](hash/index.md)

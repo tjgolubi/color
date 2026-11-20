@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.31)
 
 foreach (required TJG_SOURCE_DIR TJG_TEST_BINARY_DIR TJG_CXX_COMPILER
                   TJG_GENERATOR)
@@ -39,6 +39,7 @@ file(COPY "${TJG_SOURCE_DIR}/CMakeLists.txt"
      "${TJG_SOURCE_DIR}/color-config.cmake.in" "${TJG_SOURCE_DIR}/LICENSE"
      "${TJG_SOURCE_DIR}/THIRD-PARTY-NOTICES" DESTINATION "${source}")
 file(COPY "${TJG_SOURCE_DIR}/include/tjg" DESTINATION "${source}/include")
+file(COPY "${TJG_SOURCE_DIR}/src" DESTINATION "${source}")
 
 run("${CMAKE_COMMAND}"
     -S

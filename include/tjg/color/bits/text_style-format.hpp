@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <system_error>
 #include <exception>
 #include <concepts>
 #include <type_traits>
@@ -31,10 +30,7 @@
 
 namespace tjg::color::detail {
 
-[[nodiscard]] inline auto get_style_state() -> text_style& {
-  static text_style _state{};
-  return _state;
-}
+[[nodiscard]] auto get_style_state() -> text_style&;
 
 class style_scope {
   text_style _saved;
@@ -94,7 +90,7 @@ struct formatter<tjg::color::text_style, Char>
     if (value.empty())
       return ctx.out();
 
-    auto sgr = tjg::color::sgr_buffer{};
+    auto sgr = tjg::color::detail::sgr_buffer{};
     tjg::color::detail::append_sgr(sgr, value);
     return std::copy(sgr.begin(), sgr.end(), ctx.out());
   }
@@ -204,7 +200,7 @@ auto vformat_to(OutputIt out, text_style style,
  * The colored analog of
  * [std::vformat_to()](https://en.cppreference.com/w/cpp/utility/format/vformat_to.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  */
@@ -234,15 +230,7 @@ auto vformat_to(OutputIt out, const std::locale& loc, text_style style,
 
 namespace detail {
 
-inline void write_file(FILE* f, const char* data, std::size_t size)
-{
-  auto count = std::fwrite(data, 1, size, f);
-  if (count == size)
-    return;
-  const auto ec = std::make_error_code(std::io_errc::stream);
-  const auto x =std::system_error{ec, "writing SGR"};
-  TJG_THROW(x);
-}
+void write_file(FILE* f, const char* data, std::size_t size);
 
 } // detail
 
@@ -250,46 +238,30 @@ inline void write_file(FILE* f, const char* data, std::size_t size)
  * The colored analog of
  * [std::vprint_nonunicode()](https://en.cppreference.com/w/cpp/io/vprint_nonunicode.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  */
-inline void vprint_nonunicode(FILE* f, text_style ts, std::string_view fmt,
-                              std::format_args args)
-{
-  auto writer = [&](const char* data, std::size_t size)
-                { detail::write_file(f, data, size); };
-
-  TJG_SGR_SCOPE(writer, ts);
-  std::vprint_nonunicode(f, fmt, args);
-}  // vprint_nonunicode
+void vprint_nonunicode(FILE* f, text_style style, std::string_view fmt,
+                      std::format_args args);
 
 /// Prints a styled message to stdout without Unicode-specific handling.
-inline void vprint_nonunicode(text_style ts, std::string_view fmt,
-                              std::format_args args)
-{ vprint_nonunicode(stdout, ts, fmt, args); }
+void vprint_nonunicode(text_style style, std::string_view fmt,
+                      std::format_args args);
 
 /// Prints a styled message using the standard Unicode output path.
-inline void vprint_unicode(FILE* f, text_style ts, std::string_view fmt,
-                           std::format_args args)
-{
-  auto writer = [&](const char* data, std::size_t size)
-                { detail::write_file(f, data, size); };
-
-  TJG_SGR_SCOPE(writer, ts);
-  std::vprint_unicode(f, fmt, args);
-}
+void vprint_unicode(FILE* f, text_style style, std::string_view fmt,
+                    std::format_args args);
 
 /// Prints a styled message to stdout using the standard Unicode output path.
-inline void vprint_unicode(text_style ts, std::string_view fmt,
-                           std::format_args args)
-{ vprint_unicode(stdout, ts, fmt, args); }
+void vprint_unicode(text_style style, std::string_view fmt,
+                    std::format_args args);
 
 /**
  * The colored analog of
  * [std::print()](https://en.cppreference.com/w/cpp/io/print.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  *
@@ -299,12 +271,12 @@ inline void vprint_unicode(text_style ts, std::string_view fmt,
  *                "Elapsed time: {0:.2f} seconds", 1.23);
  */
 template<typename... T>
-void print(FILE* f, text_style ts, std::format_string<T...> fmt, T&&... args)
+void print(FILE* f, text_style style, std::format_string<T...> fmt, T&&... args)
 {
   auto writer = [&](const char* data, std::size_t size)
                 { detail::write_file(f, data, size); };
 
-  TJG_SGR_SCOPE(writer, ts);
+  TJG_SGR_SCOPE(writer, style);
   std::print(f, fmt, std::forward<T>(args)...);
 }
 
@@ -312,7 +284,7 @@ void print(FILE* f, text_style ts, std::format_string<T...> fmt, T&&... args)
  * The colored analog of
  * [std::print()](https://en.cppreference.com/w/cpp/io/print.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  *
@@ -322,14 +294,14 @@ void print(FILE* f, text_style ts, std::format_string<T...> fmt, T&&... args)
  *                "Elapsed time: {0:.2f} seconds", 1.23);
  */
 template<typename... T>
-void print(text_style ts, std::format_string<T...> fmt, T&&... args)
-{ print(stdout, ts, fmt, std::forward<T>(args)...); }
+void print(text_style style, std::format_string<T...> fmt, T&&... args)
+{ print(stdout, style, fmt, std::forward<T>(args)...); }
 
 /**
  * The colored analog of
  * [std::println()](https://en.cppreference.com/w/cpp/io/println.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults. The newline follows the reset.
  *
@@ -339,12 +311,12 @@ void print(text_style ts, std::format_string<T...> fmt, T&&... args)
  *                  "Elapsed time: {0:.2f} seconds", 1.23);
  */
 template<typename... T>
-void println(FILE* f, text_style ts, std::format_string<T...> fmt, T&&... args)
+void println(FILE* f, text_style style, std::format_string<T...> fmt, T&&... args)
 {
   auto writer = [&](const char* data, std::size_t size)
                 { detail::write_file(f, data, size); };
 
-  print(f, ts, fmt, std::forward<T>(args)...);
+  print(f, style, fmt, std::forward<T>(args)...);
   writer("\n", 1);
 }
 
@@ -352,7 +324,7 @@ void println(FILE* f, text_style ts, std::format_string<T...> fmt, T&&... args)
  * The colored analog of
  * [std::println()](https://en.cppreference.com/w/cpp/io/println.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults. The newline follows the reset.
  *
@@ -362,35 +334,25 @@ void println(FILE* f, text_style ts, std::format_string<T...> fmt, T&&... args)
  *                  "Elapsed time: {0:.2f} seconds", 1.23);
  */
 template<typename... T>
-void println(text_style ts, std::format_string<T...> fmt, T&&... args)
-{ println(stdout, ts, fmt, std::forward<T>(args)...); }
+void println(text_style style, std::format_string<T...> fmt, T&&... args)
+{ println(stdout, style, fmt, std::forward<T>(args)...); }
 
 /**
  * The colored analog of
  * [std::vformat()](https://en.cppreference.com/w/cpp/utility/format/vformat.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  */
-inline auto vformat(text_style ts, std::string_view fmt, std::format_args args)
-  -> std::string
-{
-  auto result = std::string{};
-  auto writer = [&](const char* data, std::size_t size)
-                { result.append(data, size); };
-
-  TJG_SGR_SCOPE(writer, ts);
-  std::vformat_to(std::back_inserter(result), fmt, args);
-  scope.finish();
-  return result;
-}
+auto vformat(text_style style, std::string_view fmt, std::format_args args)
+  -> std::string;
 
 /**
  * The colored analog of
  * [std::format()](https://en.cppreference.com/w/cpp/utility/format/format.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  * Reset does not restore a previously active style.
@@ -404,15 +366,15 @@ inline auto vformat(text_style ts, std::string_view fmt, std::format_args args)
  * ```
  */
 template<typename... T>
-inline auto format(text_style ts, std::format_string<T...> fmt, T&&... args)
+inline auto format(text_style style, std::format_string<T...> fmt, T&&... args)
   -> std::string
-{ return vformat(ts, fmt.get(), std::make_format_args(args...)); }
+{ return vformat(style, fmt.get(), std::make_format_args(args...)); }
 
 /**
  * The colored analog of
  * [std::format_to()](https://en.cppreference.com/w/cpp/utility/format/format_to.html).
  *
- * If `ts` is not empty, the formatted text is preceded by SGR sequences for its
+ * If `style` is not empty, the formatted text is preceded by SGR sequences for its
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  *
@@ -423,40 +385,30 @@ inline auto format(text_style ts, std::format_string<T...> fmt, T&&... args)
  *                    tjg::color::bold().fg(tjg::color::rgb::red), "{}", 42);
  */
 template<std::output_iterator<const char&> OutputIt, typename... T>
-inline auto format_to(OutputIt out, text_style ts, std::format_string<T...> fmt,
+inline auto format_to(OutputIt out, text_style style, std::format_string<T...> fmt,
                       T&&... args)
   -> OutputIt
 {
-  return vformat_to(std::move(out), ts, fmt.get(),
+  return vformat_to(std::move(out), style, fmt.get(),
                     std::make_format_args(args...));
 }
 
-inline auto vformat(text_style ts, std::wstring_view pattern,
-                    std::wformat_args args)
-  -> std::wstring
-{
-  auto result = std::wstring{};
-  auto writer = [&](const char* data, std::size_t size)
-                { result.append(data, data + size); };
-
-  TJG_SGR_SCOPE(writer, ts);
-  std::vformat_to(std::back_inserter(result), pattern, args);
-  scope.finish();
-  return result;
-}
+auto vformat(text_style style, std::wstring_view pattern,
+             std::wformat_args args)
+  -> std::wstring;
 
 template<typename... T>
-inline auto format(text_style ts, std::wformat_string<T...> pattern,
+inline auto format(text_style style, std::wformat_string<T...> pattern,
                    T&&... args)
   -> std::wstring
-{ return vformat(ts, pattern.get(), std::make_wformat_args(args...)); }
+{ return vformat(style, pattern.get(), std::make_wformat_args(args...)); }
 
 template<std::output_iterator<const wchar_t&> OutputIt, typename... T>
-auto format_to(OutputIt out, text_style ts, std::wformat_string<T...> pattern,
+auto format_to(OutputIt out, text_style style, std::wformat_string<T...> pattern,
                T&&... args)
   -> OutputIt
 {
-  return vformat_to(std::move(out), ts, pattern.get(),
+  return vformat_to(std::move(out), style, pattern.get(),
                     std::make_wformat_args(args...));
 }
 
@@ -501,12 +453,12 @@ struct basic_styled_arg_formatter : Formatter {
 
 } // detail
 
-/** Returns a formatting argument that applies text style `ts` to `value` using
+/** Returns a formatting argument that applies text style `style` to `value` using
  * ANSI escape sequences. The underlying type's format specifications are
  * preserved, including width, alignment, and precision. Padding produced by the
  * underlying formatter is inside the styled span.
  *
- * The result borrows `value` and stores a copy of `ts`. It does not copy or own
+ * The result borrows `value` and stores a copy of `style`. It does not copy or own
  * `value`, which must remain alive whenever the result is formatted. A
  * temporary value can be used in an immediate formatting call, but storing the
  * result does not extend that temporary's lifetime.
@@ -524,9 +476,9 @@ struct basic_styled_arg_formatter : Formatter {
  *                                      .bg(tjg::color::rgb::midnight_blue)));
  */
 template<typename T>
-constexpr auto styled(const T& value, text_style ts)
+constexpr auto styled(const T& value, text_style style)
   -> detail::styled_arg<std::remove_cvref_t<T>>
-{ return detail::styled_arg<std::remove_cvref_t<T>>{value, ts}; }
+{ return detail::styled_arg<std::remove_cvref_t<T>>{value, style}; }
 
 } // tjg::color
 

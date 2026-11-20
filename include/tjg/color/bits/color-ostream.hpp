@@ -15,7 +15,6 @@
 #include <string_view>
 #include <iterator>
 #include <concepts>
-#include <limits>
 #include <type_traits>
 #include <utility>
 
@@ -51,7 +50,7 @@ template<CharType Char>
 auto operator<<(std::basic_ostream<Char>& os, const text_style& style)
   -> std::basic_ostream<Char>&
 {
-  auto buffer = basic_sgr_buffer<Char>{};
+  auto buffer = detail::basic_sgr_buffer<Char>{};
   detail::append_sgr(buffer, style.empty() ? absolute(style) : style);
   return os.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
 }
@@ -100,23 +99,15 @@ auto operator<<(std::basic_ostream<Char>& os, const styled_arg<T>& arg)
  * A nonempty style precedes the text with SGR sequences and appends a reset
  * to terminal defaults. An empty style emits no SGR sequences.
  */
-inline void vprint_nonunicode(std::ostream& os, text_style ts,
-                              std::string_view fmt, std::format_args args)
-{
-  TJG_SGR_OSTREAM_SCOPE(os, ts);
-  std::vprint_nonunicode(os, fmt, args);
-}
+void vprint_nonunicode(std::ostream& os, text_style style,
+                              std::string_view fmt, std::format_args args);
 
 /// Prints styled text using the standard Unicode stream output path.
-inline void vprint_unicode(std::ostream& os, text_style ts,
-                           std::string_view fmt, std::format_args args)
-{
-  TJG_SGR_OSTREAM_SCOPE(os, ts);
-  std::vprint_unicode(os, fmt, args);
-}
+void vprint_unicode(std::ostream& os, text_style style,
+                           std::string_view fmt, std::format_args args);
 
 /**
- * Prints formatted text to `os` using `ts`, followed by a terminal reset for
+ * Prints formatted text to `os` using `style`, followed by a terminal reset for
  * a nonempty style. Reset does not restore a previously active style.
  *
  * **Example**:
@@ -124,22 +115,22 @@ inline void vprint_unicode(std::ostream& os, text_style ts,
  *     tjg::color::print(os, tjg::color::text_style{tjg::color::emphasis::bold}, "Result: {}", 42);
  */
 template<typename... T>
-void print(std::ostream& os, text_style ts, std::format_string<T...> fmt,
+void print(std::ostream& os, text_style style, std::format_string<T...> fmt,
            T&&... args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, ts);
+  TJG_SGR_OSTREAM_SCOPE(os, style);
   std::print(os, fmt, std::forward<T>(args)...);
 }
 
 /**
- * Prints formatted text to `os` using `ts`, followed by a newline.
+ * Prints formatted text to `os` using `style`, followed by a newline.
  * A nonempty style ends with a reset to terminal defaults before the newline.
  */
 template<typename... T>
-void println(std::ostream& os, text_style ts, std::format_string<T...> fmt,
+void println(std::ostream& os, text_style style, std::format_string<T...> fmt,
              T&&... args)
 {
-  tjg::color::print(os, ts, fmt, std::forward<T>(args)...);
+  tjg::color::print(os, style, fmt, std::forward<T>(args)...);
   os.put('\n');
 }
 
@@ -150,50 +141,15 @@ void println(std::ostream& os, text_style ts, std::format_string<T...> fmt,
  * alignment; only left places padding after text.
  * Field width is consumed; other stream settings are preserved.
  */
+auto operator<<(std::ostream& os, const styled_text& value) -> std::ostream&;
+auto operator<<(std::wostream& os, const wstyled_text& value) -> std::wostream&;
+
 template<CharType Char>
 auto operator<<(std::basic_ostream<Char>& os,
                 const basic_styled_text<Char>& value)
   -> std::basic_ostream<Char>&
-{
-  auto sentry = typename std::basic_ostream<Char>::sentry{os};
-  if (!sentry)
-    return os;
+{ return operator<<(os, value); }
 
-  auto specs = detail::string_format_specs<Char>{};
-  const auto width = os.width();
-  if (width > static_cast<decltype(width)>(std::numeric_limits<int>::max()))
-    detail::standard_format_error("styled text stream width is too large");
-  if (width > 0) specs.width = static_cast<std::size_t>(width);
-  const auto fill = os.fill();
-  specs.set_fill(std::basic_string_view<Char>{&fill, 1});
-  specs.alignment =
-      ((os.flags() & std::ios_base::adjustfield) == std::ios_base::left) ? '<'
-                                                                         : '>';
-  os.width(0);
-
-  auto output = std::ostreambuf_iterator<Char>{os};
-
-  bool failed;
-#if defined(__cpp_exceptions) || defined(_CPPUNWIND)
-  try {
-#endif
-    auto renderer = detail::styled_text_renderer<Char>{specs};
-    failed = renderer.format(value, output).failed();
-#if defined(__cpp_exceptions) || defined(_CPPUNWIND)
-  } catch (...) {
-    const bool rethrow = (os.exceptions() & std::ios_base::badbit) != 0;
-    // Keep the stream buffer's exception if setstate() also throws.
-    try { os.setstate(std::ios_base::badbit); }
-    catch (...) { }
-    if (rethrow) throw;
-    return os;
-  }
-#endif
-
-  if (failed)
-    os.setstate(std::ios_base::badbit);
-  return os;
-} // << styled_text
 
 } // tjg::color
 

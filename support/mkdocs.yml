@@ -1,6 +1,11 @@
 site_name: '{color}'
 
 docs_dir: ../doc
+not_in_nav: |
+  /demos.md
+  /styled-text-demo.md
+  /table-demo.md
+  /wrap-table.md
 
 repo_url: https://github.com/tjgolubi/color
 
@@ -55,6 +60,201 @@ nav:
   - Styled arguments: styled.md
   - Styled output: print.md
   - Styled formatting: format.md
+  - API reference:
+      - Overview: ref/index.md
+      - Color:
+          - Header: ref/color/index.md
+          - ref/color/format.md
+          - ref/color/format_to.md
+          - Formatter specializations:
+              - ref/color/formatter/index.md
+              - ref/color/formatter/parse.md
+              - ref/color/formatter/format.md
+          - ref/color/operator-insertion.md
+          - ref/color/print.md
+          - ref/color/println.md
+          - ref/color/styled.md
+          - ref/color/vformat.md
+          - ref/color/vformat_to.md
+          - ref/color/vprint_nonunicode.md
+          - ref/color/vprint_unicode.md
+          - ref/color/write_debug_value.md
+          - ref/color/write_value.md
+          - Colors:
+              - Overview: ref/color/colors/index.md
+              - Xterm-default palette: ref/color/colors/xterm-palette.md
+              - Hash functions:
+                  - ref/color/colors/hash/index.md
+                  - ref/color/colors/hash/operator-call.md
+              - ref/color/colors/Color.md
+              - ref/color/colors/blend.md
+              - ref/color/colors/color.md
+              - ref/color/colors/color_t.md
+              - cube:
+                  - ref/color/colors/cube/index.md
+                  - ref/color/colors/cube/palette-index.md
+                  - ref/color/colors/cube/b.md
+                  - ref/color/colors/cube/constructor.md
+                  - ref/color/colors/cube/g.md
+                  - ref/color/colors/cube/operator-assignment.md
+                  - ref/color/colors/cube/operator-rgb.md
+                  - ref/color/colors/cube/operator-three-way-comparison.md
+                  - ref/color/colors/cube/operator-equal.md
+                  - ref/color/colors/cube/r.md
+              - gray:
+                  - ref/color/colors/gray/index.md
+                  - ref/color/colors/gray/palette-index.md
+                  - ref/color/colors/gray/constructor.md
+                  - ref/color/colors/gray/operator-assignment.md
+                  - ref/color/colors/gray/operator-rgb.md
+                  - ref/color/colors/gray/operator-three-way-comparison.md
+                  - ref/color/colors/gray/operator-equal.md
+              - ref/color/colors/name_of.md
+              - ref/color/colors/no_color.md
+              - no_color_t:
+                  - ref/color/colors/no_color_t/index.md
+                  - ref/color/colors/no_color_t/constructor.md
+                  - ref/color/colors/no_color_t/operator-assignment.md
+                  - ref/color/colors/no_color_t/operator-three-way-comparison.md
+                  - ref/color/colors/no_color_t/operator-equal.md
+              - rgb:
+                  - ref/color/colors/rgb/index.md
+                  - ref/color/colors/rgb/constructor.md
+                  - ref/color/colors/rgb/operator-assignment.md
+                  - ref/color/colors/rgb/operator-or-assignment.md
+                  - ref/color/colors/rgb/operator-or.md
+                  - ref/color/colors/rgb/operator-three-way-comparison.md
+                  - ref/color/colors/rgb/operator-equal.md
+                  - ref/color/colors/rgb/operator-value_type.md
+                  - ref/color/colors/rgb/rgb-constants.md
+              - ref/color/colors/term_color.md
+              - ref/color/colors/to_rgb.md
+          - Text styles:
+              - Overview: ref/color/text_style/index.md
+              - Hash functions:
+                  - ref/color/text_style/hash/index.md
+                  - ref/color/text_style/hash/operator-call.md
+              - ref/color/text_style/absolute.md
+              - ref/color/text_style/bg.md
+              - ref/color/text_style/blend.md
+              - ref/color/text_style/blink.md
+              - ref/color/text_style/bold.md
+              - ref/color/text_style/conceal.md
+              - ref/color/text_style/emphasis.md
+              - ref/color/text_style/faint.md
+              - ref/color/text_style/fg.md
+              - ref/color/text_style/italic.md
+              - ref/color/text_style/overlay.md
+              - ref/color/text_style/reverse.md
+              - ref/color/text_style/strike.md
+              - text_style:
+                  - ref/color/text_style/text_style/index.md
+                  - ref/color/text_style/text_style/absolute.md
+                  - ref/color/text_style/text_style/bg.md
+                  - ref/color/text_style/text_style/blink.md
+                  - ref/color/text_style/text_style/bold.md
+                  - ref/color/text_style/text_style/clear.md
+                  - ref/color/text_style/text_style/conceal.md
+                  - ref/color/text_style/text_style/constructor.md
+                  - ref/color/text_style/text_style/operator-assignment.md
+                  - ref/color/text_style/text_style/emph.md
+                  - ref/color/text_style/text_style/empty.md
+                  - ref/color/text_style/text_style/faint.md
+                  - ref/color/text_style/text_style/fg.md
+                  - ref/color/text_style/text_style/has_bg.md
+                  - ref/color/text_style/text_style/has_emph.md
+                  - ref/color/text_style/text_style/has_fg.md
+                  - ref/color/text_style/text_style/is_absolute.md
+                  - ref/color/text_style/text_style/is_blink.md
+                  - ref/color/text_style/text_style/is_bold.md
+                  - ref/color/text_style/text_style/is_conceal.md
+                  - ref/color/text_style/text_style/is_enabled.md
+                  - ref/color/text_style/text_style/is_faint.md
+                  - ref/color/text_style/text_style/is_italic.md
+                  - ref/color/text_style/text_style/is_reverse.md
+                  - ref/color/text_style/text_style/is_strike.md
+                  - ref/color/text_style/text_style/is_underline.md
+                  - ref/color/text_style/text_style/italic.md
+                  - ref/color/text_style/text_style/operator-equal.md
+                  - ref/color/text_style/text_style/operator-three-way-comparison.md
+                  - ref/color/text_style/text_style/overlay.md
+                  - ref/color/text_style/text_style/reverse.md
+                  - ref/color/text_style/text_style/set.md
+                  - ref/color/text_style/text_style/strike.md
+                  - ref/color/text_style/text_style/underlay.md
+                  - ref/color/text_style/text_style/underline.md
+              - ref/color/text_style/underlay.md
+              - ref/color/text_style/underline.md
+          - Styled text:
+              - Overview: ref/color/styled_text/index.md
+              - ref/color/styled_text/absolute.md
+              - basic_styled_text:
+                  - ref/color/styled_text/basic_styled_text/index.md
+                  - ref/color/styled_text/basic_styled_text/constructor.md
+                  - ref/color/styled_text/basic_styled_text/empty.md
+                  - ref/color/styled_text/basic_styled_text/operator-addition-assignment.md
+                  - ref/color/styled_text/basic_styled_text/operator-addition.md
+                  - ref/color/styled_text/basic_styled_text/operator-assignment.md
+                  - ref/color/styled_text/basic_styled_text/operator-equal.md
+                  - ref/color/styled_text/basic_styled_text/operator-not-equal.md
+                  - ref/color/styled_text/basic_styled_text/overlay.md
+                  - ref/color/styled_text/basic_styled_text/plain_text.md
+                  - ref/color/styled_text/basic_styled_text/style.md
+                  - ref/color/styled_text/basic_styled_text/underlay.md
+              - ref/color/styled_text/blink.md
+              - ref/color/styled_text/bold.md
+              - ref/color/styled_text/conceal.md
+              - ref/color/styled_text/faint.md
+              - ref/color/styled_text/italic.md
+              - ref/color/styled_text/overlay.md
+              - ref/color/styled_text/reverse.md
+              - ref/color/styled_text/strike.md
+              - ref/color/styled_text/styled_text.md
+              - ref/color/styled_text/underlay.md
+              - ref/color/styled_text/word_wrap.md
+              - ref/color/styled_text/underline.md
+              - ref/color/styled_text/wstyled_text.md
+          - SGR and ANSI:
+              - Overview: ref/color/sgr/index.md
+              - ref/color/sgr/basic_sgr_buffer.md
+              - ref/color/sgr/parse_styled_text.md
+              - ref/color/sgr/sgr_buffer.md
+              - ref/color/sgr/sgr_max_length.md
+              - ref/color/sgr/sgr_reset.md
+              - ref/color/sgr/sgr_reset_length.md
+              - ref/color/sgr/strip_ansi.md
+              - ref/color/sgr/to_sgr.md
+              - ref/color/sgr/wrap_sgr.md
+      - TJG utilities:
+          - Overview: ref/util/index.md
+          - ref/util/CharType.md
+          - ref/util/backslash_escape.md
+          - ref/util/backslash_escape_to.md
+          - ref/util/backslash_unescape.md
+          - ref/util/backslash_unescape_to.md
+          - basic_inline_buffer:
+              - ref/util/basic_inline_buffer/index.md
+              - ref/util/basic_inline_buffer/append.md
+              - ref/util/basic_inline_buffer/begin.md
+              - ref/util/basic_inline_buffer/clear.md
+              - ref/util/basic_inline_buffer/constructor.md
+              - ref/util/basic_inline_buffer/data.md
+              - ref/util/basic_inline_buffer/empty.md
+              - ref/util/basic_inline_buffer/end.md
+              - ref/util/basic_inline_buffer/operator-assignment.md
+              - ref/util/basic_inline_buffer/push_back.md
+              - ref/util/basic_inline_buffer/resize.md
+              - ref/util/basic_inline_buffer/resize_and_overwrite.md
+              - ref/util/basic_inline_buffer/size.md
+              - ref/util/basic_inline_buffer/view.md
+          - ref/util/enum_cast.md
+          - ref/util/hash_combine.md
+          - ref/util/hash_t.md
+          - ref/util/hash_value.md
+          - ref/util/hash_values.md
+          - ref/util/inline_buffer.md
+          - ref/util/narrow_cast.md
+          - ref/util/strip_ansi.md
 
 extra:
   generator: false

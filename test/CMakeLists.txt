@@ -64,6 +64,7 @@ foreach (
   strip-ansi
   styled-text
   styled-text-format
+  word-wrap
   parse-styled-text
   backslash
   inline-buffer)
