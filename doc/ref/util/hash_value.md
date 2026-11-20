@@ -1,4 +1,4 @@
-# `tjg::hash_value`
+# [`tjg::hash_value`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/hash_support.hpp#L47)
 
 Header: [`<tjg/hash_support.hpp>`](index.md#tjghash_supporthpp).
 

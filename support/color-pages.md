@@ -73,3 +73,23 @@ it causes `No module named 'mkdocstrings_handlers'`.
 
 For a virtual environment created by native Windows Python, use
 `build/doc-venv/Scripts/python.exe` instead of `build/doc-venv/bin/python`.
+
+## Reference source links
+
+Declaration-page titles link to the matching source revision on GitHub.
+Overload pages link to their first declaration when the overloads share a file.
+Implicit members link to their enclosing class, and collections or overloads
+spread across files link to their common header. Topic titles remain unlinked.
+
+The links use commit permalinks so later source changes do not move their
+destinations. To regenerate them, first build the guide from the intended
+committed source to refresh `build/doxyxml`, then run this in the MSYS2 shell:
+
+```sh
+python support/reference-source-links.py --revision "$(git rev-parse HEAD)"
+```
+
+Use the full source commit ID, and make sure the XML and checkout match that
+commit. Do not generate links to uncommitted source changes. Add `--check` to
+verify existing links without writing, or `--dry-run` to inspect destinations.
+Build the guide again after updating the Markdown titles.

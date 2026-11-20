@@ -1,4 +1,4 @@
-# `tjg::strip_ansi`
+# [`tjg::strip_ansi`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/strip_ansi.hpp#L84)
 
 Header: [`<tjg/strip_ansi.hpp>`](index.md#tjgstrip_ansihpp).
 

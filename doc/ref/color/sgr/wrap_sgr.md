@@ -1,4 +1,4 @@
-# `tjg::color::wrap_sgr`
+# [`tjg::color::wrap_sgr`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/bits/sgr_support.hpp#L347)
 
 Header: [`<tjg/color.hpp>`](../index.md).
 
@@ -13,7 +13,7 @@ auto wrap_sgr(const text_style& style, std::string_view sv) -> std::string;
 
 ## Description
 
-Returns the opening [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters) for `style`, the literal text `sv`, and a terminal reset. Empty text produces an empty string. An empty relative style returns a copy of the input text. Embedded nulls, braces, and escape sequences are copied without interpretation. The result can allocate.
+Returns the opening [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters) for `style`, the literal text `sv`, and a terminal reset. Empty text produces an empty string. An empty relative style returns a copy of the input text. Embedded nulls, braces, and escape sequences are copied without interpretation.
 
 For wide text, supply a `std::wstring_view` or specify `wrap_sgr<wchar_t>` explicitly.
 
@@ -34,4 +34,4 @@ Returns `std::string` and accepts inputs implicitly convertible to `std::string_
 
 ## Return value
 
-An owning string with the input character type and requested style wrapping.
+A string with the input character type and requested style wrapping.

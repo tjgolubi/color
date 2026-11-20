@@ -1,4 +1,4 @@
-// Parse ordinary ANSI SGR into owned styled text.
+// Parse ordinary ANSI SGR into styled text.
 #pragma once
 
 #include <tjg/color/styled_text.hpp>

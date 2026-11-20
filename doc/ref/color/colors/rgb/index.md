@@ -1,4 +1,4 @@
-# `tjg::color::rgb`
+# [`tjg::color::rgb`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/colors.hpp#L76)
 
 Header: [`<tjg/color/colors.hpp>`](../index.md).
 
@@ -60,6 +60,7 @@ Named colors are constexpr static members. See the [swatches](../../../../named-
 | ---                            | ---                                                         |
 | [`operator\|`](operator-or.md) | Returns the bitwise OR of corresponding channels.           |
 | [`color`](../color.md)         | Creates an RGB value from normalized channels or grayscale. |
+| [`blend`](../blend.md)         | Averages two or more colors using their RGB values.         |
 
 ## Helper classes
 

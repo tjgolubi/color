@@ -1,4 +1,4 @@
-# `tjg::color::gray`
+# [`tjg::color::gray`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/colors.hpp#L383)
 
 Header: [`<tjg/color/colors.hpp>`](../index.md).
 
@@ -35,6 +35,12 @@ See [Xterm-default palette behavior](../xterm-palette.md).
 | [`operator rgb`](operator-rgb.md)                 | Converts implicitly to `rgb`.                                          |
 | [`operator<=>`](operator-three-way-comparison.md) | Compares the gray indices and returns a `std::strong_ordering`.        |
 | [`operator==`](operator-equal.md)                 | Compares the gray index for equality.                                  |
+
+## Non-member functions
+
+| Name                   | Description                                               |
+| ---                    | ---                                                       |
+| [`blend`](../blend.md) | Averages the fixed RGB equivalents of two or more colors. |
 
 ## Helper classes
 

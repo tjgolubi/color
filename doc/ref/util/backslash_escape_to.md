@@ -1,4 +1,4 @@
-# `tjg::backslash_escape_to`
+# [`tjg::backslash_escape_to`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/backslash.hpp#L78)
 
 Header: [`<tjg/backslash.hpp>`](index.md#tjgbackslashhpp).
 

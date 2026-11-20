@@ -1,4 +1,4 @@
-# `std::formatter::format` for {color}
+# [`std::formatter::format` for {color}](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color.hpp)
 
 Type: [`std::formatter` specializations](index.md).
 

@@ -1,4 +1,4 @@
-# `tjg::basic_inline_buffer`
+# [`tjg::basic_inline_buffer`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/inline_buffer.hpp#L33)
 
 Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 

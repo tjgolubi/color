@@ -1,4 +1,4 @@
-# `tjg::color::write_debug_value`
+# [`tjg::color::write_debug_value`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/bits/emphasis-format.hpp#L56)
 
 Header: [`<tjg/color.hpp>`](index.md).
 

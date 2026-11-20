@@ -1,4 +1,4 @@
-# `tjg::color::format`
+# [`tjg::color::format`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/bits/text_style-format.hpp#L407)
 
 Header: [`<tjg/color.hpp>`](index.md).
 

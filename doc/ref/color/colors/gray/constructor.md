@@ -1,4 +1,4 @@
-# `tjg::color::gray::gray`
+# [`tjg::color::gray::gray`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/colors.hpp#L398)
 
 Type: [`tjg::color::gray`](index.md).
 

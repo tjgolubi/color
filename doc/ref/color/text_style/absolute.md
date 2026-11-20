@@ -1,4 +1,4 @@
-# `tjg::color::absolute`
+# [`tjg::color::absolute`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/text_style.hpp#L304)
 
 Header: [`<tjg/color/text_style.hpp>`](index.md).
 

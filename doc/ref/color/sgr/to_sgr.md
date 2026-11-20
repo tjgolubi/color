@@ -1,4 +1,4 @@
-# `tjg::color::to_sgr`
+# [`tjg::color::to_sgr`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/bits/sgr_support.hpp#L241)
 
 Header: [`<tjg/color.hpp>`](../index.md).
 
@@ -33,10 +33,6 @@ Both styles describe complete states. Unspecified colors mean terminal defaults 
 ## Return value
 
 A narrow string containing only the opening SGR or transition.
-
-## Notes
-
-Constructing the result can allocate.
 
 ## See also
 

@@ -1,4 +1,4 @@
-# `tjg::narrow_cast`
+# [`tjg::narrow_cast`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/utility.hpp#L16)
 
 Header: [`<tjg/utility.hpp>`](index.md#tjgutilityhpp).
 

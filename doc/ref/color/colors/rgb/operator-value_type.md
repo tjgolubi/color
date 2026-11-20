@@ -1,4 +1,4 @@
-# `tjg::color::rgb::operator value_type`
+# [`tjg::color::rgb::operator value_type`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/colors.hpp#L118)
 
 Type: [`tjg::color::rgb`](index.md).
 

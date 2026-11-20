@@ -1,4 +1,4 @@
-# Header `<tjg/color/text_style.hpp>`
+# [Header `<tjg/color/text_style.hpp>`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/text_style.hpp)
 
 Foreground, background, and emphasis value types and operations.
 

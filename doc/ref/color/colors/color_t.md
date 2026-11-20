@@ -1,4 +1,4 @@
-# `tjg::color::color_t`
+# [`tjg::color::color_t`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/colors.hpp#L519)
 
 Header: [`<tjg/color/colors.hpp>`](index.md).
 
@@ -21,3 +21,9 @@ A [`std::variant`](https://en.cppreference.com/w/cpp/utility/variant.html) that 
 | 4     | [`gray`](gray/index.md)             |
 
 Values with different alternatives remain distinct even if they produce the same RGB equivalent. Variant ordering compares the alternative index first. [`std::hash<color_t>`](hash/index.md) is provided; see also [standard variant hashing](https://en.cppreference.com/w/cpp/utility/variant/hash.html). References obtained with [`std::get`](https://en.cppreference.com/w/cpp/utility/variant/get.html) refer to storage in the variant and should not outlive it or a change of alternative.
+
+## Non-member functions
+
+| Name                | Description                                                |
+| ---                 | ---                                                        |
+| [`blend`](blend.md) | Blends specified colors while ignoring unspecified inputs. |

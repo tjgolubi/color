@@ -1,4 +1,4 @@
-# `tjg::color::text_style`
+# [`tjg::color::text_style`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/text_style.hpp#L53)
 
 Header: [`<tjg/color/text_style.hpp>`](../index.md).
 
@@ -117,6 +117,23 @@ Both composition members combine emphasis attributes and the absolute flag and r
 | ---                                               | ---                                                                                   |
 | [`operator==`](operator-equal.md)                 | Compares the stored foreground, background, emphasis, and absolute flag for equality. |
 | [`operator<=>`](operator-three-way-comparison.md) | Compares the stored style components in their declaration order.                      |
+
+## Non-member functions
+
+| Name                             | Description                                                                 |
+| ---                              | ---                                                                         |
+| [`absolute`](../absolute.md)     | Returns a copy of a style with its absolute flag set.                        |
+| [`fg`](../fg.md)                 | Returns a style with the supplied foreground color.                         |
+| [`bg`](../bg.md)                 | Returns a style with the supplied background color.                         |
+| [`bold`](../bold.md)             | Returns a style with increased intensity enabled or disabled.               |
+| [`faint`](../faint.md)           | Returns a style with decreased intensity enabled or disabled.               |
+| [`italic`](../italic.md)         | Returns a style with italic text enabled or disabled.                       |
+| [`underline`](../underline.md)   | Returns a style with underlining enabled or disabled.                       |
+| [`blink`](../blink.md)           | Returns a style with blinking enabled or disabled.                          |
+| [`reverse`](../reverse.md)       | Returns a style with reversed foreground and background enabled or disabled. |
+| [`conceal`](../conceal.md)       | Returns a style with concealment enabled or disabled.                       |
+| [`strike`](../strike.md)         | Returns a style with crossed-out text enabled or disabled.                  |
+| [`blend`](../blend.md)           | Averages foreground and background colors and combines emphasis attributes. |
 
 ## Helper classes
 

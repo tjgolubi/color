@@ -1,4 +1,4 @@
-# `tjg::color::term_color`
+# [`tjg::color::term_color`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/colors.hpp#L54)
 
 Header: [`<tjg/color/colors.hpp>`](index.md).
 
@@ -24,3 +24,9 @@ Selects one of the terminal’s 16 named palette entries. The actual colors foll
 Conversion to [`rgb`](rgb/index.md) uses the fixed Xterm-default palette. The corresponding constants are [`rgb::term_black` through `rgb::term_bright_white`](rgb/rgb-constants.md#terminal-colors). Use the named enumerators when selecting a color. See also [`name_of`](name_of.md).
 
 See [Xterm-default palette behavior](xterm-palette.md).
+
+## Non-member functions
+
+| Name                | Description                                               |
+| ---                 | ---                                                       |
+| [`blend`](blend.md) | Averages the fixed RGB equivalents of two or more colors. |

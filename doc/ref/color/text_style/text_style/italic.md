@@ -1,4 +1,4 @@
-# `tjg::color::text_style::italic`
+# [`tjg::color::text_style::italic`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/text_style.hpp#L217)
 
 Type: [`tjg::color::text_style`](index.md).
 
