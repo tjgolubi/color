@@ -12,10 +12,10 @@ A variant that holds one supported color kind. Default construction holds `no_co
 
 | Index | Type |
 | --- | --- |
-| 0 | [`no_color_t`](no_color_t.md) |
-| 1 | [`rgb`](rgb.md) |
+| 0 | [`no_color_t`](no_color_t/index.md) |
+| 1 | [`rgb`](rgb/index.md) |
 | 2 | [`term_color`](term_color.md) |
-| 3 | [`cube`](cube.md) |
-| 4 | [`gray`](gray.md) |
+| 3 | [`cube`](cube/index.md) |
+| 4 | [`gray`](gray/index.md) |
 
-Values with different alternatives remain distinct even if they produce the same RGB equivalent. Variant ordering compares the alternative index first. `std::hash<color_t>` is provided. References obtained with `std::get` refer to storage in the variant and should not outlive it or a change of alternative.
+Values with different alternatives remain distinct even if they produce the same RGB equivalent. Variant ordering compares the alternative index first. [`std::hash<color_t>`](hash/index.md) is provided. References obtained with `std::get` refer to storage in the variant and should not outlive it or a change of alternative.

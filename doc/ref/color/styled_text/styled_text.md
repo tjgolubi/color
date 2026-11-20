@@ -8,4 +8,4 @@ Header: [`<tjg/color/styled_text.hpp>`](index.md).
 using styled_text = basic_styled_text<char>;
 ```
 
-The narrow-character specialization of [`basic_styled_text`](basic_styled_text.md).
+The narrow-character specialization of [`basic_styled_text`](basic_styled_text/index.md).

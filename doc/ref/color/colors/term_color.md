@@ -19,4 +19,4 @@ Selects one of the terminal’s 16 named palette entries. The actual colors foll
 | `black` through `white` | 0–7 | 30–37 | 40–47 |
 | `gray` through `bright_white` | 8–15 | 90–97 | 100–107 |
 
-Conversion to [`rgb`](rgb.md) uses the fixed Xterm-default palette. The corresponding constants are `rgb::term_black` through `rgb::term_bright_white`. Use the named enumerators when selecting a color. See also [`name_of`](name_of.md).
+Conversion to [`rgb`](rgb/index.md) uses the fixed Xterm-default palette. The corresponding constants are `rgb::term_black` through `rgb::term_bright_white`. Use the named enumerators when selecting a color. See also [`name_of`](name_of.md).

@@ -1,6 +1,6 @@
 # `tjg::basic_inline_buffer`
 
-Header: [`<tjg/inline_buffer.hpp>`](index.md#tjginline_bufferhpp).
+Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 
 ## Synopsis
 
@@ -49,4 +49,20 @@ A character buffer with fixed inline capacity. It starts empty and maintains an 
 | `append(view)` | Appends all characters, including embedded nulls. Nonempty views must refer to external storage and fit. |
 | `append(cp)` | Appends a valid external null-terminated string, excluding the terminator. The characters must fit. |
 
-A wide buffer accepts narrow characters by widening their unsigned byte values. This operation does not decode UTF-8. See [`inline_buffer`](inline_buffer.md) for the narrow alias.
+A wide buffer accepts narrow characters by widening their unsigned byte values. This operation does not decode UTF-8. See [`inline_buffer`](../inline_buffer.md) for the narrow alias.
+
+## Member functions
+
+- [`basic_inline_buffer`](constructor.md)
+- [`operator=`](operator-assignment.md)
+- [`empty`](empty.md)
+- [`size`](size.md)
+- [`data`](data.md)
+- [`view`](view.md)
+- [`begin`](begin.md)
+- [`end`](end.md)
+- [`clear`](clear.md)
+- [`resize`](resize.md)
+- [`resize_and_overwrite`](resize_and_overwrite.md)
+- [`push_back`](push_back.md)
+- [`append`](append.md)

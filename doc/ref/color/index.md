@@ -8,7 +8,7 @@ Provides formatting, printing, styled-argument wrappers, stream insertion, and t
 
 - [`tjg::color::format`](format.md)
 - [`tjg::color::format_to`](format_to.md)
-- [`std::formatter` specializations](formatter.md)
+- [`std::formatter` specializations](formatter/index.md)
 - [`tjg::color::operator<<`](operator-insertion.md)
 - [`tjg::color::print`](print.md)
 - [`tjg::color::println`](println.md)

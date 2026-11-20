@@ -9,3 +9,5 @@ constexpr auto absolute(text_style style) noexcept -> text_style;
 ```
 
 Returns a copy of `style` with its absolute flag set. During rendering it starts from terminal defaults. See the [styled-text overload](../styled_text/absolute.md) and [`to_sgr`](../sgr/to_sgr.md).
+
+See also [`text_style::absolute`](text_style/absolute.md).

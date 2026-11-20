@@ -1,9 +1,11 @@
 # Named `tjg::color::rgb` constants
 
-Header: [`<tjg/color/colors.hpp>`](index.md).
+Type: [`tjg::color::rgb`](index.md).
 
-Each name denotes a static [`rgb`](rgb.md) member usable in constant expressions. The `term_*` entries use
-fixed Xterm-default colors. See the [swatches](../../../named-colors.md).
+Header: [`<tjg/color/colors.hpp>`](../index.md).
+
+Each name denotes a static [`rgb`](index.md) member usable in constant expressions. The `term_*` entries use
+fixed Xterm-default colors. See the [swatches](../../../../named-colors.md).
 
 | Constant | RGB |
 | --- | --- |

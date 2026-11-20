@@ -10,4 +10,6 @@ constexpr auto conceal(text_style style, bool enable = true) noexcept
   -> text_style;
 ```
 
-By default enables concealment. The first overload starts with an empty [`text_style`](text_style.md), and the second starts with a copy of `style`. Pass `false` to clear the bit in the result. See the [styled-text overload](../styled_text/conceal.md).
+By default enables concealment. The first overload starts with an empty [`text_style`](text_style/index.md), and the second starts with a copy of `style`. Pass `false` to clear the bit in the result. See the [styled-text overload](../styled_text/conceal.md).
+
+See also [`text_style::conceal`](text_style/conceal.md).

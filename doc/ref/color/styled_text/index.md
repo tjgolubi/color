@@ -7,7 +7,7 @@ Owning styled text and operations that produce styled text.
 ## Declarations
 
 - [`tjg::color::absolute`](absolute.md)
-- [`tjg::color::basic_styled_text`](basic_styled_text.md)
+- [`tjg::color::basic_styled_text`](basic_styled_text/index.md)
 - [`tjg::color::blink`](blink.md)
 - [`tjg::color::bold`](bold.md)
 - [`tjg::color::conceal`](conceal.md)

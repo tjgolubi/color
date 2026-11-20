@@ -1,6 +1,6 @@
 # `tjg::color::text_style`
 
-Header: [`<tjg/color/text_style.hpp>`](index.md).
+Header: [`<tjg/color/text_style.hpp>`](../index.md).
 
 ## Synopsis
 
@@ -51,7 +51,7 @@ public:
 };
 ```
 
-Stores optional foreground and background [`color_t`](../colors/color_t.md) values, [`emphasis`](emphasis.md), and an absolute flag. Default construction makes an empty relative style. An absolute-only style is nonempty. `clear()` restores the default and returns `*this`.
+Stores optional foreground and background [`color_t`](../../colors/color_t.md) values, [`emphasis`](../emphasis.md), and an absolute flag. Default construction makes an empty relative style. An absolute-only style is nonempty. `clear()` restores the default and returns `*this`.
 
 ## Member operations
 
@@ -66,4 +66,41 @@ Stores optional foreground and background [`color_t`](../colors/color_t.md) valu
 | `overlay(other)` | Replace matching colors with specified colors from `other`. |
 | `underlay(other)` | Fill unspecified channels with colors from `other`. |
 
-Both composition members union emphasis and absolute flags and return `*this`. Equality, ordering, and `std::hash<text_style>` include the stored colors, emphasis, and absolute flag. See the [text styles guide](../../../text-style.md) and [stream insertion](../operator-insertion.md).
+Both composition members union emphasis and absolute flags and return `*this`. Equality, ordering, and [`std::hash<text_style>`](../hash/index.md) include the stored colors, emphasis, and absolute flag. See the [text styles guide](../../../../text-style.md) and [stream insertion](../../operator-insertion.md).
+
+## Member functions
+
+- [`text_style`](constructor.md)
+- [`operator=`](operator-assignment.md)
+- [`empty`](empty.md)
+- [`clear`](clear.md)
+- [`absolute`](absolute.md)
+- [`is_absolute`](is_absolute.md)
+- [`overlay`](overlay.md)
+- [`underlay`](underlay.md)
+- [`has_fg`](has_fg.md)
+- [`has_bg`](has_bg.md)
+- [`has_emph`](has_emph.md)
+- [`fg`](fg.md)
+- [`bg`](bg.md)
+- [`emph`](emph.md)
+- [`set`](set.md)
+- [`is_enabled`](is_enabled.md)
+- [`bold`](bold.md)
+- [`is_bold`](is_bold.md)
+- [`faint`](faint.md)
+- [`is_faint`](is_faint.md)
+- [`italic`](italic.md)
+- [`is_italic`](is_italic.md)
+- [`underline`](underline.md)
+- [`is_underline`](is_underline.md)
+- [`blink`](blink.md)
+- [`is_blink`](is_blink.md)
+- [`reverse`](reverse.md)
+- [`is_reverse`](is_reverse.md)
+- [`conceal`](conceal.md)
+- [`is_conceal`](is_conceal.md)
+- [`strike`](strike.md)
+- [`is_strike`](is_strike.md)
+- [`operator==`](operator-equal.md)
+- [`operator<=>`](operator-three-way-comparison.md)

@@ -20,7 +20,7 @@ Use the direct headers below when you only need the shared utilities.
 
 ## `<tjg/inline_buffer.hpp>`
 
-- [`tjg::basic_inline_buffer`](basic_inline_buffer.md)
+- [`tjg::basic_inline_buffer`](basic_inline_buffer/index.md)
 - [`tjg::inline_buffer`](inline_buffer.md)
 
 ## `<tjg/strip_ansi.hpp>`

@@ -1,6 +1,6 @@
 # `tjg::color::basic_styled_text`
 
-Header: [`<tjg/color/styled_text.hpp>`](index.md).
+Header: [`<tjg/color/styled_text.hpp>`](../index.md).
 
 ## Synopsis
 
@@ -35,7 +35,7 @@ public:
 };
 ```
 
-Owns text together with its style. Concatenation preserves the styles of the original pieces. A relative group inherits unspecified components from its enclosing style. An absolute group starts from terminal defaults. See [`styled_text`](styled_text.md) and [`wstyled_text`](wstyled_text.md) for the narrow and wide aliases.
+Owns text together with its style. Concatenation preserves the styles of the original pieces. A relative group inherits unspecified components from its enclosing style. An absolute group starts from terminal defaults. See [`styled_text`](../styled_text.md) and [`wstyled_text`](../wstyled_text.md) for the narrow and wide aliases.
 
 ## Text inputs
 
@@ -53,4 +53,21 @@ Construct with a `string_type` or a non-null pointer to a null-terminated string
 | `operator+`, `operator+=` | Concatenate. Empty values act as identities. |
 | `operator==`, `operator!=` | Compare text, styles, and grouping. |
 
-The style mutators and `operator+=` return `*this`. Construction from text, copying, concatenation, and `plain_text()` can allocate. For rendering, include [`<tjg/color.hpp>`](../index.md). See the [structured text guide](../../../styled.md#structured-styled-text).
+The style mutators and `operator+=` return `*this`. Construction from text, copying, concatenation, and `plain_text()` can allocate. For rendering, include [`<tjg/color.hpp>`](../../index.md). See the [structured text guide](../../../../styled.md#structured-styled-text).
+
+## Member functions
+
+- [`basic_styled_text`](constructor.md)
+- [`operator=`](operator-assignment.md)
+- [`style`](style.md)
+- [`overlay`](overlay.md)
+- [`underlay`](underlay.md)
+- [`empty`](empty.md)
+- [`plain_text`](plain_text.md)
+- [`operator+=`](operator-addition-assignment.md)
+
+## Non-member functions
+
+- [`operator==`](operator-equal.md)
+- [`operator!=`](operator-not-equal.md)
+- [`operator+`](operator-addition.md)

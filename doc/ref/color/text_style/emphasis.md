@@ -14,4 +14,4 @@ constexpr auto operator|(emphasis lhs, emphasis rhs) noexcept -> emphasis;
 constexpr auto operator|=(emphasis& lhs, emphasis rhs) noexcept -> emphasis&;
 ```
 
-Combines independent text attributes as a bit mask. `none` selects no attributes. `operator|` returns the union and `operator|=` updates its left operand. The bit values are distinct from SGR parameter numbers. See [Text styles](text_style.md) and the [attribute table](../../../emphasis.md#attributes).
+Combines independent text attributes as a bit mask. `none` selects no attributes. `operator|` returns the union and `operator|=` updates its left operand. The bit values are distinct from SGR parameter numbers. See [Text styles](text_style/index.md) and the [attribute table](../../../emphasis.md#attributes).

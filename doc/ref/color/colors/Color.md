@@ -12,4 +12,4 @@ concept Color = std::same_as<std::remove_cvref_t<T>, rgb>
              || std::same_as<std::remove_cvref_t<T>, gray>;
 ```
 
-Recognizes the four concrete color types, including their const and reference forms. [`color_t`](color_t.md) and [`no_color_t`](no_color_t.md) do not satisfy it.
+Recognizes the four concrete color types, including their const and reference forms. [`color_t`](color_t.md) and [`no_color_t`](no_color_t/index.md) do not satisfy it.

@@ -19,6 +19,7 @@ Foreground, background, and emphasis value types and operations.
 - [`tjg::color::overlay`](overlay.md)
 - [`tjg::color::reverse`](reverse.md)
 - [`tjg::color::strike`](strike.md)
-- [`tjg::color::text_style`](text_style.md)
+- [`tjg::color::text_style`](text_style/index.md)
 - [`tjg::color::underlay`](underlay.md)
 - [`tjg::color::underline`](underline.md)
+- [`std::hash<tjg::color::text_style>`](hash/index.md)
