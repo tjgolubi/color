@@ -41,7 +41,7 @@ auto decode(std::basic_string_view<Char> text) noexcept
       cp = 0xffffffffu;
     return {cp, 1};
   }
-}
+} // decode
 
 enum class token_kind { text, space, newline, punctuation };
 
@@ -59,18 +59,20 @@ struct line_range {
 // Each punctuation-delimited word is inspected once. Prefix sums avoid
 // rescanning the remainder of an oversized word after each hyphenation.
 auto select_lines(const std::vector<token>& tokens, std::size_t limit)
-  TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::vector<line_range>
+    TJG_NOEXCEPT_UNLESS_BAD_ALLOC
+  -> std::vector<line_range>
 {
   auto sums = std::vector<std::size_t>{0};
   sums.reserve(tokens.size() + 1);
   for (const auto& t : tokens)
     sums.push_back(sums.back() + t.columns);
   auto lines = std::vector<line_range>{};
+
   auto emit = [&](std::size_t begin, std::size_t end, bool hyphen = false) {
     while (end > begin && tokens[end - 1].kind == token_kind::space)
       --end;
     lines.push_back({begin, end, hyphen});
-  };
+  }; // emit
 
   for (std::size_t paragraph = 0; paragraph < tokens.size();) {
     auto end = paragraph;
@@ -132,9 +134,9 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
   while (!lines.empty() && lines.back().begin == lines.back().end)
     lines.pop_back();
   return lines;
-}
+} // select_lines
 
-} // namespace
+} // local
 
 struct styled_text_word_wrapper {
   template<CharType Char>
@@ -153,7 +155,7 @@ struct styled_text_word_wrapper {
       return;
     const auto stripped = tjg::strip_ansi<Char>(*leaf.source->_text);
     const auto view = std::basic_string_view<Char>{stripped};
-    for (std::size_t pos = 0; pos < view.size();) {
+    for (std::size_t pos = 0; pos < view.size(); ) {
       const auto cp = decode(view.substr(pos));
       auto kind = token_kind::text;
       if (cp.value == '\n')
@@ -172,7 +174,7 @@ struct styled_text_word_wrapper {
       else
         leaf.text.append(view.substr(pos, cp.size));
       const auto columns = kind == token_kind::newline ? 0
-                         : kind == token_kind::space ? 1
+                         : kind == token_kind::space   ? 1
                          : unicode::display_width_of(cp.value);
       tokens.push_back({offset, leaf.text.size() - offset, columns, kind});
       pos += cp.size;
@@ -181,8 +183,8 @@ struct styled_text_word_wrapper {
 
   template<CharType Char>
   static auto collect(const basic_styled_text<Char>& text,
-                      std::vector<token>& tokens)
-    TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::vector<record<Char>>
+                      std::vector<token>& tokens) TJG_NOEXCEPT_UNLESS_BAD_ALLOC
+    -> std::vector<record<Char>>
   {
     auto records = std::vector<record<Char>>{{&text, 0, 0, {}, {}}};
     struct frame { std::size_t node, next; };
@@ -204,7 +206,7 @@ struct styled_text_word_wrapper {
       }
     }
     return records;
-  }
+  } // collect
 
   template<CharType Char>
   static auto reconstruct(const std::vector<record<Char>>& records,
@@ -255,17 +257,17 @@ struct styled_text_word_wrapper {
       }
     }
     return result;
-  }
+  } // reconstruct
 
   template<CharType Char>
-  static auto wrap(const basic_styled_text<Char>& text, std::ptrdiff_t width)
+  static auto wrap(const basic_styled_text<Char>& text, std::size_t width)
     -> std::vector<basic_styled_text<Char>>
   {
     if (width < 16)
       TJG_THROW(std::invalid_argument{"word_wrap: width must be at least 16"});
     auto tokens = std::vector<token>{};
     const auto records = collect(text, tokens);
-    const auto lines = select_lines(tokens, static_cast<std::size_t>(width));
+    const auto lines = select_lines(tokens, width);
     auto result = std::vector<basic_styled_text<Char>>{};
     result.reserve(lines.size());
     for (const auto line : lines)
@@ -278,11 +280,11 @@ struct styled_text_word_wrapper {
 
 namespace tjg::color {
 
-auto word_wrap(const styled_text& text, std::ptrdiff_t width)
+auto word_wrap(const styled_text& text, std::size_t width)
   -> std::vector<styled_text>
 { return detail::styled_text_word_wrapper::wrap(text, width); }
 
-auto word_wrap(const wstyled_text& text, std::ptrdiff_t width)
+auto word_wrap(const wstyled_text& text, std::size_t width)
   -> std::vector<wstyled_text>
 { return detail::styled_text_word_wrapper::wrap(text, width); }
 

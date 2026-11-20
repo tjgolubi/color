@@ -1,4 +1,4 @@
-# `tjg::color::word_wrap`
+# [`tjg::color::word_wrap`](https://github.com/tjgolubi/color/blob/e99d821498d9a00315bc71f28cce7d4c7fd9a4b8/include/tjg/color/styled_text.hpp#L167)
 
 Header: [`<tjg/color/styled_text.hpp>`](index.md), also available through
 [`<tjg/color.hpp>`](../index.md).
@@ -6,9 +6,9 @@ Header: [`<tjg/color/styled_text.hpp>`](index.md), also available through
 ## Synopsis
 
 ```cpp
-auto word_wrap(const styled_text& text, std::ptrdiff_t width)
+auto word_wrap(const styled_text& text, std::size_t width)
   -> std::vector<styled_text>;
-auto word_wrap(const wstyled_text& text, std::ptrdiff_t width)
+auto word_wrap(const wstyled_text& text, std::size_t width)
   -> std::vector<wstyled_text>;
 ```
 
@@ -88,8 +88,9 @@ For any valid width large enough for the text:
 
 ## Exceptions
 
-Throws `std::invalid_argument` when `width < 16`, including negative widths
-and empty or whitespace-only input. Width is checked before inspecting text.
+Throws `std::invalid_argument` when `width < 16`, even for empty or
+whitespace-only input. Width is checked before inspecting text. Validate
+signed widths before converting them to `std::size_t`.
 Allocation can throw. With exceptions disabled, invalid widths use the
 library's `TJG_THROW` failure policy.
 

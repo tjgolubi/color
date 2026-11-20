@@ -242,8 +242,8 @@ escape sequences stored in text spans are measured as text.
 
 Use `word_wrap(text, width)` to split styled text into display lines. Styles
 and nested groups stay with their text, and the original value is unchanged.
-The width must be at least 16 columns. The returned lines have no padding;
-your table or output code chooses how to align them.
+Pass a `std::size_t` width of at least 16 columns. The returned lines have no
+padding, so your table or output code chooses how to align them.
 
 ```cpp
 using namespace tjg::color;

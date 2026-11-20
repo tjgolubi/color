@@ -18,7 +18,7 @@ enum class alignment { left, center, right };
 
 struct column {
   const char* heading;
-  int width;
+  std::size_t width;
   alignment align;
   rgb background;
 
@@ -54,7 +54,7 @@ public:
                   std::string_view right) const
   {
     for (std::size_t i = 0; i < N; ++i) {
-      const auto width = static_cast<std::size_t>(_columns[i].width) + 2;
+      const auto width = _columns[i].width + 2;
       std::print("{}{:─<{}}", (i == 0) ? left : joint, "", width);
     }
     std::println("{}", right);

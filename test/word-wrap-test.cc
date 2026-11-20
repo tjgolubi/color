@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include <cstddef>
 #include <cstdint>
 
 namespace {
@@ -119,15 +120,15 @@ TYPED_TEST(WordWrap, BlankLinesPreservePaddingStyle) {
 
 TYPED_TEST(WordWrap, WidthValidatedBeforeInput) {
   using text = basic_styled_text<TypeParam>;
-  for (const auto width : {std::ptrdiff_t{-1}, std::ptrdiff_t{0},
-                          std::ptrdiff_t{15},
-                          std::numeric_limits<std::ptrdiff_t>::min()}) {
+  for (const auto width : {std::size_t{0}, std::size_t{15}}) {
     EXPECT_THROW((void)word_wrap(text{}, width), std::invalid_argument);
     EXPECT_THROW((void)word_wrap(text{ascii<TypeParam>(" \n")}, width),
                  std::invalid_argument);
   }
-  EXPECT_EQ(word_wrap(text{ascii<TypeParam>("a b")},
-                     std::numeric_limits<std::ptrdiff_t>::max()).size(), 1u);
+  const auto input = ascii<TypeParam>("a b");
+  EXPECT_EQ(plain(word_wrap(text{input},
+                           std::numeric_limits<std::size_t>::max())),
+            (std::vector{input}));
 }
 
 TYPED_TEST(WordWrap, PunctuationAndQuotes) {
@@ -298,7 +299,7 @@ TYPED_TEST(WordWrap, WidthAndContentInvariants) {
   using Char = TypeParam;
   using text = basic_styled_text<Char>;
   auto state = std::uint32_t{12345};
-  for (int trial = 0; trial < 200; ++trial) {
+  for (std::size_t trial = 0; trial < 200; ++trial) {
     auto input = std::basic_string<Char>{};
     auto content = std::basic_string<Char>{};
     for (int i = 0; i < 500; ++i) {
@@ -313,7 +314,7 @@ TYPED_TEST(WordWrap, WidthAndContentInvariants) {
     auto recovered = std::basic_string<Char>{};
     for (const auto& line : lines) {
       const auto value = line.plain_text();
-      EXPECT_LE(value.size(), static_cast<std::size_t>(width));
+      EXPECT_LE(value.size(), width);
       if (!value.empty()) {
         EXPECT_NE(value.back(), Char{' '});
       }

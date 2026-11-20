@@ -164,12 +164,12 @@ using wstyled_text = basic_styled_text<wchar_t>;
  * malformed code units are preserved and count as one column each.
  */
 [[nodiscard]]
-auto word_wrap(const styled_text& text, std::ptrdiff_t width)
+auto word_wrap(const styled_text& text, std::size_t width)
   -> std::vector<styled_text>;
 
 /// Wide-character overload; decodes UTF-16 or UTF-32 independently per span.
 [[nodiscard]]
-auto word_wrap(const wstyled_text& text, std::ptrdiff_t width)
+auto word_wrap(const wstyled_text& text, std::size_t width)
   -> std::vector<wstyled_text>;
 
 namespace detail {
