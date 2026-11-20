@@ -36,31 +36,48 @@ with nested groups, uses shorter styling expressions, and includes an SGR
 format-and-parse walkthrough. The seven demos use the current names and source
 files. `build.bash` runs the regression suite and builds the HTML guide.
 
-The GitHub Pages guide and public marketing site are current. The marketing
-site is at version 13 and its demo downloads and comparisons match `dev`.
+The last recorded marketing publication is version 13, with demo downloads
+and comparisons matching `dev`. The API reference changes on `feat/CppRef`
+have not been published to GitHub Pages.
 See [BuildAndTest.md](BuildAndTest.md) for checks and [Website.md](Website.md)
 for deployment provenance.
 
 ## API reference in review
 
-The plain-Markdown API reference is on the pushed `feat/CppRef` branch at
-`df20fe5bd8598ce295b203063fefa496bdeeef0a`. Start at
+The plain-Markdown API reference is on `feat/CppRef` at
+`0bdfa029668fb4650d619d88870784b86e3e49e3`, matching the local
+`origin/feat/CppRef` tracking ref at this inspection. Start at
 [doc/ref/index.md](https://github.com/tjgolubi/color/blob/feat/CppRef/doc/ref/index.md).
 The reference has topic and public-header indexes, dedicated API pages, and
 class folders with member pages. The existing user guide remains in `doc/`.
-The feature branch awaits Terry's review. See
-[BuildAndTest.md](BuildAndTest.md) for verification.
+The review changes are implemented: consistent sections and overload
+descriptions, linked member tables, Xterm palette guidance, public `style`
+parameter names, and reduced implementation prose. Declaration-page titles
+link to GitHub source permalinks; topic titles remain plain. The source-link
+generator and usage instructions live in `support/`.
+
+The library working tree has no tracked edits. `ViewWeb.bash` remains an
+untracked convenience script. User-guide simplification is pending Terry's
+review and instructions. See [BuildAndTest.md](BuildAndTest.md) for validation
+and CI limitations.
+
+`wrap()` was removed at Terry's instruction. Its requirements, unresolved
+choices, and implementation lessons are retained in
+[WrapDesign.md](WrapDesign.md). Read that handoff before discussing a new
+implementation; it does not authorize implementation.
 
 ## Coordination documents
 
-This README, `Workflow.md`, `BuildAndTest.md`, and `Website.md` are the current
-coordination documents for Color.
+These coordination documents live on `docs/Coord` and are committed separately
+from the library. Updating documents does not authorize committing or pushing
+them; those operations need Terry's instructions.
 
-| Document                           | Purpose                                                              |
-| ---------------------------------- | -------------------------------------------------------------------- |
-| [BuildAndTest.md](BuildAndTest.md) | Record build requirements, test procedures, and verified results.    |
-| [Website.md](Website.md)           | Record website content, publication state, and maintenance guidance. |
-| [Workflow.md](Workflow.md)         | Record working rules and repository procedures.                      |
+| Document                           | Purpose                                               |
+| ---------------------------------- | ----------------------------------------------------- |
+| [BuildAndTest.md](BuildAndTest.md) | Build requirements, procedures, and verified results. |
+| [Website.md](Website.md)           | Website content, publication state, and maintenance.  |
+| [Workflow.md](Workflow.md)         | Working rules and repository procedures.              |
+| [WrapDesign.md](WrapDesign.md)     | Wrap requirements, open decisions, and lessons.       |
 
 A design overview belongs with the coordination documents. It will record
 the library's vision, design decisions, and rationale. See
@@ -71,7 +88,9 @@ API reference, and design overview.
 
 Change project files only when Terry gives an imperative instruction.
 Questions, observations, and discussion of possibilities do not authorize
-edits. Newer explicit instructions take precedence over older documentation.
+edits. Answer questions without changing project files; temporary scratch
+files for experiments are allowed. Newer explicit instructions take
+precedence over older documentation.
 
 Keep coordination documents on the separate `docs/Coord` branch so they remain
 available while library work moves between branches. Use `git worktree list` to locate the library and coordination checkouts.

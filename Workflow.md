@@ -11,6 +11,31 @@ Questions, observations, and statements of intent are discussion, not edit
 authorization. Read-only inspection and CI checks needed to answer a prompt
 are allowed.
 
+Generally, if a prompt is a question, just answer the question without
+modifying project files. Temporary scratch files for coding experiments or
+verification needed to answer it are allowed. Keep them separate from the
+project's source, tests, build configuration, and documentation; do not
+integrate them into the project without an imperative instruction.
+
+This is the prime directive. Apply it before every edit, including when a
+design discussion seems complete or implementation seems like the natural
+next step. "Can you do it now?" and "Can you implement that now?" are questions;
+answer them without starting implementation. "Implement it now" and "Please
+update the workflow document" authorize edits within their stated scope.
+Words such as "now" do not turn a question into an imperative instruction.
+Do not infer edit authorization from enthusiasm, agreement on a design, or
+the absence of objections.
+
+Before writing, identify the specific imperative instruction that authorizes
+the edit and its scope. If none exists, answer the question using read-only
+investigation or temporary scratch files as needed, and wait for an
+instruction before changing the project. Do not create or integrate a new
+file as a way around the restriction on modifying existing files. Permission
+to draft a standalone file does not authorize changing headers, build files,
+tests, or documentation to integrate it. An imperative instruction already
+given remains sufficient for the work it authorizes; do not repeatedly ask
+for confirmation within that scope.
+
 Explain proposed changes before editing. An instruction authorizes the work
 needed within its scope, not unrelated maintenance. Preserve explicit stopping
 points such as "stop before committing." Discuss a change, implement it,
@@ -28,6 +53,13 @@ than discarding or stashing them automatically. Preserve concurrent edits and
 re-read a file if it changes while preparing an update. A vi swap file can
 indicate an active editing session. Coordinate with Terry before writing a
 file he has open with unsaved changes.
+
+When authorized work touches files with uncommitted changes, inspect and
+record the relevant existing diffs before editing so the new work can be
+reviewed or removed independently. Keep changes limited to the authorized
+task. If asked to undo the assistant's work, reverse only its changes and
+preserve Terry's earlier and concurrent edits. Do not use whole-file restores,
+resets, or automatic stashes to recover from an authorization mistake.
 
 Preserve untracked convenience scripts, archives, logs, and demo binaries.
 Mention them when they affect the task, could be included accidentally, or
@@ -121,6 +153,23 @@ direct includes, and dedicated API pages. Check whether a behavior is a
 commitment before documenting it as a guarantee or enforcing it with a
 regression test.
 
+Reference entity pages always have Synopsis and Description, followed by
+applicable sections in a consistent order. Give multiple overloads separate
+descriptions; a single overload does not need an extra subsection. Class
+overview pages link to constructor pages rather than repeating their prose.
+Use tables with linked names and descriptions for member and non-member
+functions and similar inventories. List associated free functions on the
+relevant class page. Member-function categories may use Doxygen groups.
+Use "Nested types" for class-scoped aliases and "Type definitions" for
+namespace aliases, immediately before "Template parameters" where applicable.
+
+Link declaration-page titles to committed source on GitHub. Keep topic-page
+titles plain where no single source declaration is appropriate. Regenerate
+permalinks with `support/reference-source-links.py` only when the source
+revision and Doxygen XML match; see `support/color-pages.md`. Keep existing
+permalinks until intentionally refreshing them, rather than changing every
+link merely because a documentation commit changes HEAD.
+
 ## User-guide terminology and review
 
 Describe concatenated text and nested groups of styled text, with grouping
@@ -172,6 +221,12 @@ is `dev`.
 Coordination documents live at the root of the separate `docs/Coord` branch.
 Inspect actual refs and worktrees before acting rather than assuming recorded
 checkout state still holds.
+
+On Terry's Windows/MSYS2 checkout, use MSYS2 Git only, never Windows Git.
+Use `C:/msys64/usr/bin/git.exe` or `/usr/bin/git` from MSYS2 Bash. Put
+`/usr/bin` on PATH for the MSYS2 build and documentation tools. The checkout
+must preserve case-distinct paths such as `Color.md` and `color.md`; do not
+rename them to work around a case-insensitive checkout.
 
 Use the checkout's local toolchain and the GitHub connector for
 remote inspection where appropriate. Machine-specific paths and tool versions

@@ -91,7 +91,7 @@ MkDocs syntax, so their appearance in raw GitHub Markdown does not establish
 whether they render correctly. A successful guide build establishes generation,
 not visual review or deployment; record those checks separately.
 
-## Current local validation
+## Integration-baseline local validation
 
 On November 19, 2026, the focused `color-test` CTest entry passed for the
 `fix/DarkGray` working tree committed as
@@ -126,22 +126,59 @@ on all tested toolchains. Keep the compile-time regression check.
 
 ## API reference candidate
 
-On November 20, 2026, the `feat/CppRef` tree pushed as
-`df20fe5bd8598ce295b203063fefa496bdeeef0a` passed a strict local MkDocs build
-with Doxygen 1.9.8 and the pinned dependencies. All 174 reference pages rendered,
-were reachable from the reference index, and appeared in the search index.
-The link check verified 696 links, including fragments. Representative C++23
-examples passed on the earlier reference revision, `d0bd751`.
+The current `feat/CppRef` candidate is
+`0bdfa029668fb4650d619d88870784b86e3e49e3`, matching the inspected local
+remote-tracking ref. Its tree is identical to the initially created local
+commit `5b9d20c`; use the current full SHA for subsequent CI checks.
 
-At the handoff check, the push runs for this exact candidate were still in
-progress. Guide publication is restricted to `dev`.
+On November 20, 2026, after removing the experimental `wrap()` feature,
+configuration, the full build, and all 22 registered CTest entries passed in
+the MSYS2 GCC/libstdc++ environment. The configured compiler is
+`/usr/bin/g++.exe`, with Debug, C++23, `TJG_TEST=ON`, and `TJG_WERROR=ON`.
+No failed or skipped Google Test markers were found in the retained
+`build/Testing/Temporary/LastTest.log`. These checks ran on the working tree
+subsequently committed with the reference changes; they were not rerun after
+the commit. No wrap tests or implementation remain.
 
-| Workflow                                                                  | Status      |
-| ------------------------------------------------------------------------- | ----------- |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44649456867)       | In progress |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44649457002)       | In progress |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44649456927)     | In progress |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44649456948) | In progress |
+Immediately before committing, the strict MkDocs build passed again using
+the following command from the MSYS2 shell with `/usr/bin` on PATH:
+
+```sh
+PYTHONPATH="$PWD/support/python" \
+TJG_DOXYGEN="$(command -v doxygen)" \
+TJG_DOXYXML="$PWD/build/doxyxml" \
+build/doc-venv/bin/python -m mkdocs build --strict \
+  --config-file support/mkdocs-pages.yml \
+  --site-dir "$PWD/build/doc-html" --no-directory-urls
+```
+
+`PYTHONPATH` supplies the repository's custom C++ mkdocstrings handler.
+Installing base `mkdocstrings` alone does not supply that handler. Use the
+pinned documentation environment and the configured build target or the
+environment above; see `support/color-pages.md` for troubleshooting.
+
+The source-title check passed for 173 linked declaration titles, with four
+topic titles unchanged and no updates needed:
+
+```sh
+python support/reference-source-links.py \
+  --revision 92039b88e7f226935de41ed533b8601ddeff5517 --check
+```
+
+That SHA is the committed source revision used by the existing permalinks,
+not the current documentation commit. Do not regenerate the links against
+a new revision without refreshing and matching the Doxygen XML first.
+The earlier temporary generated-HTML audit script is no longer present;
+the final pre-commit check established source-title mappings and strict
+generation, not a fresh exhaustive HTML-link or visual review.
+
+To preview locally, use the same handler environment and replace the MkDocs
+`build` command with `serve --config-file support/mkdocs-pages.yml`. Follow
+the URL printed by MkDocs.
+
+GitHub CI has not been inspected for this exact candidate. Earlier candidate
+runs do not establish its result. No reference publication or deployment was
+performed in this session; guide publication remains restricted to `dev`.
 
 ## Demo comparisons
 
