@@ -40,10 +40,11 @@ into physical lines, and the table code aligns and pads those lines.
   do not insert a hyphen. Inserted hyphens are for oversized words only.
 
 The public overloads are declared in `<tjg/color/styled_text.hpp>` and linked
-through `tjg::tjg`. Both take the text by const reference and the width as a
-signed `std::ptrdiff_t`. They return `std::vector<styled_text>` and
-`std::vector<wstyled_text>`, respectively. See the
-[API reference](https://github.com/tjgolubi/color/blob/e99d821498d9a00315bc71f28cce7d4c7fd9a4b8/doc/ref/color/styled_text/word_wrap.md).
+through `tjg::tjg`. Both take the text by const reference and the width as
+`std::size_t`, consistent with the library's other width arguments. Callers
+validate signed widths before converting them. The overloads return
+`std::vector<styled_text>` and `std::vector<wstyled_text>`, respectively.
+See `doc/ref/color/styled_text/word_wrap.md` in the library checkout.
 
 ## Whitespace and physical lines
 
