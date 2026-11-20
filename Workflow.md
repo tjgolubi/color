@@ -2,7 +2,7 @@
 
 [Document map](README.md)
 
-Updated November 19, 2026.
+Updated November 20, 2026.
 
 ## Authorization and scope
 
@@ -37,12 +37,9 @@ automatically.
 ## Project and coding guidance
 
 Color is a standalone C++23 header library using standard formatting and
-printing. The existing implementation defines the current design. Derive design descriptions from the
-current source and tests. The source code and user guide define the design;
-do not maintain a separate `CppDesign.md`. Preserve useful rationale near the
-implementation or in the guide after checking it against the current code.
-Record uncertainty as a question, not an inferred plan. External-library
-comparisons belong in the demo context. The marketing homepage also credits
+printing. Verify descriptions of current behavior against the source and
+tests. Record uncertainty as a question. External-library comparisons belong
+in the demo context. The marketing homepage also credits
 {fmt}'s inspiration and recommends it for visitors who cannot use C++23.
 The user guide describes this initial release in the present tense: do not
 include old API behavior, migration notes, or an upstream-extension narrative.
@@ -95,6 +92,35 @@ passes and formatter-configuration changes need instructions; do not restyle
 unrelated files. Check the generated guide when comment wrapping changes
 because Doxygen can interpret wrapped text as list syntax.
 
+## Documentation
+
+The three document sets serve different readers.
+
+- **User guide** lives in `doc/` at its existing paths. Lead with short
+  examples for newcomers and link to advanced walkthroughs and the relevant
+  API reference pages. Teach the valid input range and normal use of
+  `color()`. Preserve existing detail during a future guide overhaul by
+  moving it to the appropriate reference or advanced page.
+- **API reference** lives in `doc/ref/`. Keep the Markdown readable directly.
+  The landing page lists topics and public headers. Header indexes link to
+  declarations, and entity pages show the public include and link back.
+  Use exact API names in page titles for search and in filenames where
+  practical. Use hyphens in prose filenames. Group overloaded functions on
+  one page. Give each public class a folder with an `index.md` overview and
+  dedicated member pages. Public nested classes get subfolders.
+- **Design overview** belongs on `docs/Coord`. Record vision, rationale, and
+  decisions about behavior users can rely on. Current implementation behavior
+  and existing tests are evidence of what the library does today. Treat
+  unresolved guarantees as open questions.
+
+Under `doc/ref/color/`, document the umbrella include and use
+`colors/`, `text_style/`, and `styled_text/` for the narrower headers. Group
+SGR helpers in `color/sgr/` and link their pages to the umbrella include.
+Document shared TJG utilities in `doc/ref/util/` with a single launch index,
+direct includes, and dedicated API pages. Check whether a behavior is a
+commitment before documenting it as a guarantee or enforcing it with a
+regression test.
+
 ## User-guide terminology and review
 
 Describe concatenated text and nested groups of styled text, with grouping
@@ -110,13 +136,16 @@ behavior is common sense and delete its explanation.
 Use "text" or "styled text" where the distinction is clear. Use "text span"
 where an individual piece's boundary matters, such as measuring display width
 or handling escape sequences split across pieces. Use local namespace imports
-in examples when they make styling expressions easier to read. Check for
-names that hide API types or functions after qualification is removed.
+in examples when they make styling expressions easier to read. For terminal
+colors, use `using namespace tjg::color;` and `using enum term_color;` in
+local scope when they keep expressions such as `fg(green)` readable. Check
+for name collisions after removing qualification.
 
 ### Teaching color choices
 
-The user guide teaches readers how to get the appearance they want. Start
-with named `term_color` values and named RGB constants. For custom shades,
+The user guide teaches readers how to get the appearance they want. Lead
+with `term_color` and a short example, then introduce named RGB colors. For
+custom shades,
 introduce `color(red, green, blue)` and `color(grayscale)` with inputs from
 `0.0` to `1.0`. Both overloads return `rgb`. The one-argument form uses the
 same value for all three channels.
@@ -125,9 +154,9 @@ The named neutral shades `rgb::dark_gray`, `rgb::gray`, and `rgb::light_gray`
 match `color(0.25)`, `color(0.5)`, and `color(0.75)`, respectively. The guide
 generates Neutral swatches from the named RGB constants.
 
-Reserve direct `rgb{...}` construction, indexed `gray` and `cube` values, and
-raw SGR for advanced material or explicit comparisons. The appearance of
-indexed colors depends on the terminal palette. `term_color::gray` selects
+Reserve direct `rgb{...}` construction and raw SGR for advanced material.
+Indexed `gray` and `cube` serve readers who need precise SGR palette control
+and understand how terminal palettes affect appearance. `term_color::gray` selects
 slot 8, and `rgb::term_gray` is its fixed Xterm RGB counterpart (`#7F7F7F`).
 Keep threading and implementation details out of the main explanation.
 

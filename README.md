@@ -1,6 +1,6 @@
 # Color coordination
 
-Updated November 19, 2026.
+Updated November 20, 2026.
 
 These documents provide continuity between conversations about
 [`tjgolubi/color`](https://github.com/tjgolubi/color). Keep them current as
@@ -41,6 +41,16 @@ site is at version 13 and its demo downloads and comparisons match `dev`.
 See [BuildAndTest.md](BuildAndTest.md) for checks and [Website.md](Website.md)
 for deployment provenance.
 
+## API reference in review
+
+The plain-Markdown API reference is on the pushed `feat/CppRef` branch at
+`df20fe5bd8598ce295b203063fefa496bdeeef0a`. Start at
+[doc/ref/index.md](https://github.com/tjgolubi/color/blob/feat/CppRef/doc/ref/index.md).
+The reference has topic and public-header indexes, dedicated API pages, and
+class folders with member pages. The existing user guide remains in `doc/`.
+The feature branch awaits Terry's review. See
+[BuildAndTest.md](BuildAndTest.md) for verification.
+
 ## Coordination documents
 
 This README, `Workflow.md`, `BuildAndTest.md`, and `Website.md` are the current
@@ -52,11 +62,10 @@ coordination documents for Color.
 | [Website.md](Website.md)           | Record website content, publication state, and maintenance guidance. |
 | [Workflow.md](Workflow.md)         | Record working rules and repository procedures.                      |
 
-The source code and user guide define Color's current design. A separate
-`CppDesign.md` is retired from the coordination plan. Useful rationale belongs
-near the relevant implementation or in the guide, after verification against
-the current code. Any reference material consulted later must be checked
-against this repository and current instructions before being carried forward.
+A design overview belongs with the coordination documents. It will record
+the library's vision, design decisions, and rationale. See
+[Workflow.md](Workflow.md#documentation) for the roles of the user guide,
+API reference, and design overview.
 
 ## Working rules
 

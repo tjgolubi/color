@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md)
 
-Updated November 19, 2026.
+Updated November 20, 2026.
 
 ## Requirements and standard build
 
@@ -77,8 +77,9 @@ cmake --build build --target doc
 ```
 
 The target creates `build/doc-venv`, installs the hash-pinned packages from
-`support/doc-requirements.txt`, and builds `build/doc-html/index.html` using
-`support/mkdocs-pages.yml`. Reuse a compatible environment and reinstall from
+`support/doc-requirements.txt`, and uses `support/mkdocs-pages.yml` to build the
+user guide at `build/doc-html/index.html`. On `feat/CppRef` it also builds the
+API reference at `build/doc-html/ref/index.html`. Reuse a compatible environment and reinstall from
 the pinned requirements when dependency inputs change. Do not invoke release
 or publication tooling merely to build the guide.
 
@@ -122,6 +123,25 @@ The normalized RGB regression test exposed a constant-evaluation failure on
 Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
 positive-range cast preserves the quantization and supports constant evaluation
 on all tested toolchains. Keep the compile-time regression check.
+
+## API reference candidate
+
+On November 20, 2026, the `feat/CppRef` tree pushed as
+`df20fe5bd8598ce295b203063fefa496bdeeef0a` passed a strict local MkDocs build
+with Doxygen 1.9.8 and the pinned dependencies. All 174 reference pages rendered,
+were reachable from the reference index, and appeared in the search index.
+The link check verified 696 links, including fragments. Representative C++23
+examples passed on the earlier reference revision, `d0bd751`.
+
+At the handoff check, the push runs for this exact candidate were still in
+progress. Guide publication is restricted to `dev`.
+
+| Workflow                                                                  | Status      |
+| ------------------------------------------------------------------------- | ----------- |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44649456867)       | In progress |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44649457002)       | In progress |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44649456927)     | In progress |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44649456948) | In progress |
 
 ## Demo comparisons
 
