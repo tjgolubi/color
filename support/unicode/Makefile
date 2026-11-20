@@ -23,7 +23,7 @@ BINARIES := $(BIN1) $(BIN2)
 INCLUDE := $(PROJDIR)/include/tjg/color/bits
 
 .PHONY: all clean
-all: $(addprefix $(INCLUDE)/, UnicodeData.hpp EastAsianWidth.hpp)
+all: $(PROJDIR)/src/UnicodeData.hpp $(INCLUDE)/EastAsianWidth.hpp
 
 $(BUILD_DIR)/%$(EXEEXT): %.cpp | $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) "$<" $(LDLIBS) -o "$@"
@@ -31,7 +31,7 @@ $(BUILD_DIR)/%$(EXEEXT): %.cpp | $(BUILD_DIR)
 $(INCLUDE)/EastAsianWidth.hpp: $(BIN1) EastAsianWidth.txt
 	$(BIN1) EastAsianWidth.txt > $@
 
-$(INCLUDE)/UnicodeData.hpp: $(BIN2) UnicodeData.txt
+$(PROJDIR)/src/UnicodeData.hpp: $(BIN2) UnicodeData.txt
 	$(BIN2) UnicodeData.txt > $@
 
 $(BUILD_DIR):

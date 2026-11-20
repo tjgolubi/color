@@ -10,12 +10,10 @@
 #include <string_view>
 
 #include <vector>
-#include <algorithm>
 #include <memory>
 
 #include <concepts>
 #include <utility>
-#include <limits>
 
 namespace tjg::color {
 
@@ -44,14 +42,10 @@ private:
   leaf       _text{};
   branch     _children{}; // A node is a leaf when this is empty.
 
-  void append_plain_text(string_type& result) const {
-    if (_text) result.append(*_text);
-    for (const auto& child : _children)
-      child.append_plain_text(result);
-  }
+  void append_plain_text(string_type& result) const;
 
  public:
-  basic_styled_text() = default;
+  constexpr basic_styled_text() noexcept = default;
 
   basic_styled_text(string_type text, const text_style& style = {})
     TJG_NOEXCEPT_UNLESS_BAD_ALLOC
@@ -90,9 +84,9 @@ private:
     return *this;
   }
 
-  auto style() const noexcept -> text_style { return _style; }
+  constexpr auto style() const noexcept -> text_style { return _style; }
 
-  auto style(text_style value) noexcept -> basic_styled_text& {
+  constexpr auto style(text_style value) noexcept -> basic_styled_text& {
     _style = value;
     return *this;
   }
@@ -104,20 +98,14 @@ private:
    * Returns this node for chaining.
    * To overlay only this node, use style(style().overlay(overrides)).
    */
-  auto overlay(text_style overrides) noexcept -> basic_styled_text& {
-    if (_style.is_absolute()) return *this;
-    _style.overlay(overrides);
-    for (auto& child : _children)
-      child.overlay(overrides);
-    return *this;
-  }
+  auto overlay(text_style overrides) noexcept -> basic_styled_text&;
 
   /**
    * Underlays this node's style in place, leaving its text and children intact.
    * Specified colors replace unspecified matching channels; emphasis attributes
    * are combined. Returns a reference to this node for chaining.
    */
-  auto underlay(text_style style) noexcept -> basic_styled_text& {
+  constexpr auto underlay(text_style style) noexcept -> basic_styled_text& {
     _style.underlay(style);
     return *this;
   }
@@ -130,30 +118,14 @@ private:
    * applying styles. Preserves embedded nulls and escapes without interpreting
    * them. Does not modify this value. Allocation can throw.
    */
-  [[nodiscard]] auto plain_text() const -> string_type {
-    auto result = string_type{};
-    append_plain_text(result);
-    return result;
-  }
+  [[nodiscard]] auto plain_text() const -> string_type;
 
-  auto operator+=(basic_styled_text rhs) -> basic_styled_text& {
-    if (rhs.empty()) return *this;
-    if (empty()) return *this = std::move(rhs);
-    if (!_children.empty() && _style.empty()) {
-      _children.push_back(std::move(rhs));
-      return *this;
-    }
-    auto children = branch{};
-    // Allocate before moving either operand. The following moves cannot throw.
-    children.reserve(2);
-    children.push_back(std::move(*this));
-    children.push_back(std::move(rhs));
-    _children = std::move(children);
-    return *this;
-  } // operator+=
+  auto operator+=(basic_styled_text rhs) -> basic_styled_text&; // operator+=
 
   friend
-  bool operator==(const basic_styled_text& lhs, const basic_styled_text& rhs) {
+  bool operator==(const basic_styled_text& lhs, const basic_styled_text& rhs)
+    noexcept
+  {
     if (lhs._style != rhs._style || lhs._children != rhs._children)
       return false;
     return lhs._text == rhs._text
@@ -162,6 +134,7 @@ private:
 
   friend
   bool operator!=(const basic_styled_text& lhs, const basic_styled_text& rhs)
+    noexcept
   { return !(lhs == rhs); }
 
   friend auto operator+(basic_styled_text lhs, basic_styled_text rhs)

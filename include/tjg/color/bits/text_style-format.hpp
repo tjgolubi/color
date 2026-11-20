@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <system_error>
 #include <exception>
 #include <concepts>
 #include <type_traits>
@@ -31,10 +30,7 @@
 
 namespace tjg::color::detail {
 
-[[nodiscard]] inline auto get_style_state() -> text_style& {
-  static text_style _state{};
-  return _state;
-}
+[[nodiscard]] auto get_style_state() -> text_style&;
 
 class style_scope {
   text_style _saved;
@@ -234,15 +230,7 @@ auto vformat_to(OutputIt out, const std::locale& loc, text_style style,
 
 namespace detail {
 
-inline void write_file(FILE* f, const char* data, std::size_t size)
-{
-  auto count = std::fwrite(data, 1, size, f);
-  if (count == size)
-    return;
-  const auto ec = std::make_error_code(std::io_errc::stream);
-  const auto x =std::system_error{ec, "writing SGR"};
-  TJG_THROW(x);
-}
+void write_file(FILE* f, const char* data, std::size_t size);
 
 } // detail
 
@@ -254,36 +242,20 @@ inline void write_file(FILE* f, const char* data, std::size_t size)
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  */
-inline void vprint_nonunicode(FILE* f, text_style style, std::string_view fmt,
-                              std::format_args args)
-{
-  auto writer = [&](const char* data, std::size_t size)
-                { detail::write_file(f, data, size); };
-
-  TJG_SGR_SCOPE(writer, style);
-  std::vprint_nonunicode(f, fmt, args);
-}  // vprint_nonunicode
+void vprint_nonunicode(FILE* f, text_style style, std::string_view fmt,
+                      std::format_args args);
 
 /// Prints a styled message to stdout without Unicode-specific handling.
-inline void vprint_nonunicode(text_style style, std::string_view fmt,
-                              std::format_args args)
-{ vprint_nonunicode(stdout, style, fmt, args); }
+void vprint_nonunicode(text_style style, std::string_view fmt,
+                      std::format_args args);
 
 /// Prints a styled message using the standard Unicode output path.
-inline void vprint_unicode(FILE* f, text_style style, std::string_view fmt,
-                           std::format_args args)
-{
-  auto writer = [&](const char* data, std::size_t size)
-                { detail::write_file(f, data, size); };
-
-  TJG_SGR_SCOPE(writer, style);
-  std::vprint_unicode(f, fmt, args);
-}
+void vprint_unicode(FILE* f, text_style style, std::string_view fmt,
+                    std::format_args args);
 
 /// Prints a styled message to stdout using the standard Unicode output path.
-inline void vprint_unicode(text_style style, std::string_view fmt,
-                           std::format_args args)
-{ vprint_unicode(stdout, style, fmt, args); }
+void vprint_unicode(text_style style, std::string_view fmt,
+                    std::format_args args);
 
 /**
  * The colored analog of
@@ -373,18 +345,8 @@ void println(text_style style, std::format_string<T...> fmt, T&&... args)
  * specified foreground, background, and emphasis, and followed by an SGR reset
  * to terminal defaults.
  */
-inline auto vformat(text_style style, std::string_view fmt, std::format_args args)
-  -> std::string
-{
-  auto result = std::string{};
-  auto writer = [&](const char* data, std::size_t size)
-                { result.append(data, size); };
-
-  TJG_SGR_SCOPE(writer, style);
-  std::vformat_to(std::back_inserter(result), fmt, args);
-  scope.finish();
-  return result;
-}
+auto vformat(text_style style, std::string_view fmt, std::format_args args)
+  -> std::string;
 
 /**
  * The colored analog of
@@ -431,19 +393,9 @@ inline auto format_to(OutputIt out, text_style style, std::format_string<T...> f
                     std::make_format_args(args...));
 }
 
-inline auto vformat(text_style style, std::wstring_view pattern,
-                    std::wformat_args args)
-  -> std::wstring
-{
-  auto result = std::wstring{};
-  auto writer = [&](const char* data, std::size_t size)
-                { result.append(data, data + size); };
-
-  TJG_SGR_SCOPE(writer, style);
-  std::vformat_to(std::back_inserter(result), pattern, args);
-  scope.finish();
-  return result;
-}
+auto vformat(text_style style, std::wstring_view pattern,
+             std::wformat_args args)
+  -> std::wstring;
 
 template<typename... T>
 inline auto format(text_style style, std::wformat_string<T...> pattern,

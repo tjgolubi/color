@@ -226,6 +226,9 @@ constexpr void append_sgr(Buffer& buf, text_style ts) {
   buf.data()[buf.size() - 1] = 'm';
 }  // append_sgr
 
+auto make_sgr(const text_style& style) -> std::string;
+auto make_sgr(const text_style& target, const text_style& initial) -> std::string;
+
 } // detail
 
 /**
@@ -239,10 +242,7 @@ constexpr void append_sgr(Buffer& buf, text_style ts) {
  */
 [[nodiscard]] inline
 auto to_sgr(const text_style& style) TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string {
-  if (style.empty()) return {};
-  auto sgr = detail::sgr_buffer{};
-  detail::append_sgr(sgr, style);
-  return std::string{sgr.view()};
+  return detail::make_sgr(style);
 }
 
 namespace detail {
@@ -331,9 +331,7 @@ void append_sgr_transition(Buffer& buf, text_style target, text_style initial) {
 auto to_sgr(const text_style& target, const text_style& initial)
   TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string
 {
-  auto sgr = detail::sgr_buffer{};
-  detail::append_sgr_transition(sgr, target, initial);
-  return std::string{sgr.view()};
+  return detail::make_sgr(target, initial);
 }
 
 /**
@@ -342,23 +340,10 @@ auto to_sgr(const text_style& target, const text_style& initial)
  * text. The text is copied without formatting or interpreting embedded escapes.
  * The reset restores terminal defaults, not a previously active style.
  */
- template<CharType Char>
-[[nodiscard]] inline
+template<CharType Char>
+[[nodiscard]]
 auto wrap_sgr(const text_style& style, std::basic_string_view<Char> sv)
-  -> std::basic_string<Char>
-{
-  if (sv.empty()) return {};
-  if (style.empty()) return std::basic_string<Char>{sv};
-  constexpr auto reset = sgr_reset();
-  auto sgr = detail::sgr_buffer{};
-  detail::append_sgr(sgr, style);
-  auto result = std::basic_string<Char>{};
-  result.reserve(sgr.size() + sv.size() + reset.size());
-  result.append(sgr.begin(), sgr.end());
-  result.append(sv);
-  result.append(reset.begin(), reset.end());
-  return result;
-}  // wrap_sgr
+  -> std::basic_string<Char>;
 
 /// Narrow-character convenience overload of `wrap_sgr()`.
 [[nodiscard]] inline

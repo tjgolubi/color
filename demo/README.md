@@ -5,8 +5,11 @@ and a built copy of {fmt} for the comparison demos. From the repository root,
 run `make -C demo run`.
 
 The {color} demos include `<tjg/color.hpp>`. The Makefile adds
-`$(TJG_ROOT)/include` to the compiler's include path, with `TJG_ROOT=..` by
-default. To build a single demo using only {color} and the C++ standard library,
+`$(TJG_ROOT)/include` to the compiler's include path and links `libcolor.a`,
+building it with CMake when needed. `TJG_ROOT=..` and
+`TJG_BUILD=$(TJG_ROOT)/build` by default. Use a matching compiler and standard
+library for the archive and demos. To build a single demo using only {color}
+and the C++ standard library,
 run `make StyledDemo` and then `./StyledDemo`.
 
 `Result42Compare` and `TableDemoFmt` use {fmt}. `FMT_ROOT` defaults to

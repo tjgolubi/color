@@ -326,7 +326,7 @@ c++ -std=c++23 -I include demo/TableDemo.cpp -o /tmp/TableDemo
 ```
 
 Use a C++23 compiler and standard library with `<format>` and `<print>`.
-The demo uses the header-only library and emits compact SGR sequences.
+The demo links the color library and emits compact SGR sequences.
 An ANSI-capable terminal displays its colors and text attributes.
 
 #### Apply column defaults beneath cell styles

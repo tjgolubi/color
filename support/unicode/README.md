@@ -11,5 +11,6 @@ curl --fail --location --remote-name https://www.unicode.org/Public/18.0.0/ucd/E
 
 When updating Unicode, use the same release in both URLs.
 
-Run `make` in this directory to regenerate `UnicodeData.hpp` and
-`EastAsianWidth.hpp` under `include/tjg/color/bits/`.
+Run `make` in this directory to regenerate the private classification table
+`src/UnicodeData.hpp` and the constexpr width table
+`include/tjg/color/bits/EastAsianWidth.hpp`.

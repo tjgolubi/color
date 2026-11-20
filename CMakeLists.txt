@@ -6,14 +6,37 @@ include(CMakePackageConfigHelpers)
 
 option(TJG_INSTALL "Generate TJG install rules." ON)
 option(TJG_TEST "Build TJG tests." OFF)
-option(TJG_WERROR "Treat TJG test warnings as errors." OFF)
+option(TJG_WERROR "Treat TJG library and test warnings as errors." OFF)
 
-add_library(tjg INTERFACE)
+add_library(tjg STATIC
+  src/format.cpp
+  src/ostream.cpp
+  src/parse_styled_text.cpp
+  src/sgr.cpp
+  src/styled_text_value.cpp
+  src/unicode.cpp)
 add_library(tjg::tjg ALIAS tjg)
-target_compile_features(tjg INTERFACE cxx_std_23)
+set_target_properties(tjg PROPERTIES OUTPUT_NAME color)
+target_compile_features(tjg PUBLIC cxx_std_23)
 target_include_directories(
-  tjg INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  tjg PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+if (MSVC)
+  target_compile_definitions(tjg PRIVATE _CRT_SECURE_NO_WARNINGS)
+  target_compile_options(tjg PRIVATE /W4)
+  if (TJG_WERROR)
+    target_compile_options(tjg PRIVATE /WX)
+  endif ()
+else ()
+  target_compile_options(tjg PRIVATE -Wall -Wextra -Wpedantic)
+  if (TJG_WERROR)
+    target_compile_options(tjg PRIVATE -Werror)
+  endif ()
+endif ()
+if (CMAKE_SYSTEM_NAME STREQUAL "MSYS" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_definitions(tjg PRIVATE _DEFAULT_SOURCE)
+endif ()
 
 if (TJG_INSTALL)
   set(TJG_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/tjg")
@@ -24,6 +47,7 @@ if (TJG_INSTALL)
   install(
     TARGETS tjg
     EXPORT tjg-targets
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT tjg)
   install(
     DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/tjg"

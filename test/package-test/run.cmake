@@ -39,6 +39,7 @@ file(COPY "${TJG_SOURCE_DIR}/CMakeLists.txt"
      "${TJG_SOURCE_DIR}/color-config.cmake.in" "${TJG_SOURCE_DIR}/LICENSE"
      "${TJG_SOURCE_DIR}/THIRD-PARTY-NOTICES" DESTINATION "${source}")
 file(COPY "${TJG_SOURCE_DIR}/include/tjg" DESTINATION "${source}/include")
+file(COPY "${TJG_SOURCE_DIR}/src" DESTINATION "${source}")
 
 run("${CMAKE_COMMAND}"
     -S

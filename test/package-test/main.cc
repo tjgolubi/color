@@ -27,5 +27,12 @@ int main() {
   if (tjg::color::format(tjg::color::underline(), L"{}", L"wide") !=
       L"\x1b[4mwide\x1b[0m")
     return 5;
+  const auto text = tjg::color::parse_styled_text<char>("\x1b[1mhello");
+  if (std::format("{}", text) != "\x1b[1mhello\x1b[0m") return 6;
+  const auto wide_text = tjg::color::parse_styled_text<wchar_t>(L"wide");
+  if (std::format(L"{}", wide_text) != L"wide") return 7;
+  std::wostringstream wide_output;
+  wide_output << wide_text;
+  if (wide_output.str() != L"wide") return 8;
   std::println("{}", hello);
 }
