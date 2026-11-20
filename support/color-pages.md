@@ -52,3 +52,24 @@ The target installs the hash-pinned documentation dependencies into
 `build/doc-venv` and writes `build/doc-html/index.html`. This builds the guide
 locally without publishing it. The GitHub workflow uses the same publication
 configuration and writes its output to `build/doc-html/`.
+
+## Local preview server
+
+After building the guide, run the following from the repository root in an
+MSYS2 shell (or another POSIX shell with the matching Python environment):
+
+```sh
+PYTHONPATH="$PWD/support/python" \
+TJG_DOXYGEN="$(command -v doxygen)" \
+TJG_DOXYXML="$PWD/build/doxyxml" \
+build/doc-venv/bin/python -m mkdocs serve \
+  --config-file support/mkdocs-pages.yml
+```
+
+Open the address printed by MkDocs, normally `http://127.0.0.1:8000/color/`.
+The server rebuilds and refreshes as documentation changes. Press Ctrl+C to
+stop it. `PYTHONPATH` is required for the project's local C++ handler; omitting
+it causes `No module named 'mkdocstrings_handlers'`.
+
+For a virtual environment created by native Windows Python, use
+`build/doc-venv/Scripts/python.exe` instead of `build/doc-venv/bin/python`.

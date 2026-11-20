@@ -23,6 +23,8 @@
 
 namespace tjg::color {
 
+namespace detail {
+
 /// Upper bound on style SGR output length.
 constexpr auto sgr_max_length = std::size_t{60};
 
@@ -34,6 +36,8 @@ using basic_sgr_buffer = basic_inline_buffer<Char, sgr_max_length>;
 
 using sgr_buffer = basic_sgr_buffer<char>;
 
+} // detail
+
 /**
  * Returns the ANSI SGR sequence that resets colors and emphasis to terminal
  * defaults. The returned view refers to static storage.
@@ -42,7 +46,7 @@ template<CharType Char = char>
 [[nodiscard]] constexpr
 auto sgr_reset() noexcept -> std::basic_string_view<Char> {
   static constexpr auto reset =
-                      std::array<Char, sgr_reset_length>{'\x1b', '[', '0', 'm'};
+              std::array<Char, detail::sgr_reset_length>{'\x1b', '[', '0', 'm'};
   return {reset.data(), reset.size()};
 }
 
@@ -234,10 +238,10 @@ constexpr void append_sgr(Buffer& buf, text_style ts) {
  * the leading reset selects terminal defaults for those channels.
  */
 [[nodiscard]] inline
-auto to_sgr(const text_style& ts) TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string {
-  if (ts.empty()) return {};
-  auto sgr = sgr_buffer{};
-  detail::append_sgr(sgr, ts);
+auto to_sgr(const text_style& style) TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string {
+  if (style.empty()) return {};
+  auto sgr = detail::sgr_buffer{};
+  detail::append_sgr(sgr, style);
   return std::string{sgr.view()};
 }
 
@@ -312,7 +316,7 @@ void append_sgr_transition(Buffer& buf, text_style target, text_style initial) {
 } // detail
 
 /**
- * Returns the ANSI SGR transition from `initial` to `ts`, without a trailing
+ * Returns the ANSI SGR transition from `initial` to `target`, without a trailing
  * reset. Both arguments describe complete terminal states: empty color channels
  * mean terminal defaults, and absent emphasis means off. No colors are
  * inherited. The absolute flag on `initial` is ignored. An absolute target
@@ -327,27 +331,27 @@ void append_sgr_transition(Buffer& buf, text_style target, text_style initial) {
 auto to_sgr(const text_style& target, const text_style& initial)
   TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string
 {
-  auto sgr = sgr_buffer{};
+  auto sgr = detail::sgr_buffer{};
   detail::append_sgr_transition(sgr, target, initial);
   return std::string{sgr.view()};
 }
 
 /**
- * Returns a copy of `sv` wrapped in the SGR sequences for `ts` and a terminal
+ * Returns a copy of `sv` wrapped in the SGR sequences for `style` and a terminal
  * reset. Empty text returns an empty string; an empty style returns just the
  * text. The text is copied without formatting or interpreting embedded escapes.
  * The reset restores terminal defaults, not a previously active style.
  */
  template<CharType Char>
 [[nodiscard]] inline
-auto wrap_sgr(const text_style& ts, std::basic_string_view<Char> sv)
+auto wrap_sgr(const text_style& style, std::basic_string_view<Char> sv)
   -> std::basic_string<Char>
 {
   if (sv.empty()) return {};
-  if (ts.empty()) return std::basic_string<Char>{sv};
+  if (style.empty()) return std::basic_string<Char>{sv};
   constexpr auto reset = sgr_reset();
-  auto sgr = sgr_buffer{};
-  detail::append_sgr(sgr, ts);
+  auto sgr = detail::sgr_buffer{};
+  detail::append_sgr(sgr, style);
   auto result = std::basic_string<Char>{};
   result.reserve(sgr.size() + sv.size() + reset.size());
   result.append(sgr.begin(), sgr.end());
@@ -358,7 +362,7 @@ auto wrap_sgr(const text_style& ts, std::basic_string_view<Char> sv)
 
 /// Narrow-character convenience overload of `wrap_sgr()`.
 [[nodiscard]] inline
-auto wrap_sgr(const text_style& ts, std::string_view sv) -> std::string
-{ return wrap_sgr<char>(ts, sv); }
+auto wrap_sgr(const text_style& style, std::string_view sv) -> std::string
+{ return wrap_sgr<char>(style, sv); }
 
 } // tjg::color

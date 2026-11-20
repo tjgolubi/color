@@ -14,4 +14,14 @@ constexpr text_style(color_t fg, color_t bg = {},
                      emphasis emp = emphasis::none) noexcept;
 ```
 
-Constructs a relative style from emphasis and optional colors or from a foreground color with optional background and emphasis. With no arguments, the style is empty. Use [`no_color`](../../colors/no_color.md) for an unspecified channel.
+## Description
+
+Constructs a relative style. Use [`no_color`](../../colors/no_color.md) for an unspecified channel.
+
+### Emphasis first: `text_style(emphasis emp, color_t fg, color_t bg)`
+
+Sets emphasis and the optional foreground and background. With no arguments, constructs an empty style: no emphasis and both colors unspecified.
+
+### Color first: `text_style(color_t fg, color_t bg, emphasis emp)`
+
+Sets the foreground, optional background, and optional emphasis. Background defaults to unspecified and emphasis defaults to `emphasis::none`.

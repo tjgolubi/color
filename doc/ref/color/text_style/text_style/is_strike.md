@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_strike() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if strike-through is enabled. See [`strike`](strike.md) to change it.

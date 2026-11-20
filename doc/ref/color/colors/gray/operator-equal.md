@@ -11,4 +11,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator==(const gray&) const noexcept -> bool;
 ```
 
+## Description
+
 Compares the gray index for equality. Also supports `!=` through the rewritten comparison.

@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator<=>(const rgb&) const noexcept -> std::strong_ordering;
 ```
 
+## Description
+
 Compares red, then green, then blue and returns a `std::strong_ordering`. The defaulted comparison also provides equality, and relational operators use the three-way comparison.

@@ -6,12 +6,32 @@ Header: [`<tjg/color/text_style.hpp>`](index.md).
 
 ```cpp
 enum class emphasis : std::uint8_t {
-  none = 0, bold = 1 << 0, faint = 1 << 1, italic = 1 << 2,
-  underline = 1 << 3, blink = 1 << 4, reverse = 1 << 5,
-  conceal = 1 << 6, strike = 1 << 7
+  none,      // implementation-defined
+  bold,      // implementation-defined
+  faint,     // implementation-defined
+  italic,    // implementation-defined
+  underline, // implementation-defined
+  blink,     // implementation-defined
+  reverse,   // implementation-defined
+  conceal,   // implementation-defined
+  strike     // implementation-defined
 };
 constexpr auto operator|(emphasis lhs, emphasis rhs) noexcept -> emphasis;
 constexpr auto operator|=(emphasis& lhs, emphasis rhs) noexcept -> emphasis&;
 ```
 
-Combines independent text attributes as a bit mask. `none` selects no attributes. `operator|` returns the union and `operator|=` updates its left operand. The bit values are distinct from SGR parameter numbers. See [Text styles](text_style/index.md) and the [attribute table](../../../emphasis.md#attributes).
+## Description
+
+Combines independent text attributes as a bit mask. `none` selects no attributes. `operator|` returns the union and `operator|=` updates its left operand. The bit values are distinct from [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters) parameter numbers. See [Text styles](text_style/index.md) and the [attribute table](../../../emphasis.md#attributes).
+
+| Attribute   | Meaning                                    |
+| ---         | ---                                        |
+| `none`      | No emphasis attributes.                    |
+| `bold`      | Increased text intensity.                  |
+| `faint`     | Decreased text intensity.                  |
+| `italic`    | Italic text.                               |
+| `underline` | Underlined text.                           |
+| `blink`     | Blinking text.                             |
+| `reverse`   | Reversed foreground and background colors. |
+| `conceal`   | Concealed text.                            |
+| `strike`    | Crossed-out text.                          |

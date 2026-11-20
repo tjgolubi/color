@@ -11,4 +11,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 no_color_t();
 ```
 
+## Description
+
 Value initialization creates an unspecified color. The predefined [`no_color`](../no_color.md) constant represents the same value.

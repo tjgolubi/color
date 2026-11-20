@@ -16,4 +16,30 @@ constexpr explicit rgb(value_type hex) noexcept;
 constexpr rgb(term_color color) noexcept;
 ```
 
-The default constructor produces black. With three integers, each channel must be in `0..255`. Assertion-enabled builds check this range. The current implementation clamps channels when assertions are disabled. The packed overload interprets the low 24 bits as `0xRRGGBB`. Conversion from [`term_color`](../term_color.md) uses the fixed Xterm-default palette.
+## Description
+
+Constructs an RGB value using one of the following forms.
+
+### Default construction: `rgb()`
+
+Produces black (`#000000`).
+
+### Channel values: `rgb(int r, int g, int b)`
+
+Sets the three channels. Each input must be in `0..255`. Assertion-enabled builds check the range. The current implementation clamps channels when assertions are disabled.
+
+### Packed value: `rgb(value_type hex)`
+
+Interprets the low 24 bits of [`value_type`](index.md#nested-types) as `0xRRGGBB`.
+
+### Terminal color: `rgb(term_color color)`
+
+Uses the fixed [Xterm-default RGB equivalent](../xterm-palette.md) of the supplied [`term_color`](../term_color.md).
+
+## Parameters
+
+| Parameter     | Description                                           |
+| ---           | ---                                                   |
+| `r`, `g`, `b` | Integer channel values in `0..255`.                   |
+| `hex`         | Packed value whose low 24 bits encode `0xRRGGBB`.     |
+| `color`       | Named terminal palette entry to convert to fixed RGB. |

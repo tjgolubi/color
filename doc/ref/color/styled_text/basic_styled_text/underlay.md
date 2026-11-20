@@ -10,4 +10,6 @@ Header: [`<tjg/color/styled_text.hpp>`](../index.md).
 auto underlay(text_style style) noexcept -> basic_styled_text&;
 ```
 
-Applies the supplied style as defaults for the outermost group in place. Specified outermost colors remain, emphasis and the absolute flag are combined by OR, and child styles are preserved. Returns `*this`. See also the [free function](../underlay.md).
+## Description
+
+Applies the supplied style as defaults for the outermost group in place. Specified outermost colors remain, emphasis attributes and the absolute flag are combined, and child styles are preserved. Returns `*this`. See also the [free function](../underlay.md).

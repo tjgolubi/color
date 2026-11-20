@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr gray& operator=(const gray&) noexcept;
 ```
 
+## Description
+
 Copies the gray index from the source and returns `*this`.

@@ -9,6 +9,10 @@ constexpr auto underlay(text_style base, text_style defaults) noexcept
   -> text_style;
 ```
 
-Colors from `defaults` fill unspecified channels in `base`. The result combines emphasis and absolute flags by OR. The input styles are unchanged. See also the [styled-text overload](../styled_text/underlay.md).
+## Description
 
-See also [`text_style::underlay`](text_style/underlay.md).
+Colors from `defaults` fill unspecified channels in `base`. The result combines emphasis attributes and the absolute flag. The input styles are unchanged. See also the [styled-text overload](../styled_text/underlay.md).
+
+## See also
+
+[`text_style::underlay`](text_style/underlay.md).

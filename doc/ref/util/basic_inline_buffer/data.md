@@ -12,4 +12,14 @@ constexpr auto data() noexcept -> Char*;
 constexpr auto data() const noexcept -> const Char*;
 ```
 
-Returns a pointer to the start of the buffer storage. Its constness follows the buffer. Use [`size()`](size.md) for the length of the populated range.
+## Description
+
+Provides access to the start of the buffer storage. Use [`size()`](size.md) for the length of the populated range.
+
+### Writable access: `data()`
+
+Returns a `Char*` to the start of the storage.
+
+### Read-only access: `data() const`
+
+Returns a `const Char*` to the start of the storage.

@@ -13,4 +13,6 @@ template<CharType C>
 constexpr void push_back(C value) noexcept;
 ```
 
+## Description
+
 Appends one character. The buffer must have space for it. `C` must match `Char`, or be `char` when `Char` is `wchar_t`. Narrow characters in a wide buffer are widened through `unsigned char`.

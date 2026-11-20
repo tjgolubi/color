@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto clear() noexcept -> text_style&;
 ```
 
+## Description
+
 Restores the default relative style and returns `*this`.

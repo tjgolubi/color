@@ -11,4 +11,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator==(const cube&) const noexcept -> bool;
 ```
 
+## Description
+
 Compares the three channel indices for equality. Also supports `!=` through the rewritten comparison.

@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator<=>(const no_color_t&) const noexcept = default;
 ```
 
+## Description
+
 Compares two unspecified colors. Normally constructed values compare equal.

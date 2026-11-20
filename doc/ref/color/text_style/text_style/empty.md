@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto empty() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if neither color is specified, there is no emphasis, and the absolute flag is clear. An absolute-only style is nonempty.

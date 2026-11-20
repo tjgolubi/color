@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_italic() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if italics is enabled. See [`italic`](italic.md) to change it.

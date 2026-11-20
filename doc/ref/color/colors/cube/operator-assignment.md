@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr cube& operator=(const cube&) noexcept;
 ```
 
+## Description
+
 Copies all three channel indices from the source and returns `*this`.

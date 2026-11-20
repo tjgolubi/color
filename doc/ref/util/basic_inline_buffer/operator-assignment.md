@@ -11,4 +11,6 @@ constexpr auto operator=(const basic_inline_buffer&) noexcept
   -> basic_inline_buffer&;
 ```
 
+## Description
+
 Copies the initialized prefix and size, leaving the rest of the destination storage intact. Returns `*this`.

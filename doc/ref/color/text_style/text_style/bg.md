@@ -12,4 +12,18 @@ constexpr auto bg() const noexcept -> color_t;
 constexpr auto bg(color_t color) noexcept -> text_style&;
 ```
 
-The getter returns the background by value. The setter replaces the background and returns `*this`. Pass [`no_color`](../../colors/no_color.md) to clear it. See also the [free function](../bg.md).
+## Description
+
+Reads or changes the background.
+
+### Getter: `bg()`
+
+Returns the background by value.
+
+### Setter: `bg(color_t color)`
+
+Replaces the background and returns `*this`. Pass [`no_color`](../../colors/no_color.md) to clear it.
+
+## See also
+
+[Free function](../bg.md).

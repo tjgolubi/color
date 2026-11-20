@@ -10,4 +10,6 @@ Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 constexpr auto view() const noexcept -> std::basic_string_view<Char>;
 ```
 
+## Description
+
 Returns a string view of the initialized prefix. The view borrows storage and captures the current size. It does not track subsequent size changes.

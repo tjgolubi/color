@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto set(emphasis em, bool enable = true) noexcept -> text_style&;
 ```
 
+## Description
+
 Enables all bits in `em` when `enable` is true, or clears them otherwise. Other bits are preserved. Returns `*this`.

@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_enabled(emphasis em) const noexcept -> bool;
 ```
 
-Returns true if any bit in `em` is enabled. An empty mask returns false.
+## Description
+
+Returns true if any bit in `em` is enabled. If `em` is empty, returns `false`.

@@ -10,4 +10,6 @@ Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 constexpr auto size() const noexcept -> std::size_t;
 ```
 
+## Description
+
 Returns the number of characters in the initialized prefix, at most the template capacity `Size`.

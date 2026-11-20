@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_blink() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if blinking is enabled. See [`blink`](blink.md) to change it.

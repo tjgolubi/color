@@ -10,6 +10,18 @@ constexpr auto faint(text_style style, bool enable = true) noexcept
   -> text_style;
 ```
 
-By default enables decreased intensity. The first overload starts with an empty [`text_style`](text_style/index.md), and the second starts with a copy of `style`. Pass `false` to clear the bit in the result. See the [styled-text overload](../styled_text/faint.md).
+## Description
 
-See also [`text_style::faint`](text_style/faint.md).
+By default enables decreased intensity.
+
+### New style: `faint(bool enable)`
+
+Starts with an empty [`text_style`](text_style/index.md). Enables the attribute when `enable` is true (the default); otherwise returns an empty style.
+
+### Existing style: `faint(text_style style, bool enable)`
+
+Starts with a copy of `style`, enabling or disabling this attribute according to `enable`. Other attributes, colors, and the absolute flag are preserved.
+
+## See also
+
+[Styled-text overload](../styled_text/faint.md), [`text_style::faint`](text_style/faint.md).

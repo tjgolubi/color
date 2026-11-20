@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_underline() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if underlining is enabled. See [`underline`](underline.md) to change it.

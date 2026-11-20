@@ -8,4 +8,6 @@ Header: [`<tjg/color/styled_text.hpp>`](index.md).
 using wstyled_text = basic_styled_text<wchar_t>;
 ```
 
+## Description
+
 The wide-character specialization of [`basic_styled_text`](basic_styled_text/index.md).

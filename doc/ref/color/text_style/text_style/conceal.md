@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto conceal(bool enable = true) noexcept -> text_style&;
 ```
 
+## Description
+
 Enables concealment when `enable` is true, or clears the attribute otherwise. Returns `*this`. See [`is_conceal`](is_conceal.md) to query the attribute or the [free function](../conceal.md) to obtain a new style.

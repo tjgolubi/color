@@ -5,14 +5,33 @@ Header: [`<tjg/color.hpp>`](index.md).
 ## Synopsis
 
 ```cpp
-// The return type is a formattable wrapper.
+// Returns an object of unspecified type.
 template<typename T>
-constexpr auto styled(const T& value, text_style ts);
+constexpr auto styled(const T& value, text_style style);
 ```
 
-Returns a wrapper that borrows `value` and stores a copy of `ts`. The value must remain alive until formatting or insertion completes. Use the result directly as a format argument or stream operand.
+## Description
 
-During formatting, a relative style inherits unspecified components from the surrounding style. An absolute style starts from terminal defaults. After formatting the argument, the surrounding style is restored. Format specifications are handled by the wrapped value’s formatter.
+Applies the specified text style to a value when it is formatted or written to a
+stream. After the value is written, the surrounding style is restored.
+
+## Parameters
+
+| Parameter | Description                          |
+| ---       | ---                                  |
+| `value`   | Value to which the style is applied. |
+| `style`   | Text style to apply.                 |
+
+## Return value
+
+Returns an object of unspecified type such that the described behavior takes place.
+
+## Notes
+
+The value is borrowed and must remain alive until formatting or stream insertion
+completes. The result stores a copy of `style`.
+
+## Example
 
 ```cpp
 using namespace tjg::color;

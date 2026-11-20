@@ -11,4 +11,6 @@ auto operator+(basic_styled_text lhs, basic_styled_text rhs)
   -> basic_styled_text;
 ```
 
-Returns the concatenated value, preserving the styles of both operands. An empty operand acts as an identity. The operation can allocate. See also [`operator+=`](operator-addition-assignment.md).
+## Description
+
+Returns the concatenated value, preserving the styles of both operands. An empty operand acts as an identity. See also [`operator+=`](operator-addition-assignment.md).

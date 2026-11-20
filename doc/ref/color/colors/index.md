@@ -20,3 +20,5 @@ Color values, palettes, conversions, and blending.
 - [`tjg::color::term_color`](term_color.md)
 - [`tjg::color::to_rgb`](to_rgb.md)
 - [`std::hash` specializations](hash/index.md)
+
+See [Xterm-default palette behavior](xterm-palette.md).

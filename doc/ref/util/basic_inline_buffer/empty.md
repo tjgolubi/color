@@ -10,4 +10,6 @@ Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 constexpr auto empty() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if [`size()`](size.md) is zero.

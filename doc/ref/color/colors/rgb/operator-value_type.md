@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr explicit operator value_type() const noexcept;
 ```
 
-Returns the color as `0x00RRGGBB`. The conversion is explicit.
+## Description
+
+Converts to [`value_type`](index.md#nested-types). Returns the color as `0x00RRGGBB`. The conversion is explicit.

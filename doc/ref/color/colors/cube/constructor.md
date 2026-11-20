@@ -16,4 +16,29 @@ constexpr cube(int r, int g, int b) noexcept;
 constexpr cube(const cube&) noexcept;
 ```
 
-Default construction sets all channels to zero. Pass three indices in `0..5` or a combined index in `0..215`. A combined index is decomposed with red as the most significant channel and blue as the least significant. Assertion-enabled builds check the range. The current implementation clamps when assertions are disabled. The copy constructor preserves all channels.
+## Description
+
+Constructs a color in the indexed 6×6×6 cube.
+
+### Default construction: `cube()`
+
+Sets all three channel indices to zero.
+
+### Combined index: `cube(int index)`
+
+Accepts a combined index in `0..215`. Decomposes it with red as the most significant channel and blue as the least significant: `r = index / 36`, `g = (index / 6) % 6`, and `b = index % 6`. Assertion-enabled builds check the range. The current implementation clamps when assertions are disabled.
+
+### Channel indices: `cube(int r, int g, int b)`
+
+Accepts three indices in `0..5`. Assertion-enabled builds check each range. The current implementation clamps when assertions are disabled.
+
+### Copy construction: `cube(const cube&)`
+
+Preserves all source channel indices.
+
+## Parameters
+
+| Parameter     | Description                                 |
+| ---           | ---                                         |
+| `index`       | Combined cube index in `0..215`.            |
+| `r`, `g`, `b` | Independent cube channel indices in `0..5`. |

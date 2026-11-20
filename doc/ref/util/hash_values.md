@@ -11,4 +11,6 @@ auto hash_values(const T&... values)
   -> hash_t;
 ```
 
+## Description
+
 Starts with a zero seed and calls [`hash_combine`](hash_combine.md) once per argument in order. An empty argument list returns zero.

@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto has_emph() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if any emphasis is enabled. See [`emph`](emph.md).

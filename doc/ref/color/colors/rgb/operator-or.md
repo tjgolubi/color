@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator|(rgb lhs, rgb rhs) noexcept -> rgb;
 ```
 
+## Description
+
 Returns the bitwise OR of corresponding channels. The input values are unchanged. See also [`operator|=`](operator-or-assignment.md).

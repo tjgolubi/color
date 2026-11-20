@@ -37,8 +37,15 @@ class basic_inline_buffer {
   static constexpr std::size_t _capacity{Size};
 
  public:
+  /// @name Nested types
+  /// @{
+
   /// The stored character type.
   using value_type = Char;
+
+  /// @}
+  /// @name Construction and assignment
+  /// @{
 
   /// Constructs an empty buffer. At runtime, storage is left uninitialized.
   constexpr basic_inline_buffer() noexcept {
@@ -66,8 +73,19 @@ class basic_inline_buffer {
     return *this;
   }
 
+  /// @}
+  /// @name Capacity
+  /// @{
+
   /// Returns whether the buffer contains no output characters.
   constexpr auto empty() const noexcept -> bool { return (_size == 0); }
+
+  /// Returns the number of output characters.
+  constexpr auto size() const noexcept -> std::size_t { return _size; }
+
+  /// @}
+  /// @name Element access
+  /// @{
 
   /// Returns a writable pointer to the start of the contiguous storage.
   constexpr auto data() noexcept -> Char* { return _storage.data(); }
@@ -76,18 +94,23 @@ class basic_inline_buffer {
   constexpr auto data() const noexcept -> const Char*
   { return _storage.data(); }
 
-  /// Returns the number of output characters.
-  constexpr auto size() const noexcept -> std::size_t { return _size; }
-
   /// Returns a view that borrows the storage and captures the current size.
   constexpr auto view() const noexcept -> std::basic_string_view<Char>
   { return {data(), size()}; }
+
+  /// @}
+  /// @name Iterators
+  /// @{
 
   /// Returns a read-only iterator to the start of the output.
   constexpr auto begin() const noexcept -> const Char* { return data(); }
 
   /// Returns a read-only iterator one past the end of the output.
   constexpr auto end() const noexcept -> const Char* { return data() + size(); }
+
+  /// @}
+  /// @name Modifiers
+  /// @{
 
   /// Resets the size to zero. Stored character values are left intact.
   constexpr void clear() noexcept { _size = 0; }
@@ -188,6 +211,8 @@ class basic_inline_buffer {
   constexpr void append(std::string_view text) noexcept
     requires std::same_as<Char, wchar_t>
   { append<char, std::char_traits<char>>(text); }
+
+  /// @}
 
 }; // basic_inline_buffer
 

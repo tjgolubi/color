@@ -80,6 +80,9 @@ cmake --build build --target doc
 Open `build/doc-html/index.html`. The first documentation build installs the
 pinned Python packages into a virtual environment under `build/`.
 
+For a local server that refreshes as you edit, see the
+[preview-server instructions](support/color-pages.md#local-preview-server).
+
 - [Color user guide](https://tjgolubi.github.io/color/)
 - [Color user guide source](doc/index.md)
 - [Change log](CHANGELOG.md)

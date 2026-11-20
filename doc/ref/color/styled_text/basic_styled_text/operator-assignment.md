@@ -12,4 +12,14 @@ auto operator=(const basic_styled_text& other) -> basic_styled_text&;
 auto operator=(basic_styled_text&& other) noexcept -> basic_styled_text&;
 ```
 
-Replaces the current value with a copy or moved value of the source and returns `*this`. Self-assignment leaves the value unchanged. Copy assignment may allocate.
+## Description
+
+Both overloads return `*this`. Self-assignment leaves the value unchanged.
+
+### Copy assignment: `operator=(const basic_styled_text& other)`
+
+Replaces the current value with a copy of the source.
+
+### Move assignment: `operator=(basic_styled_text&& other)`
+
+Replaces the current value by moving from the source.

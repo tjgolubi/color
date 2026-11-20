@@ -10,4 +10,6 @@ Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 constexpr void clear() noexcept;
 ```
 
+## Description
+
 Sets the size to zero and leaves the stored characters intact.

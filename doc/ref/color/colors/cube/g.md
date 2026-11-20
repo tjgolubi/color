@@ -12,4 +12,14 @@ constexpr auto g() const noexcept -> int;
 constexpr auto g(int value) noexcept -> cube&;
 ```
 
-The getter returns the green channel index in `0..5`. The setter replaces this index, preserves the other channels, and returns `*this`. Assertion-enabled builds check the range. The current implementation clamps when assertions are disabled.
+## Description
+
+Reads or changes the green channel index.
+
+### Getter: `g()`
+
+Returns the green channel index in `0..5`.
+
+### Setter: `g(int value)`
+
+Replaces this index, preserves the other channels, and returns `*this`. Assertion-enabled builds check the range. The current implementation clamps when assertions are disabled.

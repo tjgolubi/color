@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_reverse() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if reverse video is enabled. See [`reverse`](reverse.md) to change it.

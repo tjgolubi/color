@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto blink(bool enable = true) noexcept -> text_style&;
 ```
 
+## Description
+
 Enables blinking when `enable` is true, or clears the attribute otherwise. Returns `*this`. See [`is_blink`](is_blink.md) to query the attribute or the [free function](../blink.md) to obtain a new style.

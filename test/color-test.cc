@@ -845,7 +845,7 @@ void check_to_sgr(const tjg::color::text_style& style, const std::string& expect
                 "the default character type must be char");
   const auto original = style;
   EXPECT_EQ(tjg::color::to_sgr(style), expected);
-  auto wide = tjg::color::basic_sgr_buffer<wchar_t>{};
+  auto wide = tjg::color::detail::basic_sgr_buffer<wchar_t>{};
   tjg::color::detail::append_sgr(wide, style);
   EXPECT_EQ(wide.view(), (std::wstring{expected.begin(), expected.end()}));
   EXPECT_EQ(style, original);
@@ -865,7 +865,7 @@ void check_sgr_transition(const tjg::color::text_style& target,
   const auto target_copy = target;
   const auto initial_copy = initial;
   EXPECT_EQ(tjg::color::to_sgr(target, initial), expected);
-  auto wide = tjg::color::basic_sgr_buffer<wchar_t>{};
+  auto wide = tjg::color::detail::basic_sgr_buffer<wchar_t>{};
   tjg::color::detail::append_sgr_transition(wide, target, initial);
   EXPECT_EQ(wide.view(), (std::wstring{expected.begin(), expected.end()}));
   // The initial value describes a complete state regardless of its flag.
@@ -2332,7 +2332,7 @@ TEST(color_test, compact_sgr_combined_style) {
             sgr + "value\x1b[0mplain");
 
   // Appending a style must preserve existing buffer contents.
-  auto buf = tjg::color::sgr_buffer{};
+  auto buf = tjg::color::detail::sgr_buffer{};
   const auto prefix = std::string{"prefix"};
   buf.append(prefix.data(), prefix.data() + prefix.size());
   tjg::color::detail::append_sgr(buf, style);
@@ -2455,7 +2455,7 @@ TEST(color_test, absolute_style_sgr) {
       "\x1b[0;1;2;3;4;5;7;8;9;38;2;255;255;255;48;2;255;255;255m"};
   check_to_sgr(maximal, expected);
   EXPECT_EQ(expected.size(), size_t{54});
-  EXPECT_LE(expected.size(), tjg::color::sgr_max_length);
+  EXPECT_LE(expected.size(), tjg::color::detail::sgr_max_length);
 }
 
 

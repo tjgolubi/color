@@ -10,4 +10,6 @@ Header: [`<tjg/inline_buffer.hpp>`](../index.md#tjginline_bufferhpp).
 constexpr auto begin() const noexcept -> const Char*;
 ```
 
+## Description
+
 Returns a read-only pointer to the start of the output range.

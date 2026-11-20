@@ -11,5 +11,7 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 auto operator()(T value) const noexcept -> std::size_t;
 ```
 
+## Description
+
 Returns a hash of the argument. Equal keys produce equal hashes. Hash values
 are suitable for in-process lookup and should not be used as persistent identifiers.

@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_bold() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if increased intensity is enabled. See [`bold`](bold.md) to change it.

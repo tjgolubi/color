@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_conceal() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if concealment is enabled. See [`conceal`](conceal.md) to change it.

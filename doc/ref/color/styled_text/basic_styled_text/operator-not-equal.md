@@ -10,4 +10,6 @@ Header: [`<tjg/color/styled_text.hpp>`](../index.md).
 bool operator!=(const basic_styled_text&, const basic_styled_text&);
 ```
 
+## Description
+
 Returns the negation of [`operator==`](operator-equal.md).

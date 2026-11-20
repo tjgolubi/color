@@ -51,7 +51,7 @@ template<CharType Char>
 auto operator<<(std::basic_ostream<Char>& os, const text_style& style)
   -> std::basic_ostream<Char>&
 {
-  auto buffer = basic_sgr_buffer<Char>{};
+  auto buffer = detail::basic_sgr_buffer<Char>{};
   detail::append_sgr(buffer, style.empty() ? absolute(style) : style);
   return os.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
 }
@@ -100,23 +100,23 @@ auto operator<<(std::basic_ostream<Char>& os, const styled_arg<T>& arg)
  * A nonempty style precedes the text with SGR sequences and appends a reset
  * to terminal defaults. An empty style emits no SGR sequences.
  */
-inline void vprint_nonunicode(std::ostream& os, text_style ts,
+inline void vprint_nonunicode(std::ostream& os, text_style style,
                               std::string_view fmt, std::format_args args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, ts);
+  TJG_SGR_OSTREAM_SCOPE(os, style);
   std::vprint_nonunicode(os, fmt, args);
 }
 
 /// Prints styled text using the standard Unicode stream output path.
-inline void vprint_unicode(std::ostream& os, text_style ts,
+inline void vprint_unicode(std::ostream& os, text_style style,
                            std::string_view fmt, std::format_args args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, ts);
+  TJG_SGR_OSTREAM_SCOPE(os, style);
   std::vprint_unicode(os, fmt, args);
 }
 
 /**
- * Prints formatted text to `os` using `ts`, followed by a terminal reset for
+ * Prints formatted text to `os` using `style`, followed by a terminal reset for
  * a nonempty style. Reset does not restore a previously active style.
  *
  * **Example**:
@@ -124,22 +124,22 @@ inline void vprint_unicode(std::ostream& os, text_style ts,
  *     tjg::color::print(os, tjg::color::text_style{tjg::color::emphasis::bold}, "Result: {}", 42);
  */
 template<typename... T>
-void print(std::ostream& os, text_style ts, std::format_string<T...> fmt,
+void print(std::ostream& os, text_style style, std::format_string<T...> fmt,
            T&&... args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, ts);
+  TJG_SGR_OSTREAM_SCOPE(os, style);
   std::print(os, fmt, std::forward<T>(args)...);
 }
 
 /**
- * Prints formatted text to `os` using `ts`, followed by a newline.
+ * Prints formatted text to `os` using `style`, followed by a newline.
  * A nonempty style ends with a reset to terminal defaults before the newline.
  */
 template<typename... T>
-void println(std::ostream& os, text_style ts, std::format_string<T...> fmt,
+void println(std::ostream& os, text_style style, std::format_string<T...> fmt,
              T&&... args)
 {
-  tjg::color::print(os, ts, fmt, std::forward<T>(args)...);
+  tjg::color::print(os, style, fmt, std::forward<T>(args)...);
   os.put('\n');
 }
 

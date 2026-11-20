@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto has_fg() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if a foreground color is specified. See [`fg`](fg.md).

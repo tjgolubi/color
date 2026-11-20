@@ -2,14 +2,12 @@
 
 Header: [`<tjg/color.hpp>`](../index.md).
 
-Generate terminal styling sequences, parse styled text, or strip escape sequences from styled text.
+Generate [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters) terminal styling sequences, parse styled text, or strip escape sequences from styled text.
 
-- [`tjg::color::basic_sgr_buffer`](basic_sgr_buffer.md)
-- [`tjg::color::parse_styled_text`](parse_styled_text.md)
-- [`tjg::color::sgr_buffer`](sgr_buffer.md)
-- [`tjg::color::sgr_max_length`](sgr_max_length.md)
-- [`tjg::color::sgr_reset`](sgr_reset.md)
-- [`tjg::color::sgr_reset_length`](sgr_reset_length.md)
-- [`tjg::color::strip_ansi`](strip_ansi.md)
-- [`tjg::color::to_sgr`](to_sgr.md)
-- [`tjg::color::wrap_sgr`](wrap_sgr.md)
+| Name                                        | Description                                                        |
+| ---                                         | ---                                                                |
+| [`parse_styled_text`](parse_styled_text.md) | Parses SGR sequences into styled text.                             |
+| [`sgr_reset`](sgr_reset.md)                 | Returns a sequence that resets terminal colors and emphasis.       |
+| [`strip_ansi`](strip_ansi.md)               | Removes escape sequences while preserving the styles and grouping. |
+| [`to_sgr`](to_sgr.md)                       | Generates an opening style sequence or a style transition.         |
+| [`wrap_sgr`](wrap_sgr.md)                   | Surrounds literal text with styling and a reset.                   |

@@ -11,4 +11,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator==(const no_color_t&) const noexcept -> bool;
 ```
 
+## Description
+
 Compares the unspecified-color values for equality. Also supports `!=` through the rewritten comparison.

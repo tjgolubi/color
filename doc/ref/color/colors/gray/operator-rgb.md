@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr operator rgb() const noexcept;
 ```
 
+## Description
+
 Converts implicitly to [`rgb`](../rgb/index.md). Each channel is `8 + 10 * index()`.

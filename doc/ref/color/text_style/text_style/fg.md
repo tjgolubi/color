@@ -12,4 +12,18 @@ constexpr auto fg() const noexcept -> color_t;
 constexpr auto fg(color_t color) noexcept -> text_style&;
 ```
 
-The getter returns the foreground by value. The setter replaces the foreground and returns `*this`. Pass [`no_color`](../../colors/no_color.md) to clear it. See also the [free function](../fg.md).
+## Description
+
+Reads or changes the foreground.
+
+### Getter: `fg()`
+
+Returns the foreground by value.
+
+### Setter: `fg(color_t color)`
+
+Replaces the foreground and returns `*this`. Pass [`no_color`](../../colors/no_color.md) to clear it.
+
+## See also
+
+[Free function](../fg.md).

@@ -100,7 +100,7 @@ private:
   /**
    * Applies `overrides` recursively in place, skipping absolute nodes and
    * their entire subtrees. Preserves text and tree structure. Specified
-   * colors replace matching channels; emphasis bits are combined by OR.
+   * colors replace matching channels; emphasis attributes are combined.
    * Returns this node for chaining.
    * To overlay only this node, use style(style().overlay(overrides)).
    */
@@ -114,8 +114,8 @@ private:
 
   /**
    * Underlays this node's style in place, leaving its text and children intact.
-   * Specified colors replace unspecified matching channels; emphasis bits are
-   * combined by OR. Returns a reference to this node for chaining.
+   * Specified colors replace unspecified matching channels; emphasis attributes
+   * are combined. Returns a reference to this node for chaining.
    */
   auto underlay(text_style style) noexcept -> basic_styled_text& {
     _style.underlay(style);
@@ -193,7 +193,7 @@ auto to_styled_text(S&& text) -> basic_styled_text<Char>
 /**
  * Returns styled text with `overrides` applied recursively, skipping absolute
  * nodes and their entire subtrees. Specified colors replace matching channels;
- * Emphasis bits are combined by OR. Accepts styled text, character strings,
+ * Emphasis attributes are combined. Accepts styled text, character strings,
  * and std::basic_string. String
  * inputs become owned leaves. Styled-text lvalues copy their structure;
  * rvalues move it. Only the returned value is modified.

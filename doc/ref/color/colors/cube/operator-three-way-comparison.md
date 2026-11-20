@@ -10,4 +10,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator<=>(const cube&) const noexcept -> std::strong_ordering;
 ```
 
+## Description
+
 Compares the combined cube indices and returns a `std::strong_ordering`. The defaulted comparison also provides equality, and relational operators use the three-way comparison.

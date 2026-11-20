@@ -8,4 +8,6 @@ Header: [`<tjg/color.hpp>`](../index.md).
 using sgr_buffer = basic_sgr_buffer<char>;
 ```
 
+## Description
+
 The narrow-character [`basic_sgr_buffer`](basic_sgr_buffer.md) specialization.

@@ -35,39 +35,86 @@ public:
 };
 ```
 
+## Description
+
 Owns text together with its style. Concatenation preserves the styles of the original pieces. A relative group inherits unspecified components from its enclosing style. An absolute group starts from terminal defaults. See [`styled_text`](../styled_text.md) and [`wstyled_text`](../wstyled_text.md) for the narrow and wide aliases.
 
-## Text inputs
+<span id="text-inputs"></span>
 
-Construct with a `string_type` or a non-null pointer to a null-terminated string. Use a `string_type` to preserve embedded nulls. The free styled-text helpers accept these inputs and matching `basic_styled_text` values. They copy styled lvalues and can move styled rvalues. The result owns its text.
+The free styled-text helpers accept matching text inputs and styled-text values.
+They copy styled lvalues and can move styled rvalues. The result owns its text.
+See the [constructor page](constructor.md) for accepted constructor inputs.
 
-## Member operations
+The style mutators and `operator+=` return `*this`. For rendering, include [`<tjg/color.hpp>`](../../index.md). See the [structured text guide](../../../../styled.md#structured-styled-text).
 
-| Members | Behavior |
-| --- | --- |
-| `style()`, `style(value)` | Read or replace the outermost style. |
-| `overlay(overrides)` | Replace specified colors and combine emphasis throughout relative groups, skipping absolute groups and their contents. |
-| `underlay(style)` | Supply defaults and emphasis to the outermost style. |
-| `empty()` | Report whether the value contains any text. |
-| `plain_text()` | Return a string with all text in order, preserving embedded nulls and escapes. |
-| `operator+`, `operator+=` | Concatenate. Empty values act as identities. |
-| `operator==`, `operator!=` | Compare text, styles, and grouping. |
+## Type definitions
 
-The style mutators and `operator+=` return `*this`. Construction from text, copying, concatenation, and `plain_text()` can allocate. For rendering, include [`<tjg/color.hpp>`](../../index.md). See the [structured text guide](../../../../styled.md#structured-styled-text).
+| Name                                 | Description                   |
+| ---                                  | ---                           |
+| [`styled_text`](../styled_text.md)   | `basic_styled_text<char>`.    |
+| [`wstyled_text`](../wstyled_text.md) | `basic_styled_text<wchar_t>`. |
+
+## Template parameters
+
+| Parameter | Description                                                               |
+| ---       | ---                                                                       |
+| `Char`    | Stored character type satisfying [`CharType`](../../../util/CharType.md). |
+
+## Nested types
+
+| Name          | Definition                      |
+| ---           | ---                             |
+| `char_type`   | `Char`.                         |
+| `string_type` | `std::basic_string<Char>`.      |
+| `view_type`   | `std::basic_string_view<Char>`. |
 
 ## Member functions
 
-- [`basic_styled_text`](constructor.md)
-- [`operator=`](operator-assignment.md)
-- [`style`](style.md)
-- [`overlay`](overlay.md)
-- [`underlay`](underlay.md)
-- [`empty`](empty.md)
-- [`plain_text`](plain_text.md)
-- [`operator+=`](operator-addition-assignment.md)
+| Name                                            | Description                                                                         |
+| ---                                             | ---                                                                                 |
+| [`basic_styled_text`](constructor.md)           | Constructs the value; see the constructor overloads.                                |
+| [`operator=`](operator-assignment.md)           | Replaces the value by copying or moving from the source.                            |
+| [`style`](style.md)                             | Reads or replaces the outermost style.                                              |
+| [`overlay`](overlay.md)                         | Applies specified colors and combines emphasis throughout the styled text in place. |
+| [`underlay`](underlay.md)                       | Applies the supplied style as defaults for the outermost group in place.            |
+| [`empty`](empty.md)                             | Returns true if the value contains no text.                                         |
+| [`plain_text`](plain_text.md)                   | Returns an independent string containing the text in order.                         |
+| [`operator+=`](operator-addition-assignment.md) | Appends `rhs`, preserving the styles of the original pieces, and returns `*this`.   |
 
 ## Non-member functions
 
-- [`operator==`](operator-equal.md)
-- [`operator!=`](operator-not-equal.md)
-- [`operator+`](operator-addition.md)
+| Name                                        | Description                                                             |
+| ---                                         | ---                                                                     |
+| [`operator==`](operator-equal.md)           | Returns true when text, styles, and grouping match.                     |
+| [`operator!=`](operator-not-equal.md)       | Returns the negation of `operator==`.                                   |
+| [`operator+`](operator-addition.md)         | Returns the concatenated value, preserving the styles of both operands. |
+| [`overlay`](../overlay.md)                  | Applies specified colors and emphasis throughout relative groups.       |
+| [`underlay`](../underlay.md)                | Supplies defaults for the outermost group.                              |
+| [`absolute`](../absolute.md)                | Makes the outermost style absolute.                                     |
+| [`bold`](../bold.md)                        | Applies increased intensity.                                            |
+| [`faint`](../faint.md)                      | Applies decreased intensity.                                            |
+| [`italic`](../italic.md)                    | Applies italic text.                                                    |
+| [`underline`](../underline.md)              | Applies underlining.                                                    |
+| [`blink`](../blink.md)                      | Applies blinking.                                                       |
+| [`reverse`](../reverse.md)                  | Reverses foreground and background.                                     |
+| [`conceal`](../conceal.md)                  | Applies concealment.                                                    |
+| [`strike`](../strike.md)                    | Applies crossed-out text.                                               |
+| [`strip_ansi`](../../sgr/strip_ansi.md)     | Removes escape sequences while preserving styles and grouping.          |
+| [`operator<<`](../../operator-insertion.md) | Writes styled text to an output stream.                                 |
+
+## Example
+
+The combined text is green, and "passed" is also bold.
+
+```cpp
+#include <tjg/color.hpp>
+
+int main() {
+  using namespace tjg::color;
+  using enum term_color;
+
+  auto message = underlay(fg(green),
+    styled_text{"Build "} + bold(styled_text{"passed"}));
+  println(text_style{}, "{}", message);
+}
+```

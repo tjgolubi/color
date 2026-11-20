@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto underlay(const text_style& other) noexcept -> text_style&;
 ```
 
-Colors from `other` fill the corresponding unspecified channels in this style. The result combines emphasis and absolute flags by OR. Returns `*this`. See also the [free function](../underlay.md).
+## Description
+
+Colors from `other` fill the corresponding unspecified channels in this style. The result combines emphasis attributes and the absolute flag. Returns `*this`. See also the [free function](../underlay.md).

@@ -11,6 +11,8 @@ constexpr auto parse(std::basic_format_parse_context<Char>& ctx)
   -> decltype(ctx.begin());
 ```
 
+## Description
+
 Parses the format specification and returns the iterator marking where parsing
 stopped. The color, emphasis, style, and styled-text formatters accept
 string-style fill, alignment, width, precision, and the optional `s` or `?`

@@ -12,4 +12,14 @@ constexpr auto b() const noexcept -> int;
 constexpr auto b(int value) noexcept -> cube&;
 ```
 
-The getter returns the blue channel index in `0..5`. The setter replaces this index, preserves the other channels, and returns `*this`. Assertion-enabled builds check the range. The current implementation clamps when assertions are disabled.
+## Description
+
+Reads or changes the blue channel index.
+
+### Getter: `b()`
+
+Returns the blue channel index in `0..5`.
+
+### Setter: `b(int value)`
+
+Replaces this index, preserves the other channels, and returns `*this`. Assertion-enabled builds check the range. The current implementation clamps when assertions are disabled.

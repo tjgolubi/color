@@ -8,4 +8,6 @@ Header: [`<tjg/hash_support.hpp>`](index.md#tjghash_supporthpp).
 using hash_t = std::size_t;
 ```
 
+## Description
+
 The result and seed type used by [`hash_value`](hash_value.md), [`hash_combine`](hash_combine.md), and [`hash_values`](hash_values.md).

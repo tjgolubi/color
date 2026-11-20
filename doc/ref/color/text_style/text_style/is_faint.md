@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_faint() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if decreased intensity is enabled. See [`faint`](faint.md) to change it.

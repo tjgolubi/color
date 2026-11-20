@@ -18,4 +18,26 @@ basic_styled_text(const basic_styled_text& other);
 basic_styled_text(basic_styled_text&& other) noexcept;
 ```
 
-Default construction produces empty styled text. A string or a non-null pointer to a null-terminated string supplies text, and the optional `style` applies to that text. Supply a string object to preserve embedded nulls. Copy construction preserves text, grouping, and styles. Move construction transfers the value and leaves the source empty.
+## Description
+
+Constructs owned styled text.
+
+### Default construction: `basic_styled_text()`
+
+Produces empty styled text.
+
+### String input: `basic_styled_text(string_type text, const text_style& style)`
+
+Owns the supplied string, preserving embedded nulls. The optional `style` applies to this text.
+
+### Null-terminated input: `basic_styled_text(const Char* text, const text_style& style)`
+
+Copies a non-null pointer to a null-terminated string, excluding the terminator. The optional `style` applies to this text. Use the string overload to preserve embedded nulls.
+
+### Copy construction: `basic_styled_text(const basic_styled_text& other)`
+
+Preserves the source text, grouping, and styles.
+
+### Move construction: `basic_styled_text(basic_styled_text&& other)`
+
+Transfers the value and leaves the source empty.

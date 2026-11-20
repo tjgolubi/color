@@ -52,8 +52,8 @@ Concatenate the parts first, then use `underlay(style, text)` to supply
 defaults for the combined text. Existing foreground and background colors are
 preserved. The supplied colors fill unspecified channels in the outermost
 style. During formatting, each relative part inherits colors it does not
-specify; explicit colors within the group take precedence. Emphasis combines by
-OR.
+specify; explicit colors within the group take precedence. Emphasis attributes
+are combined.
 
 ```cpp
 using namespace tjg::color;
@@ -87,9 +87,9 @@ outer defaults.
 ### Use `overlay` for explicit overrides
 
 `overlay(overrides, text)` replaces the specified colors throughout the text
-and its nested groups, adding emphasis by OR. It skips existing absolute groups
-and everything inside them. Use it when the supplied colors should replace
-explicit choices:
+and its nested groups, combining emphasis attributes. It skips existing absolute
+groups and everything inside them. Use it when the supplied colors should
+replace explicit choices:
 
 ```cpp
 using namespace tjg::color;

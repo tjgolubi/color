@@ -11,4 +11,6 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 constexpr auto operator==(const rgb&) const noexcept -> bool;
 ```
 
+## Description
+
 Compares the three color channels for equality. Also supports `!=` through the rewritten comparison.

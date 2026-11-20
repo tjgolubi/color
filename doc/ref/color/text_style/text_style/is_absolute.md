@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto is_absolute() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if the style is absolute. See [`absolute`](absolute.md) to change the flag.

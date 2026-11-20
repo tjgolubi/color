@@ -10,4 +10,6 @@ Header: [`<tjg/color/styled_text.hpp>`](../index.md).
 auto empty() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if the value contains no text. A style alone does not make it nonempty.

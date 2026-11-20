@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto has_bg() const noexcept -> bool;
 ```
 
+## Description
+
 Returns true if a background color is specified. See [`bg`](bg.md).

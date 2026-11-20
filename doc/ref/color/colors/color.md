@@ -9,7 +9,30 @@ constexpr rgb color(double red, double green, double blue) noexcept;
 constexpr rgb color(double grayscale) noexcept;
 ```
 
-Returns an [`rgb`](rgb/index.md) from normalized inputs in `0.0..1.0`. The one-argument overload applies the same component to all three channels. In the current implementation, an interior value maps to the integer part of `256 * value`; the endpoints map to 0 and 255. Inputs below or above the range map to the nearest endpoint, and NaN maps to 0.
+## Description
+
+Returns an [`rgb`](rgb/index.md) from normalized inputs in `0.0..1.0`. In the current implementation, an interior value maps to the integer part of `256 * value`; the endpoints map to 0 and 255. Inputs below or above the range map to the nearest endpoint, and NaN maps to 0.
+
+### Three channels: `color(double red, double green, double blue)`
+
+Converts each normalized component independently to the corresponding RGB channel.
+
+### Grayscale: `color(double grayscale)`
+
+Applies the same normalized component to all three RGB channels.
+
+## Parameters
+
+| Parameter              | Description                                                             |
+| ---                    | ---                                                                     |
+| `red`, `green`, `blue` | Independent normalized channels in the three-argument overload.         |
+| `grayscale`            | Normalized value applied to every channel in the one-argument overload. |
+
+## Return value
+
+The RGB value formed from the normalized channels.
+
+## Example
 
 ```cpp
 using namespace tjg::color;

@@ -10,4 +10,6 @@ Header: [`<tjg/color/text_style.hpp>`](../index.md).
 constexpr auto faint(bool enable = true) noexcept -> text_style&;
 ```
 
+## Description
+
 Enables decreased intensity when `enable` is true, or clears the attribute otherwise. Returns `*this`. See [`is_faint`](is_faint.md) to query the attribute or the [free function](../faint.md) to obtain a new style.
