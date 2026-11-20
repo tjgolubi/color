@@ -45,3 +45,5 @@ the absolute underline-only span.
 using styled-text formatting. Shorter cells receive blank lines so row borders
 stay aligned. Headings and task titles are bold; only blocked and completed
 statuses use color. Build and run it with `make WrapTable && ./WrapTable`.
+See the [WrapTable walkthrough](../doc/wrap-table.md) for the expected output
+and an explanation of the table code.

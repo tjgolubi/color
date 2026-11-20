@@ -1,10 +1,10 @@
 CXX = g++
-TJG_ROOT = ..
+TJG_ROOT  := ..
 TJG_BUILD ?= $(TJG_ROOT)/build
-TJG_LIB ?= $(TJG_BUILD)/libcolor.a
-FMT_ROOT ?= $(HOME)/App/fmt
-FMT_LIB ?= $(FMT_ROOT)/build/libfmtd.a
-CXXFLAGS += -std=gnu++23 -Wall -Wextra -Werror
+TJG_LIB   ?= $(TJG_BUILD)/libcolor.a
+FMT_ROOT  ?= $(HOME)/App/fmt
+FMT_LIB   ?= $(FMT_ROOT)/build/libfmtd.a
+CXXFLAGS  += -std=gnu++23 -Wall -Wextra -Werror
 
 TJG_DEMOS := StyledDemo StyledTextDemo
 TJG_DEMOS += TableDemo TableDemoCpp TableDemoOstream WrapTable
@@ -13,6 +13,7 @@ DEMOS := $(TJG_DEMOS) $(FMT_DEMOS)
 
 find_headers = $(wildcard $(1)*.h $(1)*.hpp) \
                $(foreach dir,$(wildcard $(1)*/),$(call find_headers,$(dir)))
+
 TJG_HEADERS := $(call find_headers,$(TJG_ROOT)/include/tjg/)
 TJG_SOURCES := $(wildcard $(TJG_ROOT)/src/*.cpp $(TJG_ROOT)/src/*.hpp)
 

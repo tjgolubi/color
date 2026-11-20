@@ -97,5 +97,6 @@ library's `TJG_THROW` failure policy.
 ## See also
 
 [Wrapping guide](../../../styled.md#wrapping-text-into-lines),
+[WrapTable walkthrough](../../../wrap-table.md),
 [`basic_styled_text`](basic_styled_text/index.md),
 [`strip_ansi`](../sgr/strip_ansi.md).

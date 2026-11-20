@@ -159,6 +159,9 @@ Expected output (followed by a newline):
 span is underlined, without strikethrough or the gray background. The text after
 it resumes both surrounding properties.
 
+The [StyledTextDemo walkthrough](styled-text-demo.md) compares `underlay()`
+and `overlay()` on the same line, including an absolute span.
+
 ### Formatting and plain text
 
 Formatting leaves the value unchanged. Relative styled text inherits the
@@ -275,6 +278,9 @@ Combining marks and emoji sequences do not receive grapheme-cluster handling.
 See the [`word_wrap` reference](ref/color/styled_text/word_wrap.md) for the
 complete rules, including blank lines and invalid widths.
 
+The [WrapTable walkthrough](wrap-table.md) shows how to use these lines in
+your own table, with styled cells, column alignment, and Unicode borders.
+
 ### Debug output
 
 Use `{:?}` to inspect stored styles and nested groups without rendering SGR.
@@ -343,99 +349,8 @@ width. A short write sets `badbit`, and the stream's exception mask controls
 whether the failure throws. For a debug view of the text and its groups, insert
 the result of `std::format("{:?}", text)` or its wide equivalent.
 
-### Table demonstration
-
-The complete [TableDemo.cpp](https://github.com/tjgolubi/color/blob/dev/demo/TableDemo.cpp)
-example combines column backgrounds, independently colored cell contents, row
-emphasis, and an absolute warning span. It also demonstrates UTF-8 display
-widths and fixed-width padding and truncation.
-
-The [demo README](https://github.com/tjgolubi/color/tree/dev/demo) also lists
-three versions of the dashboard for comparison. `TableDemoCpp` uses standard
-C++23 and raw SGR sequences, `TableDemoFmt` uses {fmt}, and `TableDemoOstream`
-uses {color} with stream insertion.
-
-From the repository root, build and run the table demo with:
-
-```sh
-c++ -std=c++23 -I include demo/TableDemo.cpp -o /tmp/TableDemo
-/tmp/TableDemo
-```
-
-Use a C++23 compiler and standard library with `<format>` and `<print>`.
-The demo links the color library and emits compact SGR sequences.
-An ANSI-capable terminal displays its colors and text attributes.
-
-#### Apply column defaults beneath cell styles
-
-Each column supplies a foreground and background. The cell helper uses
-`underlay` so explicit colors in a cell take precedence:
-
-```cpp
-using namespace tjg::color;
-
-constexpr auto notes_color = fg(term_color::white).bg(rgb::indigo);
-
-auto cell(styled_text text, text_style column) -> styled_text {
-  return underlay(column, text);
-}
-
-auto nas_note = styled_text{"All", fg(term_color::red).bg(term_color::cyan)}
-              + " volumes "
-              + styled_text{"healthy", fg(term_color::green)};
-```
-
-With `cell(nas_note, notes_color)`, `All` keeps its red foreground and cyan
-background. The plain ` volumes ` inherits the column's white foreground and
-indigo background; `healthy` keeps its green foreground and inherits indigo.
-Padding also uses the column defaults. Using `overlay` here would replace
-explicit colors throughout the relative cell contents.
-
-#### Combine row emphasis with fixed-width fields
-
-The demo's `print_row` function passes the row style to `println` and formats
-four cells:
-
-```cpp
-tjg::color::println(row, "{:<16.16} {:^12.12} {:>12.12} {:<30.30}",
-                         cell(std::move(service), service_color),
-                         cell(std::move(status),  status_color),
-                         cell(std::move(latency), latency_color),
-                         cell(std::move(notes),   notes_color));
-```
-
-Service and Notes are left-aligned, Status is centered, and Latency is
-right-aligned. Each field uses equal width and precision: short text is padded
-and long text is truncated to the column width. The literal spaces between
-fields use the row style rather than a column background.
-
-The heading row supplies `tjg::color::bold().underline()`, the Backup row supplies
-`tjg::color::bold()`, and the Old server row supplies `tjg::color::faint()`. Relative cell
-contents inherit that emphasis while retaining their explicit colors and
-column backgrounds.
-
-#### Protect an absolute span
-
-The Database row contains an absolute red-on-white warning:
-
-```cpp
-using namespace tjg::color;
-constexpr auto critical_style =
-                          fg(rgb::red).bg(rgb::white).bold().blink().absolute();
-auto db_note = styled_text{"Connection refused: "}
-             + styled_text{"CRITICAL!", critical_style}
-             + " Database service is unavailable";
-```
-
-`CRITICAL!` uses its own foreground, background, and emphasis. The column style
-resumes after it. The Notes field's precision of 30 cuts off the trailing
-explanation.
-
-![TableDemo in a Windows terminal with colored columns, aligned UTF-8 text, and highlighted alerts](table-demo.png)
-
-`東京` occupies six UTF-8 bytes and `Café` occupies five. Both have an estimated
-display width of four columns. An ANSI-capable terminal shows the native
-styling, including blink where supported.
+See the [TableDemo walkthrough](table-demo.md) for a complete dashboard
+with column defaults, row emphasis, and fixed-width fields.
 
 ## Parsing SGR text
 

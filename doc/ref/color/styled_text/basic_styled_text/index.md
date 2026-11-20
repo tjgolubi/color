@@ -100,6 +100,7 @@ The style mutators and `operator+=` return `*this`. For rendering, include [`<tj
 | [`conceal`](../conceal.md)                  | Applies concealment.                                                    |
 | [`strike`](../strike.md)                    | Applies crossed-out text.                                               |
 | [`strip_ansi`](../../sgr/strip_ansi.md)     | Removes escape sequences while preserving styles and grouping.          |
+| [`word_wrap`](../word_wrap.md)               | Wraps text into lines by display width while preserving styles.         |
 | [`operator<<`](../../operator-insertion.md) | Writes styled text to an output stream.                                 |
 
 ## Example
