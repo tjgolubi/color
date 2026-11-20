@@ -8,7 +8,7 @@ Updated November 20, 2026.
 
 Build and test Color in C++23 mode. Use a compiler and standard library with
 working `<format>`, `std::formattable`, and `<print>`. CMake checks these
-facilities when tests are enabled. CMake 3.20 or later and a supported build
+facilities when tests are enabled. CMake 4.0 or later and a supported build
 tool are required; Google Test is vendored in `ext/gtest/`.
 
 From the library repository root, run:
