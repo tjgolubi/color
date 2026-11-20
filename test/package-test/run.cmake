@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.31)
 
 foreach (required TJG_SOURCE_DIR TJG_TEST_BINARY_DIR TJG_CXX_COMPILER
                   TJG_GENERATOR)
