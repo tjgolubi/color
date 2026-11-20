@@ -11,6 +11,7 @@
 #include <cstddef>
 
 namespace {
+using tjg::color::rgb;
 using tjg::color::styled_text;
 
 enum class alignment { left, center, right };
@@ -19,6 +20,16 @@ struct column {
   const char* heading;
   int width;
   alignment align;
+  rgb background;
+
+  constexpr auto header_background() const noexcept -> rgb {
+    // Multiply by 2.5, rounding half channels up and saturating at 255.
+    const auto brighten = [](int channel) {
+      return std::min(255, (5 * channel + 1) / 2);
+    };
+    return {brighten(background.r), brighten(background.g),
+            brighten(background.b)};
+  }
 };
 
 // Fixed column counts catch missing cells at compile time. Widths and
@@ -40,10 +51,11 @@ public:
   }
 
   void print_rule(std::string_view left, std::string_view joint,
-                  std::string_view right) const {
+                  std::string_view right) const
+  {
     for (std::size_t i = 0; i < N; ++i) {
       const auto width = static_cast<std::size_t>(_columns[i].width) + 2;
-      std::print("{}{:─<{}}", i == 0 ? left : joint, "", width);
+      std::print("{}{:─<{}}", (i == 0) ? left : joint, "", width);
     }
     std::println("{}", right);
   }
@@ -53,11 +65,11 @@ public:
     for (std::size_t i = 0; i < N; ++i)
       headings[i] = tjg::color::bold(_columns[i].heading);
     print_rule("┌", "┬", "┐");
-    print_row(headings);
+    print_row(headings, /*header=*/true);
     print_rule("├", "┼", "┤");
   }
 
-  void print_row(const row& cells) const {
+  void print_row(const row& cells, bool header = false) const {
     auto wrapped = std::array<std::vector<styled_text>, N>{};
     auto height = std::size_t{1}; // Even an entirely empty row has a line.
     for (std::size_t i = 0; i < N; ++i) {
@@ -69,25 +81,32 @@ public:
     for (std::size_t line = 0; line < height; ++line) {
       std::print("│");
       for (std::size_t i = 0; i < N; ++i) {
-        const auto& value = line < wrapped[i].size() ? wrapped[i][line] : blank;
+        const auto& value = (line < wrapped[i].size())
+                          ? wrapped[i][line] : blank;
         const auto& col = _columns[i];
+        const auto background = header ? col.header_background()
+                                       : col.background;
+        const auto foreground = header ? rgb::white : rgb::gainsboro;
+        const auto style = bg(background).fg(foreground);
         // Format the styled line itself: plain_text().size() would count
         // bytes, and formatting a rendered ANSI string would count escapes.
         switch (col.align) {
-        case alignment::left:
-          std::print(" {:<{}} │", value, col.width);
-          break;
-        case alignment::center:
-          std::print(" {:^{}} │", value, col.width);
-          break;
-        case alignment::right:
-          std::print(" {:>{}} │", value, col.width);
-          break;
+          case alignment::left:
+            tjg::color::print(style, " {:<{}} ", value, col.width);
+            break;
+          case alignment::center:
+            tjg::color::print(style, " {:^{}} ", value, col.width);
+            break;
+          case alignment::right:
+            tjg::color::print(style, " {:>{}} ", value, col.width);
+            break;
         }
+        std::print("│");
       }
       std::println();
     }
-  }
+  } // print_row
+
 }; // table
 
 } // local
@@ -97,16 +116,16 @@ int main() {
   using enum term_color;
 
   const auto work = table<3>{{{
-    {"Work item / handoff notes", 40, alignment::left},
-    {"Status",                    18, alignment::center},
-    {"Est. effort",               16, alignment::right},
+    {"Work item / handoff notes", 40, alignment::left,   rgb{30, 42, 54}},
+    {"Status",                    18, alignment::center, rgb{31, 46, 39}},
+    {"Est. effort",               16, alignment::right,  rgb{49, 40, 49}},
   }}};
 
   std::println("PLATFORM MAINTENANCE — weekly work queue\n");
   work.print_header();
 
   work.print_row({
-    bold("Rotate production credentials")
+    underline(bold("Rotate production credentials"))
       + "\nUpdate the API workers first, then verify that scheduled exports "
         "can still read the reporting database.",
     "Ready\nApproved by security",
@@ -115,18 +134,19 @@ int main() {
   work.print_rule("├", "┼", "┤");
 
   work.print_row({
-    bold("Restore rehearsal — 東京")
+    underline(bold("Restore rehearsal — 東京"))
       + "\nRecover last night's backup into an isolated instance. "
         "Compare row counts before deleting the rehearsal environment.",
-    styled_text{"Blocked", fg(yellow)}
+    styled_text{"Blocked", fg(yellow).reverse()}
       + "\nWaiting for temporary storage allocation",
     "6.0 h\n1 engineer",
   });
   work.print_rule("├", "┼", "┤");
 
   work.print_row({
-    bold("Café office network")
-      + "\nReplace the lobby access point after closing. "
+    underline(bold("Café office network"))
+      + "\nReplace the " + styled_text{"lobby", fg(bright_magenta)}
+      + " access point after closing. "
         "Keep the guest network available during the change.",
     "Scheduled\nAfter 18:00",
     "1.5 h",
@@ -134,7 +154,7 @@ int main() {
   work.print_rule("├", "┼", "┤");
 
   work.print_row({
-    bold("Retire the legacy export job")
+    underline(bold("Retire the legacy export job"))
       + "\nFinance has confirmed the new reports. "
         "Keep the old configuration for one billing cycle.",
     styled_text{"Complete", fg(green)},
@@ -144,4 +164,4 @@ int main() {
 
   std::println("\nEffort estimates are person-hours; descriptions and status "
                "notes wrap independently.");
-}
+} // main
