@@ -4,34 +4,19 @@
 
 Updated November 20, 2026.
 
-## Status and authorization
+## Feature status
 
-`wrap()` is not currently part of the project. The first implementation was
-removed at Terry's instruction, including its headers, Unicode table
-generator, tests, documentation, and build integrations. Do not recover it
-as an accepted implementation. Its removal passed the build, all 22 CTest
-entries, and the strict documentation build.
-
-The behavior below is agreed and sufficiently specified for implementation.
-Updating this document does not authorize implementation. Follow the prime
-directive in [Workflow.md](Workflow.md): a question calls for an answer,
-not project edits. Temporary scratch experiments are allowed. Wait for an
-imperative instruction before implementing or integrating `wrap()`.
-
-The inspected library checkout is `feat/Wrap` at
-`e5c1cd09f9bd8614ddfa2b05d41a90703ed6744d`, the runtime-library refactor
-committed on `ref/RuntimeCpp` and reported pushed by Terry. The library has
-no tracked edits; `ViewWeb.bash` remains an untracked convenience script.
-Coordination documents are in the `coord/` worktree on `docs/Coord`, versioned
-separately from the library. Recheck actual state before work; do not assume
-either checkout is clean. Terry wants `wrap()` in its own commit. Do not
-commit, stash, switch branches, or restore whole files without authorization.
+`word_wrap()` was implemented in `5675404` on top of the runtime-library
+refactor. The pushed `feat/Wrap` tip is
+`e99d821498d9a00315bc71f28cce7d4c7fd9a4b8`. The earlier, removed
+`wrap()` design is superseded. Integration into `dev` is pending.
+See [BuildAndTest.md](BuildAndTest.md#wrap-feature-validation) for the
+verified build and CI results.
 
 ## Purpose and agreed behavior
 
-The motivating use is Taskwarrior tables: wrap a styled table cell into
-physical lines, then let the table code align and pad those lines. The
-replacement should work on styled text rather than a rendered `std::string`.
+Taskwarrior tables motivated the design. Wrapping splits a styled table cell
+into physical lines, and the table code aligns and pads those lines.
 
 - Accept styled text and a display-width parameter; return a vector of
   styled-text lines.
@@ -54,12 +39,11 @@ replacement should work on styled text rather than a rendered `std::string`.
 - At a punctuation break, leave the punctuation on the preceding line and
   do not insert a hyphen. Inserted hyphens are for oversized words only.
 
-An API shape discussed was `wrap(styled_text, width) ->
-std::vector<styled_text>`, with a corresponding wide-character interface.
-The value/reference parameter choice and width type are implementation
-choices, subject to the behavior above. Prefer signed types where suitable,
-and reject negative widths rather than converting them to huge unsigned
-values. Use `style`, not `ts`, for public style parameter names.
+The public overloads are declared in `<tjg/color/styled_text.hpp>` and linked
+through `tjg::tjg`. Both take the text by const reference and the width as a
+signed `std::ptrdiff_t`. They return `std::vector<styled_text>` and
+`std::vector<wstyled_text>`, respectively. See the
+[API reference](https://github.com/tjgolubi/color/blob/e99d821498d9a00315bc71f28cce7d4c7fd9a4b8/doc/ref/color/styled_text/word_wrap.md).
 
 ## Whitespace and physical lines
 
@@ -78,7 +62,9 @@ text-span boundaries: no returned styled-text line has trailing whitespace.
 
 Return an empty vector if the sanitized input is empty or only whitespace.
 Width validation still happens first. For input containing visible text,
-leading and interior blank lines remain; trailing blank lines do not.
+leading and interior blank lines remain. Each retained blank line carries
+the input’s root style so callers can pad it with the same background as
+the surrounding lines. Trailing blank lines are trimmed.
 
 Examples below assume a valid width large enough for the visible text:
 
@@ -91,14 +77,10 @@ Examples below assume a valid width large enough for the visible text:
 
 ## ANSI sequences and remaining controls
 
-The existing `strip_ansi(basic_styled_text<Char>)` in
-`include/tjg/color/bits/strip_ansi_styled_text.hpp` strips complete
-ESC-prefixed sequences independently in each leaf. Its documented behavior
-retains sequences spanning leaves. Match this behavior: do not recognize
-escape sequences split across spans and do not add a streaming ANSI scanner.
-Keep the current scanner's handling of incomplete and malformed sequences;
-apply the control filtering below to what remains. Do not change
-`strip_ansi()` semantics as part of implementing wrapping.
+Wrapping uses the existing ANSI scanner independently within each text span.
+It strips complete ESC-prefixed sequences and retains the scanner's treatment
+of incomplete and malformed sequences. Sequences split across spans are
+handled separately in each span.
 
 After ANSI stripping, normalize whitespace and discard every remaining
 non-whitespace control character, including NUL, backspace, BEL, ESC, DEL
@@ -106,34 +88,21 @@ non-whitespace control character, including NUL, backspace, BEL, ESC, DEL
 precedence over control removal: whitespace controls become spaces, except
 newline, which forces a line break.
 
-Strip controls after decoding characters. In UTF-8, a continuation byte may
-have the numeric value of a C1 control; deleting such bytes corrupts text.
-Malformed encoded units are preserved under the separate decoding policy;
-do not reinterpret malformed UTF-8 bytes as decoded C1 controls. ANSI removal
-must leave structured styles intact rather than rendering them as escape
-sequences and reparsing them.
+Control filtering follows decoding. A valid UTF-8 continuation byte can
+have the same numeric value as a C1 control. Malformed units are preserved
+individually. Removing a control can join previously malformed units within
+a span. For example, removing BEL from `C2 07 80` leaves `C2 80`, which
+decodes as U+0080 and is removed on a second wrap. The API reference documents
+this behavior for UTF-8 bytes and unpaired UTF-16 surrogates. Terry chose to
+document the edge case to avoid adding span boundaries for it.
 
 ## Unicode and wide-character support
 
-The removed implementation only supported UTF-8 `styled_text`. Terry called
-out the missing `wstyled_text` support. Do not repeat that omission or treat
-templating on `Char` as sufficient Unicode support.
-
-The inspected MSYS2 GCC toolchain has `sizeof(wchar_t) == 2`: its wide strings
-require UTF-16 decoding, including surrogate pairs. Other supported systems
-may have four-byte `wchar_t` and require UTF-32 scalar validation. This does
-not require two different wrapping algorithms: character decoding and output
-encoding can vary while the line-breaking algorithm works on decoded tokens.
-
-Inspect these existing facilities before proposing new ones:
-
-- `include/tjg/color/bits/unicode.hpp`: UTF-8 decoding, estimated code-point
-  display widths, and prefixes that fit a width limit.
-- `include/tjg/color/bits/styled_text-format.hpp`: styled-text measurement,
-  truncation, and rendering.
-- `include/tjg/color/bits/EastAsianWidth.hpp` and `src/UnicodeData.hpp`:
-  checked-in width and private classification tables. `support/unicode/`
-  documents their generation; use matching Unicode versions for new data.
+The local MSYS2 toolchain uses two-byte `wchar_t`. The wide overload decodes
+surrogate pairs there and validates UTF-32 scalars on systems with four-byte
+`wchar_t`. Both overloads share the line-breaking algorithm.
+`include/tjg/color/bits/unicode.hpp` supplies UTF-8 decoding and the
+formatter's code-point width lookup.
 
 Use the current UTF-8 formatter's width model for both character types: two
 columns for decoded code points in the wide-character table and one otherwise.
@@ -164,16 +133,16 @@ at a break, with no inserted hyphen.
 These exclusions govern preferred punctuation breaks. They do not exempt an
 oversized word from the agreed character-boundary hyphenation rule.
 
-The removed implementation added punctuation and whitespace range tables
-and a Python generator. These were removed too. Check existing data before
-adding new generated files. Do not describe this punctuation policy as a
-complete Unicode line-breaking implementation.
+`support/unicode/gen-wrap-tables.py` generates `src/WrapData.hpp` from the
+checked-in Unicode 18.0.0 data. It uses `White_Space` and `Quotation_Mark`
+from `PropList.txt` and the punctuation categories from `UnicodeData.txt`.
+Unicode License V3 is included in the installed `THIRD-PARTY-NOTICES`.
 
 ## Preserving styles and implementation structure
 
 `basic_styled_text<Char>` stores shared immutable leaf strings, child groups,
-and a style on each node. Its representation is private. The renderer and
-ANSI stripper have narrow friend access. `plain_text()` loses the style
+and a style on each node. Its representation is private. The renderer, ANSI stripper, and
+word wrapper have narrow friend access. `plain_text()` loses the style
 structure and cannot by itself implement wrapping correctly.
 
 Preserve nested groups, inherited styles, and absolute-style boundaries when
@@ -183,21 +152,13 @@ An inserted hyphen inherits the preceding character's style, with the correct
 ancestry retained. Removing ANSI sequences, controls, or trailing spaces must
 preserve the styles and nesting of the text that remains.
 
-One promising approach from the removed implementation is to track decoded
-tokens with source ranges, select line ranges in a shared wrapping algorithm,
-then reconstruct the corresponding portions of the original styled groups.
-Whitespace normalization and inserted hyphens require explicit generated
-tokens. Decode and strip ANSI independently within each span, as agreed.
-Word detection and line selection still operate on the concatenated text;
-a style boundary alone is not a word boundary. Preserve source mappings when
-sanitization changes text lengths.
-Watch for repeated full-tree rescans, excess copying, and very deep nesting.
-
-Color now builds a static archive, `libcolor.a` on MSYS2 and Unix, with the
-existing `tjg::tjg` CMake consumer target. Implement wrapping's runtime logic
-in `.cpp` files and include it in that archive. Ordinary narrow and wide
-overloads can share private implementation code; duplicate complete wrapping
-algorithms are unnecessary.
+The narrow and wide entry points share compiled code in `src/word_wrap.cpp`.
+The wrapper walks the source groups with an explicit stack. Each token
+records its location in the sanitized span, its width, and its break
+classification. Prefix sums guide line selection across style boundaries.
+To rebuild each line, the wrapper finds the overlapping children by binary
+search, copies their styles, and appends any inserted hyphen to the final
+span. An empty line needs only the root style for padding.
 
 Preserve speed and constexpr support before reducing header content. Do not
 reintroduce `detail::output`: its type-erased iterator added an indirect call
@@ -230,36 +191,19 @@ The organization is Gothenburg Bit Factory; the upstream repository is
 Read local source again when comparing behavior. These files are context,
 not authorization to modify Taskwarrior or to copy its algorithm wholesale.
 
-## Implementation readiness and verification
+## Tests and demo
 
-There are no remaining blocking design questions from this review. The
-behavior above is settled. Parameter passing, internal representation,
-helper names, and data-generation details remain implementation choices;
-they must preserve the agreed behavior and performance priorities.
+`test/word-wrap-test.cc` exercises both overloads, including width validation
+before sanitization, physical line breaks, punctuation, oversized words,
+malformed input, controls, and sequences split across spans. The style tests
+check nested and absolute groups, hyphen inheritance, input preservation,
+and formatting of blank lines with field padding. Wide encoding cases
+select the appropriate expectations for the platform's `wchar_t` size.
 
-After an imperative implementation instruction, inspect existing diffs and
-record the proposed changes before editing. Keep the wrap change independently
-reviewable. A new header alone does not authorize integrations under a
-scratch-file exception. Check for Vim swap files before changing open files.
-
-Meaningful tests should cover ASCII wrapping; moving a fitting word intact;
-oversized words and hyphen width/style; eligible and excluded punctuation;
-leading/interior blank lines and trimmed trailing newlines; whitespace-only
-input; indentation and trailing whitespace across spans; per-character
-whitespace normalization; DEL and other controls; and per-span ANSI stripping.
-Test widths below 16 even for empty input.
-
-Cover UTF-8 multibyte characters, two-column characters at the margin, UTF-16
-surrogate pairs, and UTF-32 where supported. Verify malformed units and
-encoded sequences split across spans against the agreed per-span policy.
-Check nested/absolute styles, words spanning styles, and input preservation.
-Every returned line must fit the agreed width model and have no trailing
-whitespace. No wrapping implementation or wrap-specific tests are present
-yet; the earlier removal/build checks do not validate the future feature.
-
-Run relevant focused tests, then the full build and CTest suite. Build the
-documentation strictly after authorized documentation changes. Use MSYS2 Git,
-never Windows Git, and the existing MSYS2 toolchain with `/usr/bin` on PATH.
-See [BuildAndTest.md](BuildAndTest.md) for procedures. Report exactly which
-character types and behaviors were tested. Leave the work uncommitted unless
-Terry separately instructs a commit.
+`demo/WrapTable.cpp` wraps each styled cell, aligns its physical lines, and
+fills shorter columns with blank cells up to the row height. Unicode borders
+outline the columns. Muted slate, green, and plum
+backgrounds span text and padding. The header uses white text and scales each
+background channel by 2.5, rounded and capped at 255. Bold underlined titles,
+the reversed yellow “Blocked” label, and the magenta word “lobby” demonstrate
+how a span can keep its own emphasis or foreground inside a colored cell.

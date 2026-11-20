@@ -106,12 +106,11 @@ deployment. Sites metadata at that verification confirmed the public audience.
 
 ## Verification and current handoff
 
-The runtime refactor on `ref/RuntimeCpp` now builds a static color archive.
-The recorded version 13 publication represents the earlier `dev` snapshot;
-it has not been updated for the compiled-library requirement or API reference.
-On a future authorized site update, review header-only claims and provide
-matching build/link instructions for downloaded examples. This coordination
-update does not publish or modify the website.
+Version 13 serves the seven demos from the recorded `dev` snapshot.
+The eighth demo, `WrapTable`, and the `word_wrap()` guide and reference
+are on `feat/Wrap`. The feature-branch guide build skipped publication.
+For a future site update after integration, review the header-only claims
+and the build and link instructions for downloads against the static archive.
 
 At the version 13 verification, all seven demo downloads and both screenshots
 matched the library snapshot

@@ -30,10 +30,10 @@ The integration baseline remains `dev` at
 `15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. The squash of `fix/DarkGray`
 matches the source, guide, and tests at feature tip `4141518`.
 
-The active library checkout is `feat/Wrap` at
-`e5c1cd09f9bd8614ddfa2b05d41a90703ed6744d`. This runtime-library refactor
-is also the inspected `origin/ref/RuntimeCpp` tip; Terry reported pushing it.
-There are no tracked library edits. `ViewWeb.bash` remains untracked.
+The local and pushed `feat/Wrap` tips match at
+`e99d821498d9a00315bc71f28cce7d4c7fd9a4b8`. The branch builds on the
+static-library refactor at `e5c1cd0`. Integration into `dev` is pending.
+The library checkout has no tracked edits. `ViewWeb.bash` remains untracked.
 
 The project builds a static color archive using standard platform names:
 `libcolor.a` on Unix/MSYS2 and `color.lib` with MSVC. Consumers still use
@@ -47,8 +47,8 @@ The library provides constexpr normalized RGB and grayscale `color(...)`
 overloads, the indexed `cube` and `gray` types, and `term_color::gray` for
 terminal palette slot 8. The user guide explains styling
 with nested groups, uses shorter styling expressions, and includes an SGR
-format-and-parse walkthrough. The seven demos use the current names and source
-files. `build.bash` runs the regression suite and builds the HTML guide.
+format-and-parse walkthrough. The feature branch includes eight demos.
+`build.bash` runs the regression suite and builds the HTML guide.
 
 The last recorded marketing publication is version 13, with demo downloads
 and comparisons matching `dev`. The API reference changes on `feat/CppRef`
@@ -77,14 +77,13 @@ User-guide simplification remains pending Terry's review and instructions.
 
 ## Wrap handoff
 
-The earlier `wrap()` implementation was removed at Terry's instruction.
-The replacement's behavior is now agreed and recorded in
-[WrapDesign.md](WrapDesign.md), including both character types, display widths,
-whitespace/control filtering, punctuation, hyphenation, and style preservation.
-No blocking design questions remain. No wrap implementation or wrap-specific
-tests are present. Read the design before work and wait for an imperative
-implementation instruction; design agreement and document updates do not
-authorize coding. Terry wants wrapping in its own commit.
+Feature commit `5675404` added `word_wrap()`.
+It returns unpadded display lines for narrow and wide styled text.
+`demo/WrapTable.cpp` shows how to align those lines in colored table cells.
+The branch includes the API reference, guide examples, regression tests,
+and Unicode License V3 in `THIRD-PARTY-NOTICES`. All nine platform CI jobs
+and the guide build passed at the pushed tip. See
+[WrapDesign.md](WrapDesign.md) and [BuildAndTest.md](BuildAndTest.md).
 
 ## Coordination documents
 

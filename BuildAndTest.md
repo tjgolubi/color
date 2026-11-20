@@ -23,7 +23,7 @@ CTest with failure output enabled, then builds the guide with the `doc` target.
 The full script requires Python 3 and Doxygen as well as the C++ toolchain.
 Use the configure, build, and CTest commands below for a tests-only run.
 
-The CMake target `tjg` now builds a static archive from the six `.cpp` files
+The CMake target `tjg` now builds a static archive from the `.cpp` files
 in `src/`. Its output name is `color`: `build/libcolor.a` in the MSYS2 build,
 or `color.lib` with MSVC. `TJG_WERROR` covers both library and test warnings.
 Build only the archive with `cmake --build build --target tjg`.
@@ -141,40 +141,51 @@ Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
 positive-range cast preserves the quantization and supports constant evaluation
 on all tested toolchains. Keep the compile-time regression check.
 
-## Runtime-library validation and active wrap baseline
+## Wrap feature validation
 
-The active `feat/Wrap` checkout is at
-`e5c1cd09f9bd8614ddfa2b05d41a90703ed6744d`, also the inspected
-`origin/ref/RuntimeCpp` tip. Terry reported pushing that refactor. `wrap()`
-is not implemented; see [WrapDesign.md](WrapDesign.md) for its agreed behavior.
+Verified November 20, 2026, for the pushed `feat/Wrap` commit
+`e99d821498d9a00315bc71f28cce7d4c7fd9a4b8`. All nine platform jobs
+completed their build and test steps successfully.
 
-On November 20, 2026, the runtime-refactor working tree passed the full build
-and all 22 registered CTest entries after removal of `detail::output`.
-The build used MSYS2 GCC 16.2.0/libstdc++, Debug, C++23, `TJG_TEST=ON`, and
-`TJG_WERROR=ON`. These checks ran before the refactor commit; no new tests
-were run merely to update these coordination documents.
+| Workflow                                                              | Configurations                                               | Result        |
+| --------------------------------------------------------------------- | ------------------------------------------------------------ | ------------- |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44805534130)   | GCC 14 and Clang 20/libc++ Debug and Release, GCC ASan/UBSan | 5 jobs passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44805534252)   | LLVM 20/libc++ Debug and Release                             | 2 jobs passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44805534286) | MSVC v143 x64 Debug and Release                              | 2 jobs passed |
+| [Guide](https://github.com/tjgolubi/color/actions/runs/44805534403)   | Build on feature-branch push                                 | Build passed  |
 
-The installed-package test built the archive separately, installed and
-relocated it, then built and ran a consumer using `find_package(tjg)`.
-It verified a static imported target, C++23 propagation, and narrow/wide
-formatting, parsing, and stream linkage. The allocation-policy tests also
-cover noexcept guarantees and constant initialization of default narrow
-and wide styled-text objects.
+GitHub skipped the Pages publication job as configured for feature branches.
+The platform jobs run the CMake suite. The standalone demo has a separate
+Makefile.
 
-The strict documentation build passed with the restored iterator-based
-rendering and quoting templates. A separate library build with
-`-fno-exceptions -DTJG_NOEXCEPT_UNLESS_BAD_ALLOC=noexcept` passed and linked
-and ran `test/noexception-test.cc` as a smoke test. Use matching flags for
-the library and consumer; compiling only a consumer without exceptions does
-not establish that the archive itself supports that configuration.
+Local checks during development used MSYS2 GCC 16.2.0/libstdc++, Debug,
+C++23, `TJG_TEST=ON`, and `TJG_WERROR=ON`. After the blank-line style fix,
+all 19 Google Test cases in `word-wrap-test` passed in the local build
+(`char` and 16-bit `wchar_t`), and all 23 CTest entries passed. The package
+test installed and relocated the static archive and exercised both wrapping
+overloads from a consumer. The strict guide build passed and the generated
+reference included the malformed-input example. Run the focused tests with
+the following commands.
 
-The five standalone demos built and ran during the archive refactor, before
-the erased output bridge was removed. They were not rerun after its removal.
-The full CTest and package checks above are the later validation. No speed
-benchmark or cross-platform CI result was established for this refactor.
-Earlier `dev` CI results do not validate this SHA. Build logs under `build/`
-are temporary and some were subsequently removed; the recorded results here
-describe observed runs, not a promise that those log files still exist.
+```sh
+cmake --build build --target word-wrap-test --parallel 4
+ctest --test-dir build -R '^word-wrap-test$' --output-on-failure
+```
+
+The runtime refactor introduced an unconditional `constinit` test for default
+styled text. GCC 14 rejected the initializer and MSVC Debug reported storage
+allocated during constant evaluation. Both failures preceded wrapping.
+Commit `0166d32` removed that test. The default constructor retains
+`constexpr` and `noexcept`. Tests check nonthrowing construction and empty
+values for both character types. Portable `constinit` is outside the
+guarantees tested for this owning type. Both local allocation-policy targets
+passed after the change.
+
+During the preceding archive refactor, the full local build passed all 22
+then-registered CTest entries. A separate archive build with
+`-fno-exceptions -DTJG_NOEXCEPT_UNLESS_BAD_ALLOC=noexcept` linked and ran
+`test/noexception-test.cc`. Use matching flags for library and consumer
+when verifying that configuration. No wrapping benchmark was recorded.
 
 ## API reference baseline and source links
 
@@ -220,14 +231,15 @@ To preview locally, use the same handler environment and replace the MkDocs
 `build` command with `serve --config-file support/mkdocs-pages.yml`. Follow
 the URL printed by MkDocs.
 
-GitHub CI has not been inspected for the active runtime/wrap baseline. Earlier
-runs do not establish its result. No reference publication or deployment was
-performed in this session; guide publication remains restricted to `dev`.
+The feature-branch guide is built in CI. GitHub Pages publication is
+restricted to pushes to `dev`.
 
 ## Demo comparisons
 
-`make -C demo run` builds and runs all seven demos. `Result42Compare` and
-`TableDemoFmt` require a built copy of {fmt}. The Makefile builds and links the
+On `feat/Wrap`, `make -C demo WrapTable && ./demo/WrapTable` builds and runs
+just the wrapping demo. It was built and run locally with the final styling
+changes. `make -C demo run` builds and runs all eight demos. `Result42Compare`
+and `TableDemoFmt` require a built copy of {fmt}. The Makefile builds and links the
 color archive, using `TJG_BUILD=../build` and `TJG_LIB=$(TJG_BUILD)/libcolor.a`
 by default. Use a matching compiler and standard library for archive and demos.
 The individual standalone targets use the C++ standard library, with {color}
