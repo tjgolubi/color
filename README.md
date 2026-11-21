@@ -26,14 +26,12 @@ the demo context. The user guide covers styled text; do not create a separate
 
 ## Current handoff
 
-The integration baseline remains `dev` at
-`15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. The squash of `fix/DarkGray`
-matches the source, guide, and tests at feature tip `4141518`.
-
-The local and pushed `feat/Wrap` tips match at
-`e99d821498d9a00315bc71f28cce7d4c7fd9a4b8`. The branch builds on the
-static-library refactor at `e5c1cd0`. Integration into `dev` is pending.
-The library checkout has no tracked edits. `ViewWeb.bash` remains untracked.
+The local and pushed `dev` tips match at
+`ea7354911826f24193f108e10af834817303d912`. The preceding commit `9421859`
+squash-merged `feat/Wrap`, including the static library, API reference,
+word wrapping, and demo walkthroughs. The latest commit lowered the wrapping
+minimum to four display columns and simplified reference wording. The library
+checkout has no tracked edits.
 
 The project builds a static color archive using standard platform names:
 `libcolor.a` on Unix/MSYS2 and `color.lib` with MSVC. Consumers still use
@@ -47,21 +45,19 @@ The library provides constexpr normalized RGB and grayscale `color(...)`
 overloads, the indexed `cube` and `gray` types, and `term_color::gray` for
 terminal palette slot 8. The user guide explains styling
 with nested groups, uses shorter styling expressions, and includes an SGR
-format-and-parse walkthrough. The feature branch includes eight demos.
+format-and-parse walkthrough. The repository includes eight demos.
 `build.bash` runs the regression suite and builds the HTML guide.
 
-The last recorded marketing publication is version 13, with demo downloads
-and comparisons matching `dev`. The API reference changes on `feat/CppRef`
-have not been published to GitHub Pages.
+Marketing site version 17 uses the current `dev` snapshot for its demo
+downloads and source links. The user guide and API reference are live on
+GitHub Pages.
 See [BuildAndTest.md](BuildAndTest.md) for checks and [Website.md](Website.md)
 for deployment provenance.
 
 ## API reference baseline
 
-The plain-Markdown API reference is on `feat/CppRef` at
-`0bdfa029668fb4650d619d88870784b86e3e49e3`, matching the local
-`origin/feat/CppRef` tracking ref at this inspection. Start at
-[doc/ref/index.md](https://github.com/tjgolubi/color/blob/feat/CppRef/doc/ref/index.md).
+The [API reference](https://tjgolubi.github.io/color/ref/index.html) is
+maintained in `doc/ref/` on `dev` and published with the user guide.
 The reference has topic and public-header indexes, dedicated API pages, and
 class folders with member pages. The existing user guide remains in `doc/`.
 The review changes are implemented: consistent sections and overload
@@ -70,20 +66,18 @@ parameter names, and reduced implementation prose. Declaration-page titles
 link to GitHub source permalinks; topic titles remain plain. The source-link
 generator and usage instructions live in `support/`.
 
-The runtime-library refactor builds on this reference baseline. Existing
-source-title links still target their recorded source revision; do not
-refresh them against mismatched XML or an uncommitted source tree.
+Preserve source-title permalinks until the Doxygen XML and the committed source
+revision are ready for a coordinated refresh.
 User-guide simplification remains pending Terry's review and instructions.
 
 ## Wrap handoff
 
-Feature commit `5675404` added `word_wrap()`.
-It returns unpadded display lines for narrow and wide styled text.
-`demo/WrapTable.cpp` shows how to align those lines in colored table cells.
-The branch includes the API reference, guide examples, regression tests,
-and Unicode License V3 in `THIRD-PARTY-NOTICES`. All nine platform CI jobs
-and the guide build passed at the pushed tip. See
-[WrapDesign.md](WrapDesign.md) and [BuildAndTest.md](BuildAndTest.md).
+`word_wrap()` returns unpadded lines of narrow or wide styled text. It takes a
+`std::size_t` width of at least four display columns. `demo/WrapTable.cpp`
+shows how to align those lines in colored table cells. The current behavior
+is documented in the [API reference](https://tjgolubi.github.io/color/ref/color/styled_text/word_wrap.html)
+and the [WrapTable walkthrough](https://tjgolubi.github.io/color/wrap-table.html).
+The Unicode License V3 is recorded in `THIRD-PARTY-NOTICES`.
 
 ## Coordination documents
 
@@ -96,7 +90,6 @@ them; those operations need Terry's instructions.
 | [BuildAndTest.md](BuildAndTest.md) | Build requirements, procedures, and verified results. |
 | [Website.md](Website.md)           | Website content, publication state, and maintenance.  |
 | [Workflow.md](Workflow.md)         | Working rules and repository procedures.              |
-| [WrapDesign.md](WrapDesign.md)     | Agreed wrap behavior and implementation lessons.      |
 
 A design overview belongs with the coordination documents. It will record
 the library's vision, design decisions, and rationale. See

@@ -33,16 +33,21 @@ leading with CI status, implementation details, or long feature inventories.
 The homepage quickly shows a small complete program printing "The result is
 42 bytes." with an underlined sentence and red number; expected output is
 immediately below the code. It also shows simple status and emphasis examples.
-The dashboard screenshot demonstrates what is possible, with a source link
-rather than its full code on the homepage.
+The homepage shows the dashboard and WrapTable screenshots. At `#wrap-table`,
+visitors can download `WrapTable.cpp`, read its GitHub source, or follow the
+guide walkthrough. The demo shows multiline styled cells and Unicode display
+width in a layout defined by the example program. The getting-started section
+links to installation instructions, the API reference, and the guide's demo
+index. It documents CMake 3.31 and linking the static archive using `tjg::tjg`.
 
 ### Comparison pages
 
 - `comparisons.html`: the small sentence example, with three code blocks side
   by side for raw C++23 sequences, {fmt} restoration, and {color} nesting.
   It links to all three table comparison pages. `#table` remains a landing
-  point for those links. The C++23 explanation identifies SGR (Select Graphic
-  Rendition) and links to the Wikipedia section on SGR.
+  point for those links and the WrapTable showcase. The C++23 explanation
+  identifies SGR (Select Graphic Rendition) and links to the Wikipedia section
+  on SGR.
 - `cpp23-vs-color.html`: complete C++23 and {color} table programs side by side.
 - `fmt-vs-color.html`: complete {fmt} and {color} table programs side by side.
 - `ostream-vs-format.html`: {color} ostream and formatting table programs side
@@ -55,6 +60,8 @@ Each code block has a copy button, and each program is available as a download.
 Individual blocks scroll horizontally on narrow screens. Compact viewport
 styles and measured reference height keep the pinned area and anchor spacing
 manageable. Terry reviewed the pages and confirmed the pinned output works.
+On the C++23 side, the second block starts at `struct span` on line 20.
+On the {fmt} side, it starts at `// Reuse column backgrounds` on line 31.
 
 Keep comparisons fair: use clear, idiomatic C++23 and {fmt}, consistent names,
 and matching comment sections where appropriate. Do not inflate alternatives
@@ -76,12 +83,12 @@ handle styling, copying, and pinned-reference measurement.
 
 `dist/assets/table-demo.png` matches `demo/TableDemo.png` (1480 × 440), the
 cropped terminal screenshot with `Request ID: 002a — completed`.
-`dist/assets/result42.png` matches `demo/Result42.png`. The larger pinned
-dashboard screenshot display introduced in version 9 is in the current site.
+`dist/assets/result42.png` matches `demo/Result42.png`.
+`dist/assets/wrap-table.png` matches `demo/WrapTable.png` (765 × 476).
 Preserve the screenshots and matching demo text together, including 東京.
 
 The published comparison source and links use the `dev` snapshot
-`15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. `dist/examples/` contains all seven
+`ea7354911826f24193f108e10af834817303d912`. `dist/examples/` contains all eight
 demos and the site's quick-start program. The result page displays excerpts
 from `Result42Compare.cpp`. The three dashboard pages show complete sources
 using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
@@ -90,7 +97,7 @@ downloads, and source links together after an accepted demo update.
 
 ## Last recorded public deployment
 
-Sites confirmed that version 13 succeeded on November 19, 2026 at 22:41:46 UTC.
+Sites confirmed that version 17 succeeded on November 20, 2026 at 6:35 p.m. CST.
 The source commit was pushed and the matching archive was saved before
 deployment. Sites metadata at that verification confirmed the public audience.
 
@@ -98,25 +105,19 @@ deployment. Sites metadata at that verification confirmed the public audience.
 | ---------------- | ----------------------------------------------------------------------------------- |
 | Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
 | Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
-| Version          | 13                                                                                  |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_3b04613a0cd8819180676dbf7b9b4b16` |
-| Deployment ID    | `appgdep_6aff7b2573f48191a53dcd8458be825a`                                          |
-| Source commit    | `82f7b853144333e5738e159a9f1ee0b36c302ffc`                                          |
+| Version          | 17                                                                                  |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_fd65df53b50481918d76e7c1d97b4d47` |
+| Deployment ID    | `appgdep_6b00e7367edc81919baedbfa2a0e888e`                                          |
+| Source commit    | `8d0ff587f47031b557f46dd07837b5e8cc0098a8`                                          |
 | Audience         | Public                                                                              |
 
 ## Verification and current handoff
 
-Version 13 serves the seven demos from the recorded `dev` snapshot.
-The eighth demo, `WrapTable`, and the `word_wrap()` guide and reference
-are on `feat/Wrap`. The feature-branch guide build skipped publication.
-For a future site update after integration, review the header-only claims
-and the build and link instructions for downloads against the static archive.
-
-At the version 13 verification, all seven demo downloads and both screenshots
-matched the library snapshot
-byte for byte. The homepage and comparisons page link to the current library
-snapshot, and their live HTML matched the deployed source. All five public
-pages were checked. Keep details about individual RGB names in the user guide.
+Before deploying version 17, all eight demo sources and three screenshots
+matched the library snapshot byte for byte. After deployment, the live
+WrapTable download matched `dev`, including the four-column minimum, and the
+homepage and comparisons page showed the updated source links.
+Keep details about individual RGB names in the user guide.
 
 The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was built and
 published separately from the same library commit. See
@@ -132,6 +133,8 @@ site update includes normal source preparation and publication through Sites.
 The current Sites source helper opened the checkout, pushed the exact source,
 and packaged the deployment archive. Pass source credentials through hidden
 stdin and keep them out of files and output.
+On Windows, the native Sites helper uses Git for Windows in the separate Site
+checkout. Use MSYS2 Git for the library and coordination worktrees.
 
 Validate affected copy, source sections, assets, links, and interactions. Push
 the exact source before saving its matching archive, then deploy that saved

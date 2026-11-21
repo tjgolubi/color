@@ -20,7 +20,8 @@ From the library repository root, run:
 The script configures `build/` with GCC (`g++`), Debug, C++23 required,
 `TJG_TEST=ON`, and `TJG_WERROR=ON`. It builds with four parallel jobs, runs
 CTest with failure output enabled, then builds the guide with the `doc` target.
-The full script requires Python 3 and Doxygen as well as the C++ toolchain.
+The full script requires Python 3.10 or later and Doxygen as well as the C++
+toolchain. The pinned documentation dependencies set the Python minimum.
 Use the configure, build, and CTest commands below for a tests-only run.
 
 The CMake target `tjg` now builds a static archive from the `.cpp` files
@@ -95,8 +96,9 @@ cmake --build build --target doc
 The target creates `build/doc-venv`, installs the hash-pinned packages from
 `support/doc-requirements.txt`, and uses `support/mkdocs-pages.yml` to build the
 user guide at `build/doc-html/index.html`, including the API reference at
-`build/doc-html/ref/index.html` on the current feature branches. Reuse a
-compatible environment and reinstall from
+`build/doc-html/ref/index.html`. The local MSYS2 documentation build uses
+Python 3.14.10 and the guide workflow selects Python 3.14. MkDocs is pinned
+to 1.6.1. Reuse a compatible environment and reinstall from
 the pinned requirements when dependency inputs change. Do not invoke release
 or publication tooling merely to build the guide.
 
@@ -108,29 +110,18 @@ MkDocs syntax, so their appearance in raw GitHub Markdown does not establish
 whether they render correctly. A successful guide build establishes generation,
 not visual review or deployment; record those checks separately.
 
-## Integration-baseline local validation
+## Current `dev` validation
 
-On November 19, 2026, the focused `color-test` CTest entry passed for the
-`fix/DarkGray` working tree committed as
-`41415189bf96a6d4084c1cb9338c48c69370548b`, whose contents match current
-`dev`. The build used GCC 14.2.0 with libstdc++, CMake 4.4.5, Debug, C++23,
-`TJG_TEST=ON`, and `TJG_WERROR=ON`. The normalized grayscale case ran and
-passed. The MkDocs guide build succeeded with Doxygen 1.9.8 and the pinned
-Python dependencies. The generated HTML was checked for the five gray
-swatches and the updated styled-output samples.
-
-## Integration-baseline GitHub CI validation
-
-Verified November 19, 2026, for `dev` at
-`15cf6cee9c1ea49f199ce2bca236c7378cd2602f`. All nine platform jobs and both
+Verified November 20, 2026, for `dev` at
+`ea7354911826f24193f108e10af834817303d912`. All nine platform jobs and both
 documentation jobs passed.
 
 | Workflow                                                                  | Configurations                                                             | Jobs | Result |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44628242613)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44628242555)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44628242835)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44628242552) | Build and GitHub Pages publication                                         |    2 | Passed |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44844197060)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44844197053)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44844197119)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44844197069) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
 
 The nine platform jobs configure, build, and run the TJG suite in C++23 mode
 with warnings treated as errors. Matrix fail-fast is disabled. The results
@@ -141,31 +132,19 @@ Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
 positive-range cast preserves the quantization and supports constant evaluation
 on all tested toolchains. Keep the compile-time regression check.
 
-## Wrap feature validation
+Before committing `ea73549`, the MSYS2 build with GCC 16.2.0/libstdc++,
+CMake 4.5.0, Debug, C++23, `TJG_TEST=ON`, and `TJG_WERROR=ON` passed all
+23 CTest entries. The guide built, and WrapTable built and ran separately.
+Boundary tests cover rejection at width three and hyphenation at width four
+for `char` and `wchar_t`. The package test installs and relocates the static
+archive and exercises both wrapping overloads from a consumer.
 
-Verified November 20, 2026, for the pushed `feat/Wrap` commit
-`e99d821498d9a00315bc71f28cce7d4c7fd9a4b8`. All nine platform jobs
-completed their build and test steps successfully.
+The Ubuntu and Windows runners used CMake 3.31.6 when a 4.0 minimum blocked
+configuration. The current 3.31 minimum works with their preinstalled CMake.
 
-| Workflow                                                              | Configurations                                               | Result        |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ | ------------- |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44805534130)   | GCC 14 and Clang 20/libc++ Debug and Release, GCC ASan/UBSan | 5 jobs passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44805534252)   | LLVM 20/libc++ Debug and Release                             | 2 jobs passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44805534286) | MSVC v143 x64 Debug and Release                              | 2 jobs passed |
-| [Guide](https://github.com/tjgolubi/color/actions/runs/44805534403)   | Build on feature-branch push                                 | Build passed  |
+## Focused word-wrap validation
 
-GitHub skipped the Pages publication job as configured for feature branches.
-The platform jobs run the CMake suite. The standalone demo has a separate
-Makefile.
-
-Local checks during development used MSYS2 GCC 16.2.0/libstdc++, Debug,
-C++23, `TJG_TEST=ON`, and `TJG_WERROR=ON`. After the blank-line style fix,
-all 19 Google Test cases in `word-wrap-test` passed in the local build
-(`char` and 16-bit `wchar_t`), and all 23 CTest entries passed. The package
-test installed and relocated the static archive and exercised both wrapping
-overloads from a consumer. The strict guide build passed and the generated
-reference included the malformed-input example. Run the focused tests with
-the following commands.
+Run the wrapping tests with the following commands.
 
 ```sh
 cmake --build build --target word-wrap-test --parallel 4
@@ -189,9 +168,7 @@ when verifying that configuration. No wrapping benchmark was recorded.
 
 ## API reference baseline and source links
 
-The preceding API reference baseline on `feat/CppRef` is
-`0bdfa029668fb4650d619d88870784b86e3e49e3`, matching the inspected local
-remote-tracking ref. The runtime-library refactor builds on that baseline.
+The API reference is maintained in `doc/ref/` on `dev`.
 
 The strict MkDocs builds use the following command from the MSYS2 shell
 with `/usr/bin` on PATH:
@@ -236,9 +213,9 @@ restricted to pushes to `dev`.
 
 ## Demo comparisons
 
-On `feat/Wrap`, `make -C demo WrapTable && ./demo/WrapTable` builds and runs
-just the wrapping demo. It was built and run locally with the final styling
-changes. `make -C demo run` builds and runs all eight demos. `Result42Compare`
+From the library checkout root, `make -C demo WrapTable && ./demo/WrapTable`
+builds and runs the wrapping demo. `make -C demo run` builds and runs all
+eight demos. `Result42Compare`
 and `TableDemoFmt` require a built copy of {fmt}. The Makefile builds and links the
 color archive, using `TJG_BUILD=../build` and `TJG_LIB=$(TJG_BUILD)/libcolor.a`
 by default. Use a matching compiler and standard library for archive and demos.
@@ -256,8 +233,8 @@ guide artifact and run the dependent Pages deployment. Deployments are
 serialized without cancelling an active publication.
 
 Both jobs passed for the current `dev` commit. The live
-[Named Colors page](https://tjgolubi.github.io/color/named-colors.html#neutral)
-returned HTTP 200 and included the `rgb::dark_gray` swatch. Publication
+[`word_wrap()` reference](https://tjgolubi.github.io/color/ref/color/styled_text/word_wrap.html)
+returned HTTP 200 and documented the four-column minimum. Publication
 instructions are in the library's `support/color-pages.md`.
 
 ## Other workflow coverage
