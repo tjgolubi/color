@@ -38,6 +38,12 @@ apply to the wrapped insertion.
 
 Renders nested styled text. Stream width applies to the visible width of the result.
 
+### Wrapped text
+
+Inserts the result of [`wrapped()`](wrapped.md) into a `std::ostream`. A pending
+width set with `std::setw()` supplies the wrap width and is consumed by the
+insertion. The default is 80 display columns.
+
 ### Operand summary
 
 | Right operand                                                 | Output                                                                                                          |

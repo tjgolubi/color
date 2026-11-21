@@ -87,6 +87,9 @@ auto operator<<(std::basic_ostream<Char>& os, const styled_arg<T>& arg)
   return write_view(reset);
 } // << styled_arg
 
+/// Inserts wrapped lines, consuming the stream's field width.
+auto operator<<(std::ostream& os, const wrapped_arg& arg) -> std::ostream&;
+
 } // detail
 
 #define TJG_SGR_OSTREAM_SCOPE(stream, style) \

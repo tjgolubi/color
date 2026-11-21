@@ -789,3 +789,48 @@ TEST(styled_text_format_test, named_dynamic_specs_are_rejected) {
   EXPECT_THROW((void)runtime_format("{:>{width}.{prec}}", tree, 9, 5),
                std::format_error);
 }
+
+TEST(styled_text_format_test, wrapped_format_uses_display_width) {
+  using namespace tjg::color;
+  const auto text = wrapped(styled_text{"alpha beta"});
+  EXPECT_EQ(std::format("{:5}", text), "alpha\nbeta");
+  EXPECT_EQ(std::format("{:{}}", text, 5u), "alpha\nbeta");
+  EXPECT_EQ(std::format("{0:*>{1}}", text, 5), "alpha\n*beta");
+  EXPECT_EQ(std::format("{:*>5}", wrapped(styled_text{"alpha B"})),
+            "alpha\n****B");
+  const auto eighty = std::string(80, 'x');
+  EXPECT_EQ(std::format("{}", wrapped(styled_text{eighty + " x"})),
+            eighty + "\nx");
+  auto os = std::ostringstream{};
+  os << wrapped(styled_text{eighty + " x"});
+  EXPECT_EQ(os.str(), eighty + "\nx");
+  EXPECT_EQ(std::format("{}", wrapped(styled_text{"a\n\nb\n"})), "a\n\nb");
+  EXPECT_EQ(std::format("{}", wrapped(styled_text{" \t\n"})), "");
+}
+
+TEST(styled_text_format_test, wrapped_rejects_invalid_specs) {
+  const auto text = tjg::color::wrapped(tjg::color::styled_text{"a"});
+  EXPECT_THROW((void)runtime_format("{:3}", text), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:{}}", text, 0), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:.2}", text), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:.{}}", text, 2), std::format_error);
+}
+
+TEST(styled_text_format_test, wrapped_stream_consumes_width) {
+  using namespace tjg::color;
+  const auto text = wrapped(bold(styled_text{"alpha beta"}));
+  const auto expected = render(bold(styled_text{"alpha"})) + '\n'
+                      + render(bold(styled_text{"beta"}));
+  EXPECT_EQ(std::format("{:5}", text), expected);
+  auto os = std::ostringstream{};
+  os << std::setw(5) << text;
+  EXPECT_EQ(os.str(), expected);
+  EXPECT_EQ(os.width(), 0);
+  os.str("");
+  os << std::left << std::setfill('.') << std::setw(5)
+     << wrapped(styled_text{"alpha B"}) << '!';
+  EXPECT_EQ(os.str(), "alpha\nB....!");
+  EXPECT_EQ(os.fill(), '.');
+  EXPECT_THROW(os << std::setw(3) << text, std::format_error);
+  EXPECT_EQ(os.width(), 0);
+}

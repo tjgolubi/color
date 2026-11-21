@@ -26,7 +26,7 @@ void vprint_unicode(std::ostream& os, text_style style,
 
 #undef TJG_SGR_OSTREAM_SCOPE
 
-template<CharType Char>
+template<bool Wrap = false, CharType Char>
 auto insert_styled_text(std::basic_ostream<Char>& os,
                         const basic_styled_text<Char>& value)
   -> std::basic_ostream<Char>&
@@ -42,10 +42,17 @@ auto insert_styled_text(std::basic_ostream<Char>& os,
   if (width > 0) specs.width = static_cast<std::size_t>(width);
   const auto fill = os.fill();
   specs.set_fill(std::basic_string_view<Char>{&fill, 1});
-  specs.alignment =
-      ((os.flags() & std::ios_base::adjustfield) == std::ios_base::left) ? '<'
-                                                                         : '>';
+  const auto alignment = os.flags() & std::ios_base::adjustfield;
+  specs.alignment = alignment == std::ios_base::left ? '<' : '>';
   os.width(0);
+
+  auto wrap_width = std::size_t{0};
+  if constexpr (Wrap) {
+    wrap_width = specs.width == 0 ? detail::default_wrap_width : specs.width;
+    if (wrap_width < detail::min_wrap_width)
+      detail::standard_format_error("wrapped: width must be at least 4");
+    specs.width = alignment == 0 ? 0 : wrap_width;
+  }
 
   auto output = std::ostreambuf_iterator<Char>{os};
 
@@ -53,8 +60,13 @@ auto insert_styled_text(std::basic_ostream<Char>& os,
 #if defined(__cpp_exceptions) || defined(_CPPUNWIND)
   try {
 #endif
-    auto renderer = detail::styled_text_renderer<Char>{specs};
-    failed = renderer.format(value, output).failed();
+    if constexpr (Wrap) {
+      failed = detail::render_wrapped(value, wrap_width, specs, output)
+                .failed();
+    } else {
+      auto renderer = detail::styled_text_renderer<Char>{specs};
+      failed = renderer.format(value, output).failed();
+    }
 #if defined(__cpp_exceptions) || defined(_CPPUNWIND)
   } catch (...) {
     const bool rethrow = (os.exceptions() & std::ios_base::badbit) != 0;
@@ -76,5 +88,9 @@ auto operator<<(std::ostream& os, const styled_text& value) -> std::ostream&
 
 auto operator<<(std::wostream& os, const wstyled_text& value) -> std::wostream&
 { return insert_styled_text(os, value); }
+
+auto detail::operator<<(std::ostream& os, const wrapped_arg& arg)
+  -> std::ostream&
+{ return insert_styled_text<true>(os, arg.text); }
 
 } // tjg::color

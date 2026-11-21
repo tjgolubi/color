@@ -23,6 +23,7 @@ namespace detail {
 
 struct styled_text_ansi_stripper;
 struct styled_text_word_wrapper;
+inline constexpr std::size_t min_wrap_width = 4;
 template<CharType Char> class styled_text_renderer;
 
 } // detail

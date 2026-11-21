@@ -325,7 +325,7 @@ struct styled_text_word_wrapper {
   static auto wrap(const basic_styled_text<Char>& text, std::size_t width)
     -> std::vector<basic_styled_text<Char>>
   {
-    if (width < 4)
+    if (width < min_wrap_width)
       TJG_THROW(std::invalid_argument{"word_wrap: width must be at least 4"});
     auto tokens = std::vector<token>{};
     const auto records = collect(text, tokens);

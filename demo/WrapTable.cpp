@@ -23,6 +23,7 @@ namespace {
 
 using tjg::color::rgb;
 using tjg::color::styled_text;
+using tjg::color::text_style;
 
 /// Where to place a cell's text within its column width.
 enum class alignment {
@@ -89,11 +90,12 @@ public:
    * and bottom rules.
    */
   void print_rule(std::string_view left, std::string_view joint,
-                  std::string_view right) const
+                  std::string_view right, bool inner=true) const
   {
     for (std::size_t i = 0; i < N; ++i) {
       const auto width = _columns[i].width + 2;
-      std::print("{}{:─<{}}", (i == 0) ? left : joint, "", width);
+      auto style = inner ? bg(_columns[i].background) : text_style{};
+      std::print("{}{:─<{}}", (i == 0) ? left : joint, styled("", style), width);
     }
     std::println("{}", right);
   } // print_rule
@@ -104,7 +106,7 @@ public:
     auto headings = row{};
     for (std::size_t i = 0; i < N; ++i)
       headings[i] = tjg::color::bold(_columns[i].heading);
-    print_rule("┌", "┬", "┐");
+    print_rule("┌", "┬", "┐", false);
     print_row(headings, /*header=*/true);
     print_rule("├", "┼", "┤");
   } // print_header
@@ -222,7 +224,7 @@ int main() {
     styled_text{"Complete", fg(green)},
     "2.0 h",
   });
-  work.print_rule("└", "┴", "┘");
+  work.print_rule("└", "┴", "┘", false);
 
   std::println("\nEffort estimates are person-hours; descriptions and status "
                "notes wrap independently.");

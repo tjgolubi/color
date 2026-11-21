@@ -78,6 +78,7 @@ nav:
           - ref/color/vformat_to.md
           - ref/color/vprint_nonunicode.md
           - ref/color/vprint_unicode.md
+          - ref/color/wrapped.md
           - ref/color/write_debug_value.md
           - ref/color/write_value.md
           - Colors:

@@ -290,6 +290,18 @@ complete rules, including blank lines and invalid widths.
 The [WrapTable walkthrough](wrap-table.md) shows how to use these lines in
 your own table, with styled cells, column alignment, and Unicode borders.
 
+Use [`wrapped()`](ref/color/wrapped.md) to write the lines as one argument.
+The format field sets the wrap width. Use `{}` for 80 display columns or pass
+a dynamic field width. In a stream, set the width with `std::setw()`.
+
+```cpp
+std::print("{:{}}", wrapped(message), column_width);
+std::cout << std::setw(20) << wrapped(message);
+```
+
+`wrapped()` writes newlines between the lines. Use `std::println()` or insert
+`'\n'` yourself when you want a final newline.
+
 ### Debug output
 
 Use `{:?}` to inspect stored styles and nested groups without rendering SGR.

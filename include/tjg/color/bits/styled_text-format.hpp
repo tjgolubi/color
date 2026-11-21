@@ -217,12 +217,78 @@ struct standard_styled_text_formatter {
 
 }; // standard_styled_text_formatter
 
+inline constexpr std::size_t default_wrap_width = 80;
+
+struct wrapped_arg {
+  styled_text text;
+};
+
+template<std::output_iterator<char> OutputIt>
+auto render_wrapped(const styled_text& text, std::size_t width,
+                    const string_format_specs<char>& specs, OutputIt out)
+  -> OutputIt
+{
+  const auto lines = word_wrap(text, width);
+  auto renderer = styled_text_renderer<char>{specs};
+  for (auto line = lines.begin(); line != lines.end(); ++line) {
+    if (line != lines.begin()) *out++ = '\n';
+    out = renderer.format(*line, std::move(out));
+  }
+  return out;
+}
+
+struct wrapped_arg_formatter {
+  string_format_specs<char> specs{};
+
+  constexpr wrapped_arg_formatter() noexcept { specs.alignment = '\0'; }
+
+  constexpr auto parse(std::format_parse_context& ctx) -> decltype(ctx.begin()) {
+    const auto end = specs.parse(ctx);
+    if (specs.precision_arg >= 0
+        || specs.precision != std::numeric_limits<std::size_t>::max())
+      standard_format_error("wrapped does not accept precision");
+    if (specs.debug)
+      standard_format_error("wrapped does not accept debug presentation");
+    return end;
+  }
+
+  template<typename Context>
+  auto format(const wrapped_arg& arg, Context& ctx) const
+    -> decltype(ctx.out())
+  {
+    auto resolved = specs.resolve(ctx);
+    const auto width = specs.width == 0 && specs.width_arg < 0
+                     ? default_wrap_width : resolved.width;
+    if (width < min_wrap_width)
+      standard_format_error("wrapped: width must be at least 4");
+    resolved.width = resolved.alignment == '\0' ? 0 : width;
+    return render_wrapped(arg.text, width, resolved, ctx.out());
+  }
+}; // wrapped_arg_formatter
+
 } // tjg::color::detail
+
+namespace tjg::color {
+
+/**
+ * Wraps styled text when formatted or inserted into a narrow stream.
+ * Uses the field width or 80 display columns if omitted. Separates lines
+ * with newlines and emits no trailing newline. Format precision is invalid.
+ */
+[[nodiscard]] inline
+auto wrapped(styled_text text) noexcept -> detail::wrapped_arg
+{ return {std::move(text)}; }
+
+} // tjg::color
 
 namespace std {
 
 template<tjg::CharType Char>
 struct formatter<tjg::color::basic_styled_text<Char>, Char>
   : tjg::color::detail::standard_styled_text_formatter<Char> {};
+
+template<>
+struct formatter<tjg::color::detail::wrapped_arg, char>
+  : tjg::color::detail::wrapped_arg_formatter {};
 
 } // std

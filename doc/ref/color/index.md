@@ -17,6 +17,7 @@ Provides formatting, printing, styled-argument wrappers, stream insertion, and t
 - [`tjg::color::vformat_to`](vformat_to.md)
 - [`tjg::color::vprint_nonunicode`](vprint_nonunicode.md)
 - [`tjg::color::vprint_unicode`](vprint_unicode.md)
+- [`tjg::color::wrapped`](wrapped.md)
 - [`tjg::color::write_debug_value`](write_debug_value.md)
 - [`tjg::color::write_value`](write_value.md)
 
