@@ -43,12 +43,19 @@ auto decode(std::basic_string_view<Char> text) noexcept
   }
 } // decode
 
-enum class token_kind { text, space, newline, punctuation };
+enum class token_kind {
+  text, space, no_break_space, newline, punctuation, ideographic
+};
+
+constexpr auto is_space(token_kind kind) noexcept -> bool {
+  return kind == token_kind::space || kind == token_kind::no_break_space;
+}
 
 struct token {
   std::size_t offset, size;
   std::size_t columns;
   token_kind kind;
+  bool soft_hyphen_after = false;
 };
 
 struct line_range {
@@ -69,7 +76,7 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
   auto lines = std::vector<line_range>{};
 
   auto emit = [&](std::size_t begin, std::size_t end, bool hyphen = false) {
-    while (end > begin && tokens[end - 1].kind == token_kind::space)
+    while (end > begin && is_space(tokens[end - 1].kind))
       --end;
     lines.push_back({begin, end, hyphen});
   }; // emit
@@ -83,17 +90,20 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
     auto columns = std::size_t{0};
     auto has_text = false;
     while (pos < end) {
-      if (tokens[pos].kind == token_kind::space) {
+      if (is_space(tokens[pos].kind)) {
         ++columns;
         ++pos;
         continue;
       }
       auto word_end = pos;
+      auto has_no_break_space = false;
       do {
+        has_no_break_space |= tokens[word_end].kind == token_kind::no_break_space;
         ++word_end;
       } while (word_end < end
             && tokens[word_end].kind != token_kind::space
-            && tokens[word_end - 1].kind != token_kind::punctuation);
+            && (tokens[word_end - 1].kind != token_kind::punctuation
+                || tokens[word_end].kind == token_kind::no_break_space));
 
       while (pos < word_end) {
         const auto word_width = sums[word_end] - sums[pos];
@@ -101,7 +111,7 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
           columns += word_width;
           pos = word_end;
           has_text = true;
-        } else if (word_width <= limit || columns >= limit - 1) {
+        } else if (word_width <= limit || columns >= limit) {
           // A fitting word moves intact; separating spaces are consumed.
           // Excess leading indentation also ends at this wrap boundary.
           if (has_text)
@@ -110,18 +120,58 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
           columns = 0;
           has_text = false;
         } else {
-          const auto available = limit - columns - 1;
+          const auto available = limit - columns;
           auto cut = pos;
-          while (cut < word_end && sums[cut + 1] - sums[pos] <= available)
-            ++cut;
+          auto preferred = pos;
+          auto separator = pos;
+          auto hyphen = true;
+          for (auto next = pos + 1; next < word_end; ++next) {
+            const auto width = sums[next] - sums[pos];
+            if (width > available)
+              break;
+            const auto& before = tokens[next - 1];
+            if (tokens[next].kind == token_kind::no_break_space) {
+              if (before.kind != token_kind::no_break_space)
+                separator = next;
+              continue;
+            }
+            if (width < available) {
+              cut = next;
+              if (before.soft_hyphen_after) {
+                preferred = next;
+                hyphen = true;
+                continue;
+              }
+            }
+            if (before.kind == token_kind::ideographic
+                && tokens[next].kind == token_kind::ideographic) {
+              preferred = next;
+              hyphen = false;
+            }
+          }
+          auto consume_separator = false;
+          if (preferred != pos) {
+            cut = preferred;
+          } else if (has_text && has_no_break_space) {
+            // Use the preceding break before splitting a no-break group.
+            cut = pos;
+          } else if (separator != pos) {
+            cut = separator;
+            hyphen = false;
+            consume_separator = true;
+          }
           if (cut == pos) {
-            // A two-column character cannot fit the remaining one column.
             if (has_text)
               emit(begin, pos);
             begin = pos;
           } else {
-            emit(begin, cut, true);
-            begin = pos = cut;
+            emit(begin, cut, hyphen);
+            pos = cut;
+            if (consume_separator) {
+              while (pos < word_end && tokens[pos].kind == token_kind::no_break_space)
+                ++pos;
+            }
+            begin = pos;
           }
           columns = 0;
           has_text = false;
@@ -157,27 +207,39 @@ struct styled_text_word_wrapper {
     const auto view = std::basic_string_view<Char>{stripped};
     for (std::size_t pos = 0; pos < view.size(); ) {
       const auto cp = decode(view.substr(pos));
+      const auto source = view.substr(pos, cp.size);
+      pos += cp.size;
+      if (cp.value == 0x00ad) {
+        // Record the break on the preceding character, even across spans.
+        if (!tokens.empty() && !is_space(tokens.back().kind)
+                            && tokens.back().kind != token_kind::newline)
+          tokens.back().soft_hyphen_after = true;
+        continue;
+      }
       auto kind = token_kind::text;
       if (cp.value == '\n')
         kind = token_kind::newline;
+      else if (cp.value == 0x00a0)
+        kind = token_kind::no_break_space;
       else if (contains(wrap_spaces, cp.value))
         kind = token_kind::space;
       else if (cp.value < 0x20 || (cp.value >= 0x7f && cp.value <= 0x9f)) {
-        pos += cp.size;
         continue;
       } else if (contains(wrap_punctuation, cp.value)) {
         kind = token_kind::punctuation;
+      } else if (cp.value >= wrap_ideographic[0].first
+                 && contains(wrap_ideographic, cp.value)) {
+        kind = token_kind::ideographic;
       }
       const auto offset = leaf.text.size();
       if (kind == token_kind::space)
         leaf.text.push_back(Char{' '});
       else
-        leaf.text.append(view.substr(pos, cp.size));
+        leaf.text.append(source);
       const auto columns = kind == token_kind::newline ? 0
                          : kind == token_kind::space   ? 1
                          : unicode::display_width_of(cp.value);
       tokens.push_back({offset, leaf.text.size() - offset, columns, kind});
-      pos += cp.size;
     }
   }
 

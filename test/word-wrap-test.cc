@@ -127,7 +127,8 @@ TYPED_TEST(WordWrap, WidthValidatedBeforeInput) {
                  std::invalid_argument);
   }
   EXPECT_EQ(plain(word_wrap(text{encoded<Char>(U"\u754c\u754c\u754c")}, 4)),
-            (std::vector{encoded<Char>(U"\u754c-"), encoded<Char>(U"\u754c\u754c")}));
+            (std::vector{encoded<Char>(U"\u754c\u754c"),
+                         encoded<Char>(U"\u754c")}));
   const auto input = ascii<Char>("a b");
   EXPECT_EQ(plain(word_wrap(text{input},
                            std::numeric_limits<std::size_t>::max())),
@@ -177,17 +178,101 @@ TYPED_TEST(WordWrap, UnicodeWidthsAndWhitespace) {
     U"\U0001f600\U0001f600\U0001f600\U0001f600\U0001f600\U0001f600")}, 16));
   ASSERT_EQ(lines.size(), 2u);
   EXPECT_EQ(lines[0], encoded<Char>(U"\U0001f600\U0001f600\U0001f600"
-    U"\U0001f600\U0001f600\U0001f600\U0001f600-"));
-  EXPECT_EQ(lines[1], encoded<Char>(U"\U0001f600\U0001f600"));
+    U"\U0001f600\U0001f600\U0001f600\U0001f600\U0001f600"));
+  EXPECT_EQ(lines[1], encoded<Char>(U"\U0001f600"));
   lines = plain(word_wrap(
     text{encoded<Char>(U"a\u0085\u00a0\u2003\u2028\u2029b")}, 16));
   ASSERT_EQ(lines.size(), 1u);
-  EXPECT_EQ(lines[0], ascii<Char>("a     b"));
+  EXPECT_EQ(lines[0], encoded<Char>(U"a \u00a0   b"));
   // Combining marks count as one, matching the UTF-8 formatter's model.
   lines = plain(word_wrap(text{encoded<Char>(U"123456789012345a\u0301")}, 16));
   ASSERT_EQ(lines.size(), 2u);
   EXPECT_EQ(lines[0], ascii<Char>("123456789012345-"));
   EXPECT_EQ(lines[1], encoded<Char>(U"a\u0301"));
+}
+
+TYPED_TEST(WordWrap, SoftHyphenBreaks) {
+  using Char = TypeParam;
+  using text = basic_styled_text<Char>;
+  const auto marked = text{encoded<Char>(
+    U"super\u00adcalifragilistic\u00adexpiali\u00addocious")};
+  EXPECT_EQ(plain(word_wrap(marked, 16)),
+            (std::vector{ascii<Char>("super-"), ascii<Char>("califragilistic-"),
+                         ascii<Char>("expialidocious")}));
+  const auto unmarked = ascii<Char>("supercalifragilisticexpialidocious");
+  EXPECT_EQ(plain(word_wrap(marked, unmarked.size())), (std::vector{unmarked}));
+
+  const auto check = [](std::u32string_view input, std::size_t width,
+                        std::initializer_list<std::string_view> expected) {
+    auto wanted = std::vector<std::basic_string<Char>>{};
+    for (const auto line : expected)
+      wanted.push_back(ascii<Char>(line));
+    EXPECT_EQ(plain(word_wrap(text{encoded<Char>(input)}, width)), wanted);
+  };
+  check(U"ab\u00adcd\u00adefgh", 5, {"abcd-", "efgh"});
+  check(U"abcd\u00adxyz", 4, {"abc-", "dxyz"});
+  check(U"x ab\u00adcd", 4, {"x", "abcd"});
+  check(U"\u00adabc\u00ad\u00ad", 4, {"abc"});
+  check(U"\u00ad \u00ad", 4, {});
+
+  const auto red = fg(term_color::red);
+  const auto split = text{ascii<Char>("ab"), red}
+                   + text{encoded<Char>(U"\u00ad"), underline()}
+                   + text{ascii<Char>("cdef")};
+  const auto lines = word_wrap(split, 4);
+  ASSERT_EQ(lines.size(), 2u);
+  EXPECT_EQ(rendered(lines[0]), rendered(text{ascii<Char>("ab-"), red}));
+  EXPECT_EQ(rendered(lines[1]), ascii<Char>("cdef"));
+}
+
+TYPED_TEST(WordWrap, IdeographicBreaks) {
+  using Char = TypeParam;
+  using text = basic_styled_text<Char>;
+  const auto check = [](std::u32string_view input, std::size_t width,
+                        std::initializer_list<std::u32string_view> expected) {
+    auto wanted = std::vector<std::basic_string<Char>>{};
+    for (const auto line : expected)
+      wanted.push_back(encoded<Char>(line));
+    EXPECT_EQ(plain(word_wrap(text{encoded<Char>(input)}, width)), wanted);
+  };
+  check(U"\u5317\u4eac\u5927\u5b66", 4,
+        {U"\u5317\u4eac", U"\u5927\u5b66"});
+  check(U"\u6771\u4eac\u3002", 4, {U"\u6771", U"\u4eac\u3002"});
+  check(U"\u3042\u3044\u3046", 4, {U"\u3042\u3044", U"\u3046"});
+  check(U"x \u6771\u4eac", 4, {U"x", U"\u6771\u4eac"});
+}
+
+TYPED_TEST(WordWrap, NoBreakSpace) {
+  using Char = TypeParam;
+  using text = basic_styled_text<Char>;
+  const auto check = [](std::u32string_view input, std::size_t width,
+                        std::initializer_list<std::u32string_view> expected) {
+    auto wanted = std::vector<std::basic_string<Char>>{};
+    for (const auto line : expected)
+      wanted.push_back(encoded<Char>(line));
+    EXPECT_EQ(plain(word_wrap(text{encoded<Char>(input)}, width)), wanted);
+  };
+  check(U"10\u00a0kg", 5, {U"10\u00a0kg"});
+  check(U"x 10\u00a0kg", 5, {U"x", U"10\u00a0kg"});
+  check(U"1.\u00a0kg", 5, {U"1.\u00a0kg"});
+  check(U"x 1.\u00a0kg", 5, {U"x", U"1.\u00a0kg"});
+  check(U"10\u00a0kg", 4, {U"10", U"kg"});
+  check(U"10\u00a0\u00a0kg", 4, {U"10", U"kg"});
+  check(U"one ab\u00a0abcdef", 8, {U"one", U"ab", U"abcdef"});
+  check(U"ab\u00a0cd\u00adefghi", 6, {U"ab\u00a0cd-", U"efghi"});
+  check(U"a\u00a0\n\u00a0", 4, {U"a"});
+  check(U" \u00a0", 4, {});
+
+  const auto red = fg(term_color::red);
+  const auto split = text{ascii<Char>("10"), red}
+                   + text{encoded<Char>(U"\u00a0"), underline()}
+                   + text{ascii<Char>("kg")};
+  EXPECT_EQ(plain(word_wrap(split, 5)),
+            (std::vector{encoded<Char>(U"10\u00a0kg")}));
+  const auto lines = word_wrap(split, 4);
+  ASSERT_EQ(lines.size(), 2u);
+  EXPECT_EQ(rendered(lines[0]), rendered(text{ascii<Char>("10"), red}));
+  EXPECT_EQ(rendered(lines[1]), ascii<Char>("kg"));
 }
 
 TYPED_TEST(WordWrap, ControlsAndPerSpanAnsi) {

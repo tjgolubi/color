@@ -1,24 +1,25 @@
 # Unicode table generation
 
-The checked-in tables use Unicode 18.0.0. To download the inputs, run these
-commands from the repository root.
+The checked-in tables use Unicode 18.0.0. To fetch missing inputs using `curl`,
+run this command from the repository root.
 
 ```sh
-cd support/unicode
-curl --fail --location --remote-name https://www.unicode.org/Public/18.0.0/ucd/UnicodeData.txt
-curl --fail --location --remote-name https://www.unicode.org/Public/18.0.0/ucd/EastAsianWidth.txt
-curl --fail --location --remote-name https://www.unicode.org/Public/18.0.0/ucd/PropList.txt
+make -C support/unicode download
 ```
 
-When updating Unicode, use the same release in all three URLs.
+The target fetches missing copies of `UnicodeData.txt`, `EastAsianWidth.txt`,
+`PropList.txt`, and `LineBreak.txt`. It leaves existing files in place. When
+updating Unicode, change `UNICODE_VERSION` in the Makefile and refresh all
+inputs together.
 
 Run `make` in this directory to regenerate the private classification tables
 `src/UnicodeData.hpp` and `src/WrapData.hpp`, and the constexpr width table
-`include/tjg/color/bits/EastAsianWidth.hpp`. Wrapping table generation requires
-Python 3 (`PYTHON` can select its executable).
+`include/tjg/color/bits/EastAsianWidth.hpp`. Regeneration uses local inputs
+and works offline. Wrapping table generation requires Python 3 (`PYTHON` can
+select its executable).
 
 Run `python3 gen-wrap-tables.py` in this directory to regenerate the private
 `src/WrapData.hpp` table. It uses `White_Space` and `Quotation_Mark` from
-`PropList.txt`, and punctuation categories from `UnicodeData.txt`, excluding
-opening punctuation and quotation marks. These are wrapping break preferences,
-not a complete Unicode line-breaking algorithm.
+`PropList.txt`, punctuation categories from `UnicodeData.txt`, and the
+Ideographic (`ID`) line-break class from `LineBreak.txt`. Punctuation break
+preferences exclude opening punctuation and quotation marks.

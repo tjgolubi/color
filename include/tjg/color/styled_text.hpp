@@ -156,10 +156,15 @@ using wstyled_text = basic_styled_text<wchar_t>;
  * Wraps text into unpadded display lines, preserving nested and absolute styles.
  * Width must be at least 4; otherwise throws std::invalid_argument, even for
  * empty input. Leaves the input unchanged. Removes ANSI sequences per span,
- * normalizes whitespace, and discards remaining C0/C1 controls. Newlines force
- * breaks; trailing whitespace and trailing blank lines are removed.
- * Breaks after eligible Unicode punctuation or at whitespace. Oversized words
- * are split at decoded character boundaries with a styled ASCII hyphen.
+ * normalizes whitespace except newlines and no-break spaces (U+00A0), and
+ * discards remaining C0/C1 controls. Newlines force breaks. Trailing whitespace
+ * and trailing blank lines are removed.
+ * Breaks after eligible Unicode punctuation or at whitespace. For oversized
+ * words, a soft hyphen marks a preferred split and becomes a styled ASCII
+ * hyphen when used. Breaks between ideographic characters need no hyphen.
+ * If no preferred break fits, an oversized word can split at a no-break space
+ * and consume it without adding a hyphen.
+ * Falls back to splitting at a decoded character boundary with an ASCII hyphen.
  * Uses the UTF-8 formatter's one/two-column model for both character types;
  * malformed code units are preserved and count as one column each.
  */

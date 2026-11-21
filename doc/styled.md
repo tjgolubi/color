@@ -258,13 +258,22 @@ for (const auto& line : word_wrap(message, 20))
 // checks passed
 ```
 
-Words that fit the column move intact to the next line. Longer words split
-with a hyphen that inherits the preceding character's style. Breaks can also
-follow punctuation, except opening punctuation and quotation marks, including
-apostrophes. Punctuation stays on the preceding line without an added hyphen.
+Words that fit the column move intact to the next line. To mark a preferred
+break in a longer word, insert a soft hyphen (`U+00AD`). It becomes a visible
+hyphen only when used as a break. Breaks between adjacent ideographic
+characters in an oversized run add no hyphen. Other oversized words can split
+with a hyphen that inherits the preceding character's style.
 
-Newlines force line breaks. Other Unicode whitespace becomes ordinary spaces,
-one space per character. Leading and interior spaces are preserved, except
+Breaks can also follow punctuation, except opening punctuation and quotation
+marks, including apostrophes. Punctuation stays on the preceding line.
+
+Newlines force line breaks. A no-break space (`U+00A0`) takes one column and
+keeps adjacent text together if it fits on a full line. In an oversized group,
+wrapping can break at a no-break space when no preferred break fits. That
+space is consumed and no hyphen is added.
+
+Other Unicode whitespace becomes ordinary spaces, one space per character.
+Leading and interior spaces are preserved, except
 separating spaces at automatic wrap boundaries. Trailing spaces and trailing
 blank lines are removed. Empty or whitespace-only input returns no lines.
 Raw ANSI sequences are stripped independently from each text span; remaining

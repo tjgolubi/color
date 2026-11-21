@@ -33,23 +33,34 @@ one column. Surrogate pairs split across spans are not joined.
 
 ### Display width and breaks
 
-Both overloads use the UTF-8 formatter's Unicode 18.0.0 width table: wide code
-points count as two columns and other decoded characters as one. Combining
-marks, variation selectors, and ZWJ sequences receive no special grapheme or
-zero-width handling. This differs from wide formatting's code-unit measurement.
+Both overloads use the UTF-8 formatter's Unicode 18.0.0 width table. Wide code
+points count as two columns and most other decoded characters as one. Soft
+hyphens are zero-width break hints. Combining marks, variation selectors, and
+ZWJ sequences retain the formatter's code-point width behavior. Wide formatting
+uses code-unit measurement.
 
-Breaks are allowed at whitespace and after Unicode punctuation, except opening
+Breaks are allowed at ordinary spaces and after Unicode punctuation, except opening
 punctuation and characters with the Unicode `Quotation_Mark` property. This
 keeps apostrophes within contractions. Eligible punctuation remains on the
 preceding line with no added hyphen. These are break preferences, not a full
 Unicode line-breaking implementation.
 
 A word or punctuation-delimited portion that fits the full width moves intact
-to the next line if it cannot fit the remaining space. An oversized portion
-splits at the last complete decoded character that leaves room for an ASCII
-`-`. The hyphen inherits the preceding character's style and all enclosing
-groups. Opening punctuation and quotation marks do not prevent this forced
-split. Style boundaries alone are not word boundaries.
+to the next line if it cannot fit the remaining space. For an oversized
+portion, choose the last fitting soft-hyphen or ideographic break. A soft
+hyphen (`U+00AD`) becomes an ASCII `-` only when its break is used and there
+is room for the hyphen. The hyphen inherits the preceding character's style
+and all enclosing groups. Breaks between adjacent characters in Unicode's
+Ideographic (`ID`) line-break class add no hyphen. For example, `北京大学`
+wraps at width four as `北京` and `大学`.
+
+A no-break space (`U+00A0`) counts as one column and keeps adjacent text
+together if it fits on a full line. For an oversized group, when no preferred
+break fits, wrapping can break at the last no-break space that fits. The
+separator is consumed and no hyphen is added. For example, `10 kg` stays on
+one line at width five and wraps as `10` and `kg` at width four. If there
+is no fitting break, split at the last complete decoded character that leaves
+room for an ASCII `-`. Style boundaries alone do not create break opportunities.
 
 ### Whitespace and controls
 
@@ -58,8 +69,9 @@ span using the existing ANSI scanner. Sequences spanning spans are not
 recognized. Incomplete and malformed sequences retain the scanner's existing
 handling, after which the following filtering applies.
 
-Each Unicode `White_Space` character becomes one ordinary space, except `\n`,
-which forces a line break. Tabs have no tab stops; consecutive whitespace is
+Each Unicode `White_Space` character becomes one ordinary space, except `\n`
+and `U+00A0`. Newlines force line breaks, and no-break spaces retain their
+original encoding. Tabs have no tab stops; consecutive whitespace is
 not collapsed. Carriage return becomes a space even before newline. Remaining
 C0/C1 controls, including NUL, BEL, ESC, and DEL, are discarded after decoding.
 Malformed encoded units are retained rather than interpreted as C1 controls.

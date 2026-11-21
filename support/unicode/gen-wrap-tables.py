@@ -32,6 +32,7 @@ def ranges(points):
 
 root = Path(__file__).resolve().parent
 props = properties(root / "PropList.txt")
+line_break = properties(root / "LineBreak.txt")
 punctuation = set()
 for row in (root / "UnicodeData.txt").read_text(encoding="utf-8").splitlines():
     point, _, category, *_ = row.split(";")
@@ -51,7 +52,8 @@ lines = [
     "struct wrap_range { std::uint32_t first, last; };",
 ]
 for name, points in (("wrap_spaces", props["White_Space"]),
-                     ("wrap_punctuation", punctuation)):
+                     ("wrap_punctuation", punctuation),
+                     ("wrap_ideographic", line_break["ID"])):
     lines += ["", f"inline constexpr wrap_range {name}[] = {{"]
     lines += [f"  {{0x{first:04x}, 0x{last:04x}}},"
               for first, last in ranges(points)]
