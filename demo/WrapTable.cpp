@@ -68,13 +68,13 @@ public:
   /**
    * Sets the layout and default colors for all columns.
    * @param columns Settings in left-to-right display order.
-   * @throws std::invalid_argument A column is narrower than 16 display columns,
+   * @throws std::invalid_argument A column is narrower than 4 display columns,
    * the minimum supported by `tjg::color::word_wrap()`.
    */
   explicit table(std::array<column, N> columns) : _columns{std::move(columns)} {
     for (const auto& col : _columns) {
-      if (col.width < 16)
-        throw std::invalid_argument{"table columns must be at least 16 wide"};
+      if (col.width < 4)
+        throw std::invalid_argument{"table columns must be at least 4 wide"};
     }
   }
 

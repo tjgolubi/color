@@ -1,6 +1,6 @@
 # [Header `<tjg/color/styled_text.hpp>`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/styled_text.hpp)
 
-Owning styled text and operations that produce styled text.
+Styled text and operations that produce it.
 
 [API reference](../../index.md) · [`<tjg/color.hpp>`](../index.md)
 

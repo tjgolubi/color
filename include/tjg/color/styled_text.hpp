@@ -154,7 +154,7 @@ using wstyled_text = basic_styled_text<wchar_t>;
 
 /**
  * Wraps text into unpadded display lines, preserving nested and absolute styles.
- * Width must be at least 16; otherwise throws std::invalid_argument, even for
+ * Width must be at least 4; otherwise throws std::invalid_argument, even for
  * empty input. Leaves the input unchanged. Removes ANSI sequences per span,
  * normalizes whitespace, and discards remaining C0/C1 controls. Newlines force
  * breaks; trailing whitespace and trailing blank lines are removed.

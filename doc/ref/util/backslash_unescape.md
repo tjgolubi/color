@@ -14,7 +14,7 @@ constexpr auto backslash_unescape(std::wstring_view input) -> std::wstring;
 
 ## Description
 
-Returns an owning copy with backslash escapes decoded. Surrounding quotes are preserved. Malformed input can throw. The string has the input character type. See [`backslash_unescape_to`](backslash_unescape_to.md) for the accepted syntax and the iterator overloads.
+Returns a copy with backslash escapes decoded. Surrounding quotes are preserved. Malformed input can throw. The string has the input character type. See [`backslash_unescape_to`](backslash_unescape_to.md) for the accepted syntax and the iterator overloads.
 
 ### Character-type template: `std::basic_string_view<Char>`
 

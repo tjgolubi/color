@@ -119,13 +119,16 @@ TYPED_TEST(WordWrap, BlankLinesPreservePaddingStyle) {
 }
 
 TYPED_TEST(WordWrap, WidthValidatedBeforeInput) {
-  using text = basic_styled_text<TypeParam>;
-  for (const auto width : {std::size_t{0}, std::size_t{15}}) {
+  using Char = TypeParam;
+  using text = basic_styled_text<Char>;
+  for (const auto width : {std::size_t{0}, std::size_t{3}}) {
     EXPECT_THROW((void)word_wrap(text{}, width), std::invalid_argument);
-    EXPECT_THROW((void)word_wrap(text{ascii<TypeParam>(" \n")}, width),
+    EXPECT_THROW((void)word_wrap(text{ascii<Char>(" \n")}, width),
                  std::invalid_argument);
   }
-  const auto input = ascii<TypeParam>("a b");
+  EXPECT_EQ(plain(word_wrap(text{encoded<Char>(U"\u754c\u754c\u754c")}, 4)),
+            (std::vector{encoded<Char>(U"\u754c-"), encoded<Char>(U"\u754c\u754c")}));
+  const auto input = ascii<Char>("a b");
   EXPECT_EQ(plain(word_wrap(text{input},
                            std::numeric_limits<std::size_t>::max())),
             (std::vector{input}));

@@ -14,11 +14,10 @@ auto word_wrap(const wstyled_text& text, std::size_t width)
 
 ## Description
 
-Returns owning styled-text lines whose estimated display widths do not exceed
+Returns lines of styled text whose estimated display widths do not exceed
 `width`. Does not align or pad lines and leaves `text` unchanged. Preserves
 nested groups, inherited styles, and absolute-style boundaries, including when
 the returned lines are subsequently nested or overlaid with another style.
-This function is implemented in the compiled color library.
 
 ### Narrow overload
 
@@ -88,7 +87,7 @@ For any valid width large enough for the text:
 
 ## Exceptions
 
-Throws `std::invalid_argument` when `width < 16`, even for empty or
+Throws `std::invalid_argument` when `width < 4`, even for empty or
 whitespace-only input. Width is checked before inspecting text. Validate
 signed widths before converting them to `std::size_t`.
 Allocation can throw. With exceptions disabled, invalid widths use the
