@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md)
 
-Updated November 20, 2026.
+Updated November 21, 2026.
 
 ## Requirements and standard build
 
@@ -112,16 +112,16 @@ not visual review or deployment; record those checks separately.
 
 ## Current `dev` validation
 
-Verified November 20, 2026, for `dev` at
-`ea7354911826f24193f108e10af834817303d912`. All nine platform jobs and both
+Verified November 21, 2026, for `dev` at
+`cbc6c9ab26b5a1a7635bdade5d902966876d30ac`. All nine platform jobs and both
 documentation jobs passed.
 
 | Workflow                                                                  | Configurations                                                             | Jobs | Result |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44844197060)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44844197053)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44844197119)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44844197069) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/44955905475)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/44955905344)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/44955905568)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/44955905508) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
 
 The nine platform jobs configure, build, and run the TJG suite in C++23 mode
 with warnings treated as errors. Matrix fail-fast is disabled. The results
@@ -132,12 +132,11 @@ Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
 positive-range cast preserves the quantization and supports constant evaluation
 on all tested toolchains. Keep the compile-time regression check.
 
-Before committing `ea73549`, the MSYS2 build with GCC 16.2.0/libstdc++,
-CMake 4.5.0, Debug, C++23, `TJG_TEST=ON`, and `TJG_WERROR=ON` passed all
-23 CTest entries. The guide built, and WrapTable built and ran separately.
-Boundary tests cover rejection at width three and hyphenation at width four
-for `char` and `wchar_t`. The package test installs and relocates the static
-archive and exercises both wrapping overloads from a consumer.
+The final staged `dev` tree passed all 23 CTest entries and built the guide
+with the MSYS2 Debug build. WrapTable built and ran separately. Terry chose
+local validation during the three squashes and Actions on the final push to
+`dev`. The package test installs and relocates the static archive and
+exercises both `word_wrap()` overloads from a consumer.
 
 The Ubuntu and Windows runners used CMake 3.31.6 when a 4.0 minimum blocked
 configuration. The current 3.31 minimum works with their preinstalled CMake.
@@ -150,6 +149,16 @@ Run the wrapping tests with the following commands.
 cmake --build build --target word-wrap-test --parallel 4
 ctest --test-dir build -R '^word-wrap-test$' --output-on-failure
 ```
+
+Tests for `char` and `wchar_t` cover the width-four minimum, discretionary
+soft hyphens, hyphen-free ideographic breaks, and U+00A0 preservation and
+fallback. `styled-text-format-test` covers `wrapped()` formatting and stream
+insertion.
+
+Unicode table regeneration is separate from the normal build. See
+`support/unicode/README.md` for downloading missing inputs and regenerating
+the display-width, printability, and wrap tables. The wrap table uses Unicode
+18.0.0 `LineBreak.txt` for the Ideographic (`ID`) class.
 
 The runtime refactor introduced an unconditional `constinit` test for default
 styled text. GCC 14 rejected the initializer and MSVC Debug reported storage
@@ -233,9 +242,11 @@ guide artifact and run the dependent Pages deployment. Deployments are
 serialized without cancelling an active publication.
 
 Both jobs passed for the current `dev` commit. The live
-[`word_wrap()` reference](https://tjgolubi.github.io/color/ref/color/styled_text/word_wrap.html)
-returned HTTP 200 and documented the four-column minimum. Publication
-instructions are in the library's `support/color-pages.md`.
+[`wrapped()` reference](https://tjgolubi.github.io/color/ref/color/wrapped.html),
+[Xterm palette reference](https://tjgolubi.github.io/color/ref/color/colors/xterm-palette.html),
+and [WrapTable walkthrough](https://tjgolubi.github.io/color/wrap-table.html)
+returned HTTP 200. Publication instructions are in the library's
+`support/color-pages.md`.
 
 ## Other workflow coverage
 

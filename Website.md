@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md) · [Build and test](BuildAndTest.md)
 
-Updated November 20, 2026.
+Updated November 21, 2026.
 
 ## Purpose and audience
 
@@ -36,9 +36,13 @@ immediately below the code. It also shows simple status and emphasis examples.
 The homepage shows the dashboard and WrapTable screenshots. At `#wrap-table`,
 visitors can download `WrapTable.cpp`, read its GitHub source, or follow the
 guide walkthrough. The demo shows multiline styled cells and Unicode display
-width in a layout defined by the example program. The getting-started section
-links to installation instructions, the API reference, and the guide's demo
-index. It documents CMake 3.31 and linking the static archive using `tjg::tjg`.
+width in a layout defined by the example program. The page describes soft
+hyphens, ideographic breaks, and no-break spaces. At `#wrap-prose`, a runnable
+example uses `wrapped()` with a format field width and `rgb::xterm_cyan`, with
+links to the `wrapped()` and Xterm palette references. The getting-started
+section links to installation instructions, the API reference, and the guide's
+demo index. It documents CMake 3.31 and linking the static archive using
+`tjg::tjg`.
 
 ### Comparison pages
 
@@ -85,10 +89,11 @@ handle styling, copying, and pinned-reference measurement.
 cropped terminal screenshot with `Request ID: 002a — completed`.
 `dist/assets/result42.png` matches `demo/Result42.png`.
 `dist/assets/wrap-table.png` matches `demo/WrapTable.png` (765 × 476).
-Preserve the screenshots and matching demo text together, including 東京.
+It shows the earlier border style. The current download colors the inner
+rules to match the column backgrounds, as the homepage caption explains.
 
 The published comparison source and links use the `dev` snapshot
-`ea7354911826f24193f108e10af834817303d912`. `dist/examples/` contains all eight
+`cbc6c9ab26b5a1a7635bdade5d902966876d30ac`. `dist/examples/` contains all eight
 demos and the site's quick-start program. The result page displays excerpts
 from `Result42Compare.cpp`. The three dashboard pages show complete sources
 using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
@@ -97,7 +102,7 @@ downloads, and source links together after an accepted demo update.
 
 ## Last recorded public deployment
 
-Sites confirmed that version 17 succeeded on November 20, 2026 at 6:35 p.m. CST.
+Sites confirmed that version 18 succeeded on November 21, 2026 at 4:25 p.m. CST.
 The source commit was pushed and the matching archive was saved before
 deployment. Sites metadata at that verification confirmed the public audience.
 
@@ -105,19 +110,20 @@ deployment. Sites metadata at that verification confirmed the public audience.
 | ---------------- | ----------------------------------------------------------------------------------- |
 | Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
 | Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
-| Version          | 17                                                                                  |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_fd65df53b50481918d76e7c1d97b4d47` |
-| Deployment ID    | `appgdep_6b00e7367edc81919baedbfa2a0e888e`                                          |
-| Source commit    | `8d0ff587f47031b557f46dd07837b5e8cc0098a8`                                          |
+| Version          | 18                                                                                  |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_0c7130af88d48191873cc00d0f9dc106` |
+| Deployment ID    | `appgdep_6b021a6f1a6c819190648c1e0ad82978`                                          |
+| Source commit    | `581efe3dcacc2d86e0041689595b62a3823930e7`                                          |
 | Audience         | Public                                                                              |
 
 ## Verification and current handoff
 
-Before deploying version 17, all eight demo sources and three screenshots
-matched the library snapshot byte for byte. After deployment, the live
-WrapTable download matched `dev`, including the four-column minimum, and the
-homepage and comparisons page showed the updated source links.
-Keep details about individual RGB names in the user guide.
+Before deploying version 18, all eight demo sources matched `dev` byte for
+byte. The homepage `wrapped()` example compiled and ran, matching the two
+displayed lines and fixed cyan color. After deployment, the homepage and
+comparisons page showed the updated source links, and the live WrapTable
+download matched `dev` byte for byte. Keep the full list of RGB names in the
+user guide and API reference.
 
 The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was built and
 published separately from the same library commit. See

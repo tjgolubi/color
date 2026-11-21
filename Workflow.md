@@ -2,7 +2,7 @@
 
 [Document map](README.md)
 
-Updated November 20, 2026.
+Updated November 21, 2026.
 
 ## Authorization and scope
 
@@ -232,7 +232,7 @@ generates Neutral swatches from the named RGB constants.
 Reserve direct `rgb{...}` construction and raw SGR for advanced material.
 Indexed `gray` and `cube` serve readers who need precise SGR palette control
 and understand how terminal palettes affect appearance. `term_color::gray` selects
-slot 8, and `rgb::term_gray` is its fixed Xterm RGB counterpart (`#7F7F7F`).
+slot 8, and `rgb::xterm_gray` is its fixed Xterm RGB counterpart (`#7F7F7F`).
 Keep threading and implementation details out of the main explanation.
 
 Use **current style** for the style tracked during formatting and **default
@@ -315,9 +315,17 @@ or ordinary merge. This policy does not authorize rewriting existing commits.
    those operations. Verify the resulting commit structure, matching full
    SHAs, and applicable CI results for the final commit.
 
-Any new commit, amendment, rebase, or changed integration tree requires CI for
-the resulting SHA. Earlier results do not validate changed code. Record
-intentional exclusions and distinguish local checks from remote CI.
+CI results apply to the exact commit tested. When CI is required after an
+amendment, rebase, or change to the integration tree, verify the resulting
+SHA. Record intentional exclusions and distinguish local checks from remote
+CI.
+
+When Terry explicitly chooses CI on the final push for a batch of dependent
+candidates, test the first squash locally on `dev`. Rebase each subsequent
+candidate onto the updated `dev`, run the full local checks, and verify that
+the resulting squash tree matches the tested candidate. Retain one squash
+commit per candidate and verify every applicable CI job on the final pushed
+SHA.
 
 Check CI on demand; do not start periodic polling, cancel runs, or change
 workflow policies without instruction. Batch authorized changes before pushes
@@ -341,7 +349,8 @@ Use Conventional Commits, such as `feat(color): named RGB constants` or
 do not carry forward compatibility obligations, aliases, or breaking-change
 markers from earlier development. Describe the actual effects of changes
 without promising stable numeric or binary representations. Use Markdown
-backticks around identifiers where appropriate.
+backticks around identifiers where appropriate. Keep subjects within 80
+columns and wrap commit message bodies at 80 columns.
 
 Do not generate changelogs, assign release numbers, or create or push tags
 without instruction. Verify the current repository's release tooling before

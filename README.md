@@ -1,6 +1,6 @@
 # Color coordination
 
-Updated November 20, 2026.
+Updated November 21, 2026.
 
 These documents provide continuity between conversations about
 [`tjgolubi/color`](https://github.com/tjgolubi/color). Keep them current as
@@ -27,11 +27,20 @@ the demo context. The user guide covers styled text; do not create a separate
 ## Current handoff
 
 The local and pushed `dev` tips match at
-`ea7354911826f24193f108e10af834817303d912`. The preceding commit `9421859`
-squash-merged `feat/Wrap`, including the static library, API reference,
-word wrapping, and demo walkthroughs. The latest commit lowered the wrapping
-minimum to four display columns and simplified reference wording. The library
-checkout has no tracked edits.
+`cbc6c9ab26b5a1a7635bdade5d902966876d30ac`. The checkout is clean. The
+three squash commits on `dev`, in integration order, are:
+
+1. `1175ed1` (`ref/XtermColors`) renames fixed palette RGB constants to
+   `rgb::xterm_*`. Terminal palette slots still use `term_color`.
+2. `1b3c596` (`feat/SoftHyphen`) adds soft-hyphen, ideographic, and no-break
+   space handling to `word_wrap()`.
+3. `cbc6c9a` (`feat/Wrapped`) adds `wrapped()` and includes the WrapTable
+   inner border styling.
+
+`feat/Tagged` still points to `ea73549`. The current `dev` contains its fixed
+Xterm RGB names and enhanced wrapping prerequisites. Start Tagged from this
+baseline when Terry authorizes the branch update. See
+[TaggedRequirements.md](TaggedRequirements.md) for the parser design.
 
 The project builds a static color archive using standard platform names:
 `libcolor.a` on Unix/MSYS2 and `color.lib` with MSVC. Consumers still use
@@ -48,7 +57,7 @@ with nested groups, uses shorter styling expressions, and includes an SGR
 format-and-parse walkthrough. The repository includes eight demos.
 `build.bash` runs the regression suite and builds the HTML guide.
 
-Marketing site version 17 uses the current `dev` snapshot for its demo
+Marketing site version 18 uses the current `dev` snapshot for its demo
 downloads and source links. The user guide and API reference are live on
 GitHub Pages.
 See [BuildAndTest.md](BuildAndTest.md) for checks and [Website.md](Website.md)
@@ -73,10 +82,17 @@ User-guide simplification remains pending Terry's review and instructions.
 ## Wrap handoff
 
 `word_wrap()` returns unpadded lines of narrow or wide styled text. It takes a
-`std::size_t` width of at least four display columns. `demo/WrapTable.cpp`
-shows how to align those lines in colored table cells. The current behavior
-is documented in the [API reference](https://tjgolubi.github.io/color/ref/color/styled_text/word_wrap.html)
-and the [WrapTable walkthrough](https://tjgolubi.github.io/color/wrap-table.html).
+`std::size_t` width of at least four display columns. Soft hyphens mark
+preferred breaks, adjacent ideographs can split without a hyphen, and U+00A0
+keeps adjacent text together when it fits a full line. `demo/WrapTable.cpp`
+shows how to align the returned lines in colored table cells.
+
+`wrapped()` formats or streams narrow styled prose using `word_wrap()`. It
+takes its width from the format field or `std::setw`, defaults to 80 columns,
+and separates lines without a trailing newline. See the
+[`word_wrap()` reference](https://tjgolubi.github.io/color/ref/color/styled_text/word_wrap.html),
+[`wrapped()` reference](https://tjgolubi.github.io/color/ref/color/wrapped.html),
+and [WrapTable walkthrough](https://tjgolubi.github.io/color/wrap-table.html).
 The Unicode License V3 is recorded in `THIRD-PARTY-NOTICES`.
 
 ## Coordination documents
@@ -85,11 +101,12 @@ These coordination documents live on `docs/Coord` and are committed separately
 from the library. Updating documents does not authorize committing or pushing
 them; those operations need Terry's instructions.
 
-| Document                           | Purpose                                               |
-| ---------------------------------- | ----------------------------------------------------- |
-| [BuildAndTest.md](BuildAndTest.md) | Build requirements, procedures, and verified results. |
-| [Website.md](Website.md)           | Website content, publication state, and maintenance.  |
-| [Workflow.md](Workflow.md)         | Working rules and repository procedures.              |
+| Document                                       | Purpose                                               |
+| ---------------------------------------------- | ----------------------------------------------------- |
+| [BuildAndTest.md](BuildAndTest.md)             | Build requirements, procedures, and verified results. |
+| [TaggedRequirements.md](TaggedRequirements.md) | Draft parser behavior and acceptance examples.        |
+| [Website.md](Website.md)                       | Website content, publication state, and maintenance.  |
+| [Workflow.md](Workflow.md)                     | Working rules and repository procedures.              |
 
 A design overview belongs with the coordination documents. It will record
 the library's vision, design decisions, and rationale. See
