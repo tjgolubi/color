@@ -8,45 +8,45 @@ Header: [`<tjg/color/colors.hpp>`](../index.md).
 
 ```cpp
 // Representative constexpr static members of rgb.
-static const rgb term_black;
+static const rgb xterm_black;
 static const rgb alice_blue;
 // See the complete constant table below.
 ```
 
 ## Description
 
-Each name denotes a static [`rgb`](index.md) member usable in constant expressions. The `term_*` entries use
+Each name denotes a static [`rgb`](index.md) member usable in constant expressions. The `xterm_*` entries use
 fixed Xterm-default colors. See the [swatches](../../../../named-colors.md).
 
 Most named colors follow the [W3C CSS named colors table](https://www.w3.org/TR/css-color-4/#named-colors).
 C++ names use underscores between words, for example `alice_blue` for CSS
 `aliceblue` and `rebecca_purple` for `rebeccapurple`.
-The custom neutral shades `dark_gray` and `light_gray`, and the `term_*`
+The custom neutral shades `dark_gray` and `light_gray`, and the `xterm_*`
 constants, are separate from the CSS-derived names. `gray` is `#808080`,
 which also matches CSS gray. The CSS names `darkgray` and `lightgray` retain
 their CSS values, distinct from the underscore names.
-See [Xterm-default palette behavior](../xterm-palette.md) for the `term_*` colors.
+See [Xterm-default palette behavior](../xterm-palette.md) for the `xterm_*` colors.
 
 ### Terminal colors
 
-| Constant                   | RGB       |
-| ---                        | ---       |
-| `rgb::term_black`          | `#000000` |
-| `rgb::term_red`            | `#CD0000` |
-| `rgb::term_green`          | `#00CD00` |
-| `rgb::term_yellow`         | `#CDCD00` |
-| `rgb::term_blue`           | `#0000EE` |
-| `rgb::term_magenta`        | `#CD00CD` |
-| `rgb::term_cyan`           | `#00CDCD` |
-| `rgb::term_white`          | `#E5E5E5` |
-| `rgb::term_gray`           | `#7F7F7F` |
-| `rgb::term_bright_red`     | `#FF0000` |
-| `rgb::term_bright_green`   | `#00FF00` |
-| `rgb::term_bright_yellow`  | `#FFFF00` |
-| `rgb::term_bright_blue`    | `#5C5CFF` |
-| `rgb::term_bright_magenta` | `#FF00FF` |
-| `rgb::term_bright_cyan`    | `#00FFFF` |
-| `rgb::term_bright_white`   | `#FFFFFF` |
+| Constant                    | RGB       |
+| --------------------------- | --------- |
+| `rgb::xterm_black`          | `#000000` |
+| `rgb::xterm_red`            | `#CD0000` |
+| `rgb::xterm_green`          | `#00CD00` |
+| `rgb::xterm_yellow`         | `#CDCD00` |
+| `rgb::xterm_blue`           | `#0000EE` |
+| `rgb::xterm_magenta`        | `#CD00CD` |
+| `rgb::xterm_cyan`           | `#00CDCD` |
+| `rgb::xterm_white`          | `#E5E5E5` |
+| `rgb::xterm_gray`           | `#7F7F7F` |
+| `rgb::xterm_bright_red`     | `#FF0000` |
+| `rgb::xterm_bright_green`   | `#00FF00` |
+| `rgb::xterm_bright_yellow`  | `#FFFF00` |
+| `rgb::xterm_bright_blue`    | `#5C5CFF` |
+| `rgb::xterm_bright_magenta` | `#FF00FF` |
+| `rgb::xterm_bright_cyan`    | `#00FFFF` |
+| `rgb::xterm_bright_white`   | `#FFFFFF` |
 
 ### CSS-derived and custom colors
 

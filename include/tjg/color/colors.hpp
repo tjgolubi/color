@@ -137,22 +137,22 @@ struct rgb {
   }
 
   /// Fixed Xterm-default RGB equivalents of terminal colors.
-  static const rgb term_black;
-  static const rgb term_red;
-  static const rgb term_green;
-  static const rgb term_yellow;
-  static const rgb term_blue;
-  static const rgb term_magenta;
-  static const rgb term_cyan;
-  static const rgb term_white;
-  static const rgb term_gray;
-  static const rgb term_bright_red;
-  static const rgb term_bright_green;
-  static const rgb term_bright_yellow;
-  static const rgb term_bright_blue;
-  static const rgb term_bright_magenta;
-  static const rgb term_bright_cyan;
-  static const rgb term_bright_white;
+  static const rgb xterm_black;
+  static const rgb xterm_red;
+  static const rgb xterm_green;
+  static const rgb xterm_yellow;
+  static const rgb xterm_blue;
+  static const rgb xterm_magenta;
+  static const rgb xterm_cyan;
+  static const rgb xterm_white;
+  static const rgb xterm_gray;
+  static const rgb xterm_bright_red;
+  static const rgb xterm_bright_green;
+  static const rgb xterm_bright_yellow;
+  static const rgb xterm_bright_blue;
+  static const rgb xterm_bright_magenta;
+  static const rgb xterm_bright_cyan;
+  static const rgb xterm_bright_white;
 
   /// Named RGB constants, independent of the terminal palette.
   static const rgb alice_blue;
@@ -333,35 +333,35 @@ constexpr rgb color(double red, double green, double blue) noexcept {
 { return color(grayscale, grayscale, grayscale); }
 
 // Xterm RGB mapping for terminal palette indices 0-15.
-inline constexpr rgb rgb::term_black         {  0,   0,   0};
-inline constexpr rgb rgb::term_red           {205,   0,   0};
-inline constexpr rgb rgb::term_green         {  0, 205,   0};
-inline constexpr rgb rgb::term_yellow        {205, 205,   0};
-inline constexpr rgb rgb::term_blue          {  0,   0, 238};
-inline constexpr rgb rgb::term_magenta       {205  , 0, 205};
-inline constexpr rgb rgb::term_cyan          {  0, 205, 205};
-inline constexpr rgb rgb::term_white         {229, 229, 229};
-inline constexpr rgb rgb::term_gray          {127, 127, 127};
-inline constexpr rgb rgb::term_bright_red    {255,   0,   0};
-inline constexpr rgb rgb::term_bright_green  {  0, 255,   0};
-inline constexpr rgb rgb::term_bright_yellow {255, 255,   0};
-inline constexpr rgb rgb::term_bright_blue   { 92,  92, 255};
-inline constexpr rgb rgb::term_bright_magenta{255,   0, 255};
-inline constexpr rgb rgb::term_bright_cyan   {  0, 255, 255};
-inline constexpr rgb rgb::term_bright_white  {255, 255, 255};
+inline constexpr rgb rgb::xterm_black         {  0,   0,   0};
+inline constexpr rgb rgb::xterm_red           {205,   0,   0};
+inline constexpr rgb rgb::xterm_green         {  0, 205,   0};
+inline constexpr rgb rgb::xterm_yellow        {205, 205,   0};
+inline constexpr rgb rgb::xterm_blue          {  0,   0, 238};
+inline constexpr rgb rgb::xterm_magenta       {205  , 0, 205};
+inline constexpr rgb rgb::xterm_cyan          {  0, 205, 205};
+inline constexpr rgb rgb::xterm_white         {229, 229, 229};
+inline constexpr rgb rgb::xterm_gray          {127, 127, 127};
+inline constexpr rgb rgb::xterm_bright_red    {255,   0,   0};
+inline constexpr rgb rgb::xterm_bright_green  {  0, 255,   0};
+inline constexpr rgb rgb::xterm_bright_yellow {255, 255,   0};
+inline constexpr rgb rgb::xterm_bright_blue   { 92,  92, 255};
+inline constexpr rgb rgb::xterm_bright_magenta{255,   0, 255};
+inline constexpr rgb rgb::xterm_bright_cyan   {  0, 255, 255};
+inline constexpr rgb rgb::xterm_bright_white  {255, 255, 255};
 
 namespace detail {
 
 inline constexpr auto term_color_palette = std::array{
   // 0–7 normal
-  rgb::term_black, rgb::term_red,     rgb::term_green, rgb::term_yellow,
-  rgb::term_blue,  rgb::term_magenta, rgb::term_cyan , rgb::term_white,
+  rgb::xterm_black, rgb::xterm_red,     rgb::xterm_green, rgb::xterm_yellow,
+  rgb::xterm_blue,  rgb::xterm_magenta, rgb::xterm_cyan , rgb::xterm_white,
 
   // 8–15 bright
-  rgb::term_gray        , rgb::term_bright_red,
-  rgb::term_bright_green, rgb::term_bright_yellow,
-  rgb::term_bright_blue , rgb::term_bright_magenta,
-  rgb::term_bright_cyan , rgb::term_bright_white
+  rgb::xterm_gray        , rgb::xterm_bright_red,
+  rgb::xterm_bright_green, rgb::xterm_bright_yellow,
+  rgb::xterm_bright_blue , rgb::xterm_bright_magenta,
+  rgb::xterm_bright_cyan , rgb::xterm_bright_white
 }; // term_color_palette
 
 constexpr auto checked_term_index(term_color clr) noexcept

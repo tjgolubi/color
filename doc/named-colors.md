@@ -2,8 +2,8 @@
 
 These constexpr `tjg::color::rgb` constants are static members of `tjg::color::rgb`.
 Use them directly, for example `tjg::color::fg(tjg::color::rgb::coral)`.
-The `term_*` names are fixed Xterm-default RGB counterparts of `term_color`
-values, including `rgb::term_gray` for `term_color::gray`. They emit fixed
+The `xterm_*` names are fixed Xterm-default RGB counterparts of `term_color`
+values, including `rgb::xterm_gray` for `term_color::gray`. They emit fixed
 truecolor values regardless of the terminal's palette.
 See [Colors](colors.md) for the color types and [the overview](index.md) for
 styling examples.
@@ -70,9 +70,9 @@ The underscore names `rgb::dark_gray` and `rgb::light_gray` are
 
 ## Terminal colors
 
-These `tjg::color::rgb::term_*` constants use fixed Xterm-default RGB values.
+These `tjg::color::rgb::xterm_*` constants use fixed Xterm-default RGB values.
 They are shown in two responsive grids: the eight normal colors, followed
-by the eight bright colors beneath them. For example, `tjg::color::rgb::term_red`
+by the eight bright colors beneath them. For example, `tjg::color::rgb::xterm_red`
 is RGB `{205, 0, 0}`. Using `tjg::color::term_color::red` instead selects the
 terminal's palette entry, whose appearance depends on its theme.
 

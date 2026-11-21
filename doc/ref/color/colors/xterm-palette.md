@@ -23,24 +23,24 @@ for [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Renditio
 These are the library's fixed Xterm-default RGB equivalents. Rendering a
 `term_color` selects the terminal's entry instead of emitting these RGB values.
 
-| Entry | Enumerator                   | RGB constant               | Fixed RGB |
-| ---   | ---                          | ---                        | ---       |
-| 0     | `term_color::black`          | `rgb::term_black`          | `#000000` |
-| 1     | `term_color::red`            | `rgb::term_red`            | `#CD0000` |
-| 2     | `term_color::green`          | `rgb::term_green`          | `#00CD00` |
-| 3     | `term_color::yellow`         | `rgb::term_yellow`         | `#CDCD00` |
-| 4     | `term_color::blue`           | `rgb::term_blue`           | `#0000EE` |
-| 5     | `term_color::magenta`        | `rgb::term_magenta`        | `#CD00CD` |
-| 6     | `term_color::cyan`           | `rgb::term_cyan`           | `#00CDCD` |
-| 7     | `term_color::white`          | `rgb::term_white`          | `#E5E5E5` |
-| 8     | `term_color::gray`           | `rgb::term_gray`           | `#7F7F7F` |
-| 9     | `term_color::bright_red`     | `rgb::term_bright_red`     | `#FF0000` |
-| 10    | `term_color::bright_green`   | `rgb::term_bright_green`   | `#00FF00` |
-| 11    | `term_color::bright_yellow`  | `rgb::term_bright_yellow`  | `#FFFF00` |
-| 12    | `term_color::bright_blue`    | `rgb::term_bright_blue`    | `#5C5CFF` |
-| 13    | `term_color::bright_magenta` | `rgb::term_bright_magenta` | `#FF00FF` |
-| 14    | `term_color::bright_cyan`    | `rgb::term_bright_cyan`    | `#00FFFF` |
-| 15    | `term_color::bright_white`   | `rgb::term_bright_white`   | `#FFFFFF` |
+| Entry | Enumerator                   | RGB constant                | Fixed RGB |
+| ----- | ---------------------------- | --------------------------- | --------- |
+| 0     | `term_color::black`          | `rgb::xterm_black`          | `#000000` |
+| 1     | `term_color::red`            | `rgb::xterm_red`            | `#CD0000` |
+| 2     | `term_color::green`          | `rgb::xterm_green`          | `#00CD00` |
+| 3     | `term_color::yellow`         | `rgb::xterm_yellow`         | `#CDCD00` |
+| 4     | `term_color::blue`           | `rgb::xterm_blue`           | `#0000EE` |
+| 5     | `term_color::magenta`        | `rgb::xterm_magenta`        | `#CD00CD` |
+| 6     | `term_color::cyan`           | `rgb::xterm_cyan`           | `#00CDCD` |
+| 7     | `term_color::white`          | `rgb::xterm_white`          | `#E5E5E5` |
+| 8     | `term_color::gray`           | `rgb::xterm_gray`           | `#7F7F7F` |
+| 9     | `term_color::bright_red`     | `rgb::xterm_bright_red`     | `#FF0000` |
+| 10    | `term_color::bright_green`   | `rgb::xterm_bright_green`   | `#00FF00` |
+| 11    | `term_color::bright_yellow`  | `rgb::xterm_bright_yellow`  | `#FFFF00` |
+| 12    | `term_color::bright_blue`    | `rgb::xterm_bright_blue`    | `#5C5CFF` |
+| 13    | `term_color::bright_magenta` | `rgb::xterm_bright_magenta` | `#FF00FF` |
+| 14    | `term_color::bright_cyan`    | `rgb::xterm_bright_cyan`    | `#00FFFF` |
+| 15    | `term_color::bright_white`   | `rgb::xterm_bright_white`   | `#FFFFFF` |
 
 See the [named constants](rgb/rgb-constants.md#terminal-colors) and
 [terminal swatches](../../../named-colors.md#terminal-colors).
@@ -79,7 +79,7 @@ appearance.
 ```cpp
 using namespace tjg::color;
 auto themed = fg(term_color::red); // Select the terminal's red entry.
-auto fixed = fg(rgb::term_red);    // Request RGB {205, 0, 0}.
+auto fixed = fg(rgb::xterm_red);    // Request RGB {205, 0, 0}.
 ```
 
 The library uses the fixed conversion for [`to_rgb`](to_rgb.md), RGB

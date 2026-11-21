@@ -336,10 +336,10 @@ def render_color_swatches(
         rgb = tuple(((packed >> shift) & 255) / 255 for shift in (16, 8, 0))
         hue, saturation, _ = colorsys.rgb_to_hsv(*rgb)
         category = "neutral" if saturation == 0 else groups[int((hue * 6 + 0.5) % 6)]
-        if name.startswith("term_"):
+        if name.startswith("xterm_"):
             category = (
                 "terminal-bright"
-                if name == "term_gray" or name.startswith("term_bright_")
+                if name == "xterm_gray" or name.startswith("xterm_bright_")
                 else "terminal-normal"
             )
         if category != group and not (group == "terminal" and category.startswith("terminal-")):

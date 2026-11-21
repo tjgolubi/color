@@ -394,20 +394,20 @@ TEST(color_test, cube_xterm_rgb) {
 }
 
 TEST(color_test, terminal_color_xterm_rgb) {
+  using tjg::color::rgb;
   // Agreed Xterm-default palette, independent of the implementation table.
   const tjg::color::rgb expected[] = {
       {0, 0, 0}, {205, 0, 0}, {0, 205, 0}, {205, 205, 0},
       {0, 0, 238}, {205, 0, 205}, {0, 205, 205}, {229, 229, 229},
       {127, 127, 127}, {255, 0, 0}, {0, 255, 0}, {255, 255, 0},
       {92, 92, 255}, {255, 0, 255}, {0, 255, 255}, {255, 255, 255}};
-  const tjg::color::rgb named[] = {
-      tjg::color::rgb::term_black, tjg::color::rgb::term_red, tjg::color::rgb::term_green,
-      tjg::color::rgb::term_yellow, tjg::color::rgb::term_blue, tjg::color::rgb::term_magenta,
-      tjg::color::rgb::term_cyan, tjg::color::rgb::term_white,
-      tjg::color::rgb::term_gray, tjg::color::rgb::term_bright_red,
-      tjg::color::rgb::term_bright_green, tjg::color::rgb::term_bright_yellow,
-      tjg::color::rgb::term_bright_blue, tjg::color::rgb::term_bright_magenta,
-      tjg::color::rgb::term_bright_cyan, tjg::color::rgb::term_bright_white};
+  const rgb named[] = {
+      rgb::xterm_black, rgb::xterm_red, rgb::xterm_green, rgb::xterm_yellow,
+      rgb::xterm_blue, rgb::xterm_magenta, rgb::xterm_cyan, rgb::xterm_white,
+      rgb::xterm_gray, rgb::xterm_bright_red,
+      rgb::xterm_bright_green, rgb::xterm_bright_yellow,
+      rgb::xterm_bright_blue, rgb::xterm_bright_magenta,
+      rgb::xterm_bright_cyan, rgb::xterm_bright_white};
   static_assert(std::is_convertible<tjg::color::term_color, tjg::color::rgb>::value,
                 "terminal-to-RGB conversion must be implicit");
   static_assert(std::is_same<std::underlying_type<tjg::color::term_color>::type,

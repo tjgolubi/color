@@ -79,12 +79,12 @@ For example, `term_color::red` converts to `{205, 0, 0}`, while
 ```cpp
 using namespace tjg::color;
 rgb red = term_color::red;      // {205, 0, 0}
-auto fixed_red = rgb::term_red; // The same RGB value.
+auto fixed_red = rgb::xterm_red; // The same RGB value.
 ```
 
-The `tjg::color::rgb::term_*` constants provide fixed RGB counterparts for all
+The `tjg::color::rgb::xterm_*` constants provide fixed RGB counterparts for all
 16 terminal colors. For example, `term_color::gray` selects palette slot 8,
-and `rgb::term_gray` is its fixed RGB counterpart. These constants render as
+and `rgb::xterm_gray` is its fixed RGB counterpart. These constants render as
 truecolor. A `term_color` renders using the terminal's palette, so its
 appearance can differ from its fixed RGB counterpart.
 
