@@ -2,7 +2,7 @@
 
 [Document map](README.md)
 
-Updated November 21, 2026.
+Updated November 22, 2026.
 
 ## Authorization and scope
 
@@ -144,8 +144,9 @@ This conditional layout preference is not fully expressed by the current
 formatter configuration. Do not add noisy `clang-format off/on` comments
 to force it; discuss formatter changes instead.
 
-Brace conditional bodies containing assertion macros to avoid dangling-else
-constructs. Do not weaken compiler settings to bypass warnings. Formatting
+Assertions check assumptions about the code. Verify a public precondition
+against the design and implementation before documenting it. Brace conditional
+bodies containing assertion macros to avoid dangling-else constructs. Do not weaken compiler settings to bypass warnings. Formatting
 passes and formatter-configuration changes need instructions; do not restyle
 unrelated files. Check the generated guide when comment wrapping changes
 because Doxygen can interpret wrapped text as list syntax.
@@ -236,9 +237,11 @@ slot 8, and `rgb::xterm_gray` is its fixed Xterm RGB counterpart (`#7F7F7F`).
 Keep threading and implementation details out of the main explanation.
 
 Use **current style** for the style tracked during formatting and **default
-style** for `text_style{}`. Nested formatting inherits and restores the current
-style. The outermost formatting or printing call restores the default style.
-Describe this behavior consistently across output destinations.
+style** for `text_style{}`. Styled formatting and printing restore the
+library-tracked entry style. Relative styles inherit unspecified colors and
+combine emphasis with that style. At the outermost call, the tracked entry
+style is the default style. Describe this behavior consistently across output
+destinations.
 
 ## Repository and tools
 

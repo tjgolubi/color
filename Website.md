@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md) · [Build and test](BuildAndTest.md)
 
-Updated November 21, 2026.
+Updated November 22, 2026.
 
 ## Purpose and audience
 
@@ -36,10 +36,17 @@ immediately below the code. It also shows simple status and emphasis examples.
 The homepage shows the dashboard and WrapTable screenshots. At `#wrap-table`,
 visitors can download `WrapTable.cpp`, read its GitHub source, or follow the
 guide walkthrough. The demo shows multiline styled cells and Unicode display
-width in a layout defined by the example program. The page describes soft
+width in a layout defined by the example program, four-column hanging indents
+in the work-item notes, and a tagged, wrapped footer. The page describes soft
 hyphens, ideographic breaks, and no-break spaces. At `#wrap-prose`, a runnable
 example uses `wrapped()` with a format field width and `rgb::xterm_cyan`, with
-links to the `wrapped()` and Xterm palette references. The getting-started
+links to the `wrapped()` and Xterm palette references. At `#tagged-demo`,
+the terminal screenshot and full `Tagged.cpp` code block each use the section
+width, with the screenshot first. The code block has a copy button. Links lead
+to the walkthrough, source download, GitHub source, and the `tagged()` API
+reference. Keep the marketing copy focused on visible results and examples.
+Detailed SGR and `println()` behavior belongs in the library documentation.
+The getting-started
 section links to installation instructions, the API reference, and the guide's
 demo index. It documents CMake 3.31 and linking the static archive using
 `tjg::tjg`.
@@ -88,12 +95,11 @@ handle styling, copying, and pinned-reference measurement.
 `dist/assets/table-demo.png` matches `demo/TableDemo.png` (1480 × 440), the
 cropped terminal screenshot with `Request ID: 002a — completed`.
 `dist/assets/result42.png` matches `demo/Result42.png`.
-`dist/assets/wrap-table.png` matches `demo/WrapTable.png` (765 × 476).
-It shows the earlier border style. The current download colors the inner
-rules to match the column backgrounds, as the homepage caption explains.
+`dist/assets/wrap-table.png` matches `demo/WrapTable.png` (1040 × 651).
+`dist/assets/tagged-demo.png` matches `demo/Tagged.png` (1040 × 698).
 
 The published comparison source and links use the `dev` snapshot
-`cbc6c9ab26b5a1a7635bdade5d902966876d30ac`. `dist/examples/` contains all eight
+`fc368946e2c4bb836d487952935070698cfbf8d5`. `dist/examples/` contains all nine
 demos and the site's quick-start program. The result page displays excerpts
 from `Result42Compare.cpp`. The three dashboard pages show complete sources
 using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
@@ -102,32 +108,39 @@ downloads, and source links together after an accepted demo update.
 
 ## Last recorded public deployment
 
-Sites confirmed that version 18 succeeded on November 21, 2026 at 4:25 p.m. CST.
-The source commit was pushed and the matching archive was saved before
-deployment. Sites metadata at that verification confirmed the public audience.
+Sites confirmed that version 23 succeeded on November 22, 2026 at 2:29 p.m.
+CST. The source commit was pushed and the matching archive was saved before
+deployment. Sites metadata confirmed the public audience.
 
-| Item             | Value                                                                               |
-| ---------------- | ----------------------------------------------------------------------------------- |
-| Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
-| Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
-| Version          | 18                                                                                  |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_0c7130af88d48191873cc00d0f9dc106` |
-| Deployment ID    | `appgdep_6b021a6f1a6c819190648c1e0ad82978`                                          |
-| Source commit    | `581efe3dcacc2d86e0041689595b62a3823930e7`                                          |
-| Audience         | Public                                                                              |
+| Item             | Value                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                          |
+| Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                             |
+| Version          | 23                                                                                     |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_803c92daaa888191921a97c1cb4469f5`    |
+| Deployment ID    | `appgdep_6b03509ec45c8191b3affd8ac2d0eab3`                                             |
+| Source commit    | `74891ea4ccac9874447b7a470935d30c789479eb`                                             |
+| Audience         | Public                                                                                 |
 
 ## Verification and current handoff
 
-Before deploying version 18, all eight demo sources matched `dev` byte for
-byte. The homepage `wrapped()` example compiled and ran, matching the two
-displayed lines and fixed cyan color. After deployment, the homepage and
-comparisons page showed the updated source links, and the live WrapTable
-download matched `dev` byte for byte. Keep the full list of RGB names in the
-user guide and API reference.
+The nine demo downloads and four screenshots matched the `fc36894` library
+snapshot byte for byte before the source links were refreshed. The Tagged
+output appears above the complete `Tagged.cpp` example. All five live pages
+were checked after the homepage's `println()` newline-order explanation was
+removed in version 23.
 
-The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was built and
-published separately from the same library commit. See
-[BuildAndTest.md](BuildAndTest.md) for the guide and CI results.
+The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was published
+separately from `dev` commit `fc36894`. See [BuildAndTest.md](BuildAndTest.md)
+for the guide and CI results.
+
+### Homepage idea under discussion
+
+Consider leading with a Tagged example inspired by Taskwarrior's `task news`
+entry for writeable contexts. The idea is to wrap the explanatory prose and
+show the command transcript in its actual terminal colors, preserving column
+spacing. A uniform inset and a contrasting background would distinguish the
+transcript. The live homepage still leads with the red `42` example.
 
 ## Maintenance
 

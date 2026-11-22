@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md)
 
-Updated November 21, 2026.
+Updated November 22, 2026.
 
 ## Requirements and standard build
 
@@ -112,16 +112,16 @@ not visual review or deployment; record those checks separately.
 
 ## Current `dev` validation
 
-Verified November 21, 2026, for `dev` at
-`cbc6c9ab26b5a1a7635bdade5d902966876d30ac`. All nine platform jobs and both
+Verified for amended `dev` commit
+`fc368946e2c4bb836d487952935070698cfbf8d5`. All nine platform jobs and both
 documentation jobs passed.
 
 | Workflow                                                                  | Configurations                                                             | Jobs | Result |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/44955905475)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/44955905344)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/44955905568)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/44955905508) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/45065723414)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/45065723372)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/45065723358)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/45065723394) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
 
 The nine platform jobs configure, build, and run the TJG suite in C++23 mode
 with warnings treated as errors. Matrix fail-fast is disabled. The results
@@ -132,10 +132,11 @@ Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
 positive-range cast preserves the quantization and supports constant evaluation
 on all tested toolchains. Keep the compile-time regression check.
 
-The final staged `dev` tree passed all 23 CTest entries and built the guide
-with the MSYS2 Debug build. WrapTable built and ran separately. Terry chose
-local validation during the three squashes and Actions on the final push to
-`dev`. The package test installs and relocates the static archive and
+The MSYS2 GCC Debug `./build.bash` run passed all 24 CTest entries and built
+the guide for `c923a2f`. The stdout, `FILE*`, and `std::ostream` checks cover
+restoring the style after the `println()` newline. The amendment to `fc36894`
+changed only the guide and reference pages, which passed strict MkDocs
+builds locally. The package test installs and relocates the archive and
 exercises both `word_wrap()` overloads from a consumer.
 
 The Ubuntu and Windows runners used CMake 3.31.6 when a 4.0 minimum blocked
@@ -152,13 +153,16 @@ ctest --test-dir build -R '^word-wrap-test$' --output-on-failure
 
 Tests for `char` and `wchar_t` cover the width-four minimum, discretionary
 soft hyphens, hyphen-free ideographic breaks, and U+00A0 preservation and
-fallback. `styled-text-format-test` covers `wrapped()` formatting and stream
-insertion.
+fallback. `word-wrap-test` covers hanging indents for both character types.
+`styled-text-format-test` covers format precision for the indent and stream
+insertion. `tagged-test` checks narrow and wide markup parsing, literal
+recovery, and nested and absolute styles.
 
 Unicode table regeneration is separate from the normal build. See
 `support/unicode/README.md` for downloading missing inputs and regenerating
 the display-width, printability, and wrap tables. The wrap table uses Unicode
-18.0.0 `LineBreak.txt` for the Ideographic (`ID`) class.
+18.0.0 `LineBreak.txt` for the Ideographic (`ID`) class. The same generated
+file supplies Letter, Number, and Mark ranges for shorthand boundaries.
 
 The runtime refactor introduced an unconditional `constinit` test for default
 styled text. GCC 14 rejected the initializer and MSVC Debug reported storage
@@ -224,7 +228,8 @@ restricted to pushes to `dev`.
 
 From the library checkout root, `make -C demo WrapTable && ./demo/WrapTable`
 builds and runs the wrapping demo. `make -C demo run` builds and runs all
-eight demos. `Result42Compare`
+nine demos. `make -C demo Tagged && ./demo/Tagged` runs the tagged-prose
+demo. `Result42Compare`
 and `TableDemoFmt` require a built copy of {fmt}. The Makefile builds and links the
 color archive, using `TJG_BUILD=../build` and `TJG_LIB=$(TJG_BUILD)/libcolor.a`
 by default. Use a matching compiler and standard library for archive and demos.
@@ -241,12 +246,15 @@ workflow builds on pushes and pull requests. Pushes to `dev` also upload the
 guide artifact and run the dependent Pages deployment. Deployments are
 serialized without cancelling an active publication.
 
-Both jobs passed for the current `dev` commit. The live
-[`wrapped()` reference](https://tjgolubi.github.io/color/ref/color/wrapped.html),
-[Xterm palette reference](https://tjgolubi.github.io/color/ref/color/colors/xterm-palette.html),
-and [WrapTable walkthrough](https://tjgolubi.github.io/color/wrap-table.html)
-returned HTTP 200. Publication instructions are in the library's
-`support/color-pages.md`.
+The guide build, artifact upload, and Pages deployment succeeded for the
+current `dev` commit. The published
+[`println()` reference](https://tjgolubi.github.io/color/ref/color/println.html)
+covers all three destinations. The published
+[`tagged()` reference](https://tjgolubi.github.io/color/ref/color/styled_text/tagged.html)
+and the silver output preview on the `basic_styled_text` page were checked
+on GitHub Pages. The `tagged()` title links to the declaration at `f2cba0d`,
+and that revision still resolves on GitHub after the amendment.
+Publication instructions are in `support/color-pages.md`.
 
 ## Other workflow coverage
 
