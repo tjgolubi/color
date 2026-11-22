@@ -44,8 +44,8 @@ The first call styles the entire message. The second styles only `42`.
 
 ## Demonstration Programs
 
-The [Demos page](demos.md) lists all eight programs and includes walkthroughs
-for StyledTextDemo, TableDemo, and WrapTable.
+The [Demos page](demos.md) lists all nine programs and includes walkthroughs
+for StyledTextDemo, Tagged, TableDemo, and WrapTable.
 
 ## Headers
 
@@ -54,7 +54,7 @@ for StyledTextDemo, TableDemo, and WrapTable.
 | `<tjg/color.hpp>`             | The full library, including formatting and streams |
 | `<tjg/color/colors.hpp>`      | Color values, named colors, and `color_t`          |
 | `<tjg/color/text_style.hpp>`  | Color values, emphasis, and `text_style`           |
-| `<tjg/color/styled_text.hpp>` | Nested groups of styled text and their composition |
+| `<tjg/color/styled_text.hpp>` | Nested styled text, markup parsing, and wrapping    |
 | `<tjg/backslash.hpp>`         | Backslash escaping and unescaping for strings      |
 | `<tjg/strip_ansi.hpp>`        | ANSI escape removal from strings                   |
 | `<tjg/hash_support.hpp>`      | Hash values and hash combination                   |

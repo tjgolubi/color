@@ -4,6 +4,7 @@ docs_dir: ../doc
 not_in_nav: |
   /demos.md
   /styled-text-demo.md
+  /tagged-demo.md
   /table-demo.md
   /wrap-table.md
 
@@ -211,6 +212,7 @@ nav:
               - ref/color/styled_text/reverse.md
               - ref/color/styled_text/strike.md
               - ref/color/styled_text/styled_text.md
+              - ref/color/styled_text/tagged.md
               - ref/color/styled_text/underlay.md
               - ref/color/styled_text/word_wrap.md
               - ref/color/styled_text/underline.md

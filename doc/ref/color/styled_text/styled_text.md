@@ -11,3 +11,4 @@ using styled_text = basic_styled_text<char>;
 ## Description
 
 The narrow-character specialization of [`basic_styled_text`](basic_styled_text/index.md).
+Use [`tagged`](tagged.md) to create styled text from inline markup.

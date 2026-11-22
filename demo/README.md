@@ -33,6 +33,7 @@ Use an ANSI-capable terminal to see the styling.
 | [TableDemoCpp](TableDemoCpp.cpp)         | The dashboard with standard C++23 and raw SGR sequences.          |
 | [TableDemoFmt](TableDemoFmt.cpp)         | The dashboard with {fmt}.                                         |
 | [TableDemoOstream](TableDemoOstream.cpp) | The dashboard with {color} and stream insertion.                  |
+| [Tagged](Tagged.cpp)                    | Inline tags, Markdown-like emphasis, and wrapped alignment.       |
 | [WrapTable](WrapTable.cpp)             | Wrapped cells with left, center, and right alignment.             |
 
 `StyledTextDemo` prints the same styled line with underlay first and overlay
@@ -40,6 +41,11 @@ second, using a white foreground, `term_color::gray` background, and
 strikethrough. Underlay supplies defaults while preserving explicit colors.
 Overlay replaces the affected colors throughout relative text. Both preserve
 the absolute underline-only span.
+
+`Tagged` uses `tagged()` and `wrapped()` to print a styled release note
+at 40 and 64 columns with left and right alignment. Build and run it with
+`make Tagged && ./Tagged` in a UTF-8 terminal.
+See the [Tagged walkthrough](../doc/tagged-demo.md) for the expected output.
 
 `WrapTable` wraps each cell with `word_wrap()`, then aligns each physical line
 using styled-text formatting. Shorter cells receive blank lines so row borders

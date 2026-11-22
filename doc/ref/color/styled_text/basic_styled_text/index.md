@@ -85,6 +85,7 @@ The style mutators and `operator+=` return `*this`. For rendering, include [`<tj
 
 | Name                                        | Description                                                             |
 | ---                                         | ---                                                                     |
+| [`tagged`](../tagged.md)                     | Creates styled text from inline markup.                                 |
 | [`operator==`](operator-equal.md)           | Returns true when text, styles, and grouping match.                     |
 | [`operator!=`](operator-not-equal.md)       | Returns the negation of `operator==`.                                   |
 | [`operator+`](operator-addition.md)         | Returns the concatenated value, preserving the styles of both operands. |
@@ -100,23 +101,34 @@ The style mutators and `operator+=` return `*this`. For rendering, include [`<tj
 | [`conceal`](../conceal.md)                  | Applies concealment.                                                    |
 | [`strike`](../strike.md)                    | Applies crossed-out text.                                               |
 | [`strip_ansi`](../../sgr/strip_ansi.md)     | Removes escape sequences while preserving styles and grouping.          |
-| [`word_wrap`](../word_wrap.md)               | Wraps text into lines by display width while preserving styles.         |
-| [`wrapped`](../../wrapped.md)               | Formats or inserts wrapped styled text.                                  |
+| [`word_wrap`](../word_wrap.md)              | Wraps text into lines by display width while preserving styles.         |
+| [`wrapped`](../../wrapped.md)               | Formats or inserts wrapped styled text.                                 |
 | [`operator<<`](../../operator-insertion.md) | Writes styled text to an output stream.                                 |
 
 ## Example
 
-The combined text is green, and "passed" is also bold.
+Both calls print “Build passed” in green, with “passed” in bold. The dark gray
+background continues across the whole line. After “passed”, the job count
+uses the silver foreground from the outer style.
 
 ```cpp
 #include <tjg/color.hpp>
 
 int main() {
   using namespace tjg::color;
-  using enum term_color;
 
-  auto message = underlay(fg(green),
-    styled_text{"Build "} + bold(styled_text{"passed"}));
-  println(text_style{}, "{}", message);
-}
+  auto default_style = fg(rgb::silver).bg(rgb::dark_gray);
+
+  auto message1 = underlay(fg(rgb::green), "Build " + bold("passed"))
+                + " (9 jobs on 3 platforms)";
+  println(default_style, "{}", message1);
+
+  auto message2 = tagged("<green>Build **passed**</> (9 jobs on 3 platforms)");
+  println(default_style, "{}", message2);
+} // main
 ```
+
+Expected output
+
+<pre class="color-output"><span style="color: #C0C0C0; background-color: #404040"><span style="color: #008000">Build <strong>passed</strong></span> (9 jobs on 3 platforms)</span>
+<span style="color: #C0C0C0; background-color: #404040"><span style="color: #008000">Build <strong>passed</strong></span> (9 jobs on 3 platforms)</span></pre>

@@ -8,12 +8,31 @@ option(TJG_INSTALL "Generate TJG install rules." ON)
 option(TJG_TEST "Build TJG tests." OFF)
 option(TJG_WERROR "Treat TJG library and test warnings as errors." OFF)
 
+# Keep the tag parser's RGB lookup in sync with the public constant names.
+set(tjg_colors_header "${CMAKE_CURRENT_SOURCE_DIR}/include/tjg/color/colors.hpp")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${tjg_colors_header}")
+file(STRINGS "${tjg_colors_header}" tjg_rgb_declarations
+     REGEX "^[ \t]*static const rgb [a-z][a-z_0-9]*;")
+set(tjg_rgb_names "")
+foreach (declaration IN LISTS tjg_rgb_declarations)
+  string(REGEX MATCH "rgb ([a-z_0-9]+)" match "${declaration}")
+  list(APPEND tjg_rgb_names "${CMAKE_MATCH_1}")
+endforeach ()
+list(SORT tjg_rgb_names)
+set(tjg_rgb_entries "")
+foreach (name IN LISTS tjg_rgb_names)
+  string(APPEND tjg_rgb_entries "  {\"${name}\", rgb::${name}},\n")
+endforeach ()
+file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/TaggedColors.inc"
+     CONTENT "${tjg_rgb_entries}")
+
 add_library(tjg STATIC
   src/format.cpp
   src/ostream.cpp
   src/parse_styled_text.cpp
   src/sgr.cpp
   src/styled_text_value.cpp
+  src/tagged.cpp
   src/unicode.cpp
   src/word_wrap.cpp)
 add_library(tjg::tjg ALIAS tjg)
@@ -21,7 +40,8 @@ set_target_properties(tjg PROPERTIES OUTPUT_NAME color)
 target_compile_features(tjg PUBLIC cxx_std_23)
 target_include_directories(
   tjg PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+      PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 if (MSVC)
   target_compile_definitions(tjg PRIVATE _CRT_SECURE_NO_WARNINGS)

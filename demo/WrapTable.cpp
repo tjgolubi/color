@@ -230,7 +230,7 @@ int main() {
   });
   work.print_rule("└", "┴", "┘", false);
 
-  std::println("{}\n", wrapped(
-      "Effort estimates are person-hours; descriptions and status notes wrap "
-      "independently."));
+  std::println("{}\n", wrapped(tagged(
+      "Effort estimates are _person_-hours; descriptions and status notes wrap "
+      "independently.")));
 } // main

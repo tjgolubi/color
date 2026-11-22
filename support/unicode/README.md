@@ -22,4 +22,6 @@ Run `python3 gen-wrap-tables.py` in this directory to regenerate the private
 `src/WrapData.hpp` table. It uses `White_Space` and `Quotation_Mark` from
 `PropList.txt`, punctuation categories from `UnicodeData.txt`, and the
 Ideographic (`ID`) line-break class from `LineBreak.txt`. Punctuation break
-preferences exclude opening punctuation and quotation marks.
+preferences exclude opening punctuation and quotation marks. The same table
+provides the Letter, Number, and Mark categories for `tagged()` emphasis
+boundaries, including ranges expressed as `First` and `Last` records.

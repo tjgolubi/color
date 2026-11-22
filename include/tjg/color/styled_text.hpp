@@ -25,6 +25,7 @@ struct styled_text_ansi_stripper;
 struct styled_text_word_wrapper;
 inline constexpr std::size_t min_wrap_width = 4;
 template<CharType Char> class styled_text_renderer;
+template<CharType Char> class tagged_parser;
 
 } // detail
 
@@ -42,6 +43,7 @@ private:
   friend class detail::styled_text_renderer<Char>;
   friend struct detail::styled_text_ansi_stripper;
   friend struct detail::styled_text_word_wrapper;
+  friend class detail::tagged_parser<Char>;
 
   text_style _style{};
   leaf       _text{};
@@ -152,6 +154,28 @@ private:
 
 using styled_text  = basic_styled_text<char>;
 using wstyled_text = basic_styled_text<wchar_t>;
+
+/**
+ * Parses inline color and emphasis markup into styled text. Supports named
+ * and shorthand style tags, Markdown-like emphasis on a single line, and
+ * backtick-delimited literal text. Preserves unknown tags, malformed markup,
+ * and unrecognized escapes.
+ * The `absolute` keyword starts a style scope from the terminal defaults.
+ */
+[[nodiscard]]
+auto tagged(std::string_view text) TJG_NOEXCEPT_UNLESS_BAD_ALLOC
+  -> styled_text;
+
+/// Parses wide inline markup using the same grammar as the narrow overload.
+[[nodiscard]]
+auto tagged(std::wstring_view text) TJG_NOEXCEPT_UNLESS_BAD_ALLOC
+  -> wstyled_text;
+
+/// Parses inline markup with an explicitly selectable character type.
+template<CharType Char>
+[[nodiscard]] auto tagged(std::basic_string_view<Char> text)
+    TJG_NOEXCEPT_UNLESS_BAD_ALLOC
+  -> basic_styled_text<Char>;
 
 /**
  * Wraps text into unpadded display lines, preserving nested and absolute styles.

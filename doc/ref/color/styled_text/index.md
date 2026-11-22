@@ -17,6 +17,7 @@ Styled text and operations that produce it.
 - [`tjg::color::reverse`](reverse.md)
 - [`tjg::color::strike`](strike.md)
 - [`tjg::color::styled_text`](styled_text.md)
+- [`tjg::color::tagged`](tagged.md)
 - [`tjg::color::underlay`](underlay.md)
 - [`tjg::color::underline`](underline.md)
 - [`tjg::color::word_wrap`](word_wrap.md)
