@@ -130,8 +130,8 @@ auto select_lines(const std::vector<token>& tokens, std::size_t width,
           auto separator = pos;
           auto hyphen = true;
           for (auto next = pos + 1; next < word_end; ++next) {
-            const auto width = sums[next] - sums[pos];
-            if (width > available)
+            const auto prefix_width = sums[next] - sums[pos];
+            if (prefix_width > available)
               break;
             const auto& before = tokens[next - 1];
             if (tokens[next].kind == token_kind::no_break_space) {
@@ -139,7 +139,7 @@ auto select_lines(const std::vector<token>& tokens, std::size_t width,
                 separator = next;
               continue;
             }
-            if (width < available) {
+            if (prefix_width < available) {
               cut = next;
               if (before.soft_hyphen_after) {
                 preferred = next;
