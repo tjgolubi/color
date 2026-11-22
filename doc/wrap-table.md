@@ -1,4 +1,4 @@
-# [Wrapping text in table cells](https://github.com/tjgolubi/color/blob/c94e78f4048aba62f22599cebf44507c39a3c4fa/demo/WrapTable.cpp)
+# [Wrapping text in table cells](https://github.com/tjgolubi/color/blob/dev/demo/WrapTable.cpp)
 
 The WrapTable demo prints a work queue with left-aligned notes, centered
 statuses, and right-aligned effort estimates. Each cell can span several
@@ -26,9 +26,9 @@ make -C demo WrapTable
 ## Set up the columns and cells
 
 Each column has a heading, a content width, an alignment, and a background
-color. The demo uses widths of 40, 18, and 16 display columns. These widths
-cover the text and its alignment padding. The demo adds a one-space gutter
-on each side of every cell and prints the vertical borders separately.
+color. The demo uses content widths of 40, 18, and 12 display columns. Two
+one-space gutters per cell and four vertical borders bring the full table
+to 80 columns. The program centers the title in a field of the same width.
 
 A row holds one [`styled_text`](ref/color/styled_text/styled_text.md) value
 per column. Build each value from plain strings and styled pieces, using
@@ -95,8 +95,20 @@ styles give labels such as “Blocked” their own appearance.
 
 The demo prints `│` around each cell and ends each physical line with a
 newline. Its `print_rule()` draws horizontal lines across the content widths
-and gutters. The headings reuse the same row renderer with bold text and
-brighter backgrounds.
+and gutters. Interior rules use the column backgrounds. The headings reuse
+the same row renderer with bold text and brighter backgrounds.
 
-For a shorter wrapping example, see the
-[styled-text guide](styled.md#wrapping-text-into-lines).
+## Wrap the footer
+
+The footer is a single styled message. [`tagged()`](styled.md#styling-prose-with-tags)
+underlines `person` in “person-hours”. [`wrapped()`](ref/color/wrapped.md)
+prints the result at its default width of 80 columns, matching the table.
+
+```cpp
+std::println("{}\n", wrapped(tagged(
+    "Effort estimates are _person_-hours; descriptions and status notes wrap "
+    "independently.")));
+```
+
+For a prose example with explicit widths and alignment, see the
+[Tagged demo](tagged-demo.md).

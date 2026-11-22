@@ -387,6 +387,43 @@ the result of `std::format("{:?}", text)` or its wide equivalent.
 See the [TableDemo walkthrough](table-demo.md) for a complete dashboard
 with column defaults, row emphasis, and fixed-width fields.
 
+## Styling prose with tags
+
+Use `tagged()` to put styles directly in a string. It returns `styled_text`
+for a narrow string and `wstyled_text` for a wide string. Print the result
+directly or give narrow text to [`wrapped()`](ref/color/wrapped.md) to wrap and
+align it in a format field.
+
+```cpp
+using namespace tjg::color;
+
+auto note = tagged("<cyan>Task reports now wrap "
+                   "<yellow>**long notes**</> within each column.</>");
+std::println("{:<40}", wrapped(note));
+```
+
+The outer tag sets cyan. The inner tag makes “long notes” yellow, and
+`**` makes it bold. Each closer restores the enclosing style.
+
+- `<bold white on dark_blue>Heading</>` sets both colors and adds bold.
+  Start with `on` to set only the background, as in `<on dark_blue>text</>`.
+- `<color=white on dark_blue>text</color>` uses the same color syntax. Use
+  `</color>` or `</>` to close an explicit color tag. Close a shorthand
+  color tag with `</>`.
+- Use `*italic*`, `**bold**`, `_underline_`, and `~~strike~~` for short phrases
+  on one line. For emphasis across lines, use a named tag such as `<i>…</i>`.
+- `<absolute blue>text</>` starts from the terminal defaults before setting
+  blue. Closing the tag restores the enclosing style.
+
+Use a blank line between paragraphs. An actual newline or `<br>` starts
+a new line. Backticks preserve markup as text, and a backslash escapes a
+delimiter. For wrapping hints, `R"(10\ kg)"` inserts a no-break space and
+`R"(repre\-henderit)"` inserts a soft hyphen. Unknown or malformed tags stay
+visible.
+
+See the [Tagged demo](tagged-demo.md) for the same styled note printed at
+different widths and alignments.
+
 ## Parsing SGR text
 
 Include `<tjg/color.hpp>` and call `parse_styled_text` to turn text containing

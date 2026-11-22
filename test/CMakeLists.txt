@@ -66,6 +66,7 @@ foreach (
   styled-text-format
   word-wrap
   parse-styled-text
+  tagged
   backslash
   inline-buffer)
   add_executable(${name}-test ${name}-test.cc)

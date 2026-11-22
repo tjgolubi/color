@@ -4,6 +4,7 @@ docs_dir: ../doc
 not_in_nav: |
   /demos.md
   /styled-text-demo.md
+  /tagged-demo.md
   /table-demo.md
   /wrap-table.md
 

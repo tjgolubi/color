@@ -1,47 +1,16 @@
 /// @copyright 2026 Terry Golubiewski, all rights reserved.
 #include <tjg/color/styled_text.hpp>
-#include <tjg/color/bits/unicode.hpp>
 #include <tjg/strip_ansi.hpp>
 #include "WrapData.hpp"
+#include "unicode_scalar.hpp"
 
 #include <algorithm>
 #include <stdexcept>
-#include <type_traits>
 
 #include <cstdint>
 
 namespace tjg::color::detail {
 namespace {
-
-template<std::size_t N>
-auto contains(const wrap_range (&ranges)[N], std::uint32_t value) noexcept
-  -> bool
-{
-  const auto it = std::lower_bound(std::begin(ranges), std::end(ranges), value,
-    [](const wrap_range& range, std::uint32_t cp) { return range.last < cp; });
-  return it != std::end(ranges) && it->first <= value;
-}
-
-template<CharType Char>
-auto decode(std::basic_string_view<Char> text) noexcept
-  -> unicode::utf8_character
-{
-  if constexpr (std::is_same_v<Char, char>) {
-    return unicode::decode_utf8(text);
-  } else {
-    auto cp = static_cast<std::uint32_t>(text.front());
-    if constexpr (sizeof(Char) == 2) {
-      if (cp >= 0xd800 && cp <= 0xdbff && text.size() > 1) {
-        const auto low = static_cast<std::uint32_t>(text[1]);
-        if (low >= 0xdc00 && low <= 0xdfff)
-          return {0x10000 + ((cp - 0xd800) << 10) + low - 0xdc00, 2};
-      }
-    }
-    if (cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff))
-      cp = 0xffffffffu;
-    return {cp, 1};
-  }
-} // decode
 
 enum class token_kind {
   text, space, no_break_space, newline, punctuation, ideographic
@@ -210,7 +179,7 @@ struct styled_text_word_wrapper {
     const auto stripped = tjg::strip_ansi<Char>(*leaf.source->_text);
     const auto view = std::basic_string_view<Char>{stripped};
     for (std::size_t pos = 0; pos < view.size(); ) {
-      const auto cp = decode(view.substr(pos));
+      const auto cp = unicode::decode(view.substr(pos));
       const auto source = view.substr(pos, cp.size);
       pos += cp.size;
       if (cp.value == 0x00ad) {
@@ -225,14 +194,14 @@ struct styled_text_word_wrapper {
         kind = token_kind::newline;
       else if (cp.value == 0x00a0)
         kind = token_kind::no_break_space;
-      else if (contains(wrap_spaces, cp.value))
+      else if (unicode::contains(wrap_spaces, cp.value))
         kind = token_kind::space;
       else if (cp.value < 0x20 || (cp.value >= 0x7f && cp.value <= 0x9f)) {
         continue;
-      } else if (contains(wrap_punctuation, cp.value)) {
+      } else if (unicode::contains(wrap_punctuation, cp.value)) {
         kind = token_kind::punctuation;
       } else if (cp.value >= wrap_ideographic[0].first
-                 && contains(wrap_ideographic, cp.value)) {
+                 && unicode::contains(wrap_ideographic, cp.value)) {
         kind = token_kind::ideographic;
       }
       const auto offset = leaf.text.size();

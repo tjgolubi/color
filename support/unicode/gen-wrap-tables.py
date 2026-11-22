@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate private wrapping ranges from the checked-in Unicode 18 inputs."""
+"""Generate private text ranges from the checked-in Unicode 18 inputs."""
 
 from pathlib import Path
 
@@ -30,14 +30,28 @@ def ranges(points):
         yield start, last
 
 
+def general_categories(path):
+    first = None
+    for row in path.read_text(encoding="utf-8").splitlines():
+        point, name, category, *_ = row.split(";")
+        point = int(point, 16)
+        if name.endswith(", First>"):
+            first = point
+        else:
+            yield range(point if first is None else first, point + 1), category
+            first = None
+
+
 root = Path(__file__).resolve().parent
 props = properties(root / "PropList.txt")
 line_break = properties(root / "LineBreak.txt")
 punctuation = set()
-for row in (root / "UnicodeData.txt").read_text(encoding="utf-8").splitlines():
-    point, _, category, *_ = row.split(";")
+word_characters = set()
+for points, category in general_categories(root / "UnicodeData.txt"):
     if category.startswith("P") and category != "Ps":
-        punctuation.add(int(point, 16))
+        punctuation.update(points)
+    if category[0] in "LNM":
+        word_characters.update(points)
 punctuation -= props["Quotation_Mark"]
 
 lines = [
@@ -53,7 +67,8 @@ lines = [
 ]
 for name, points in (("wrap_spaces", props["White_Space"]),
                      ("wrap_punctuation", punctuation),
-                     ("wrap_ideographic", line_break["ID"])):
+                     ("wrap_ideographic", line_break["ID"]),
+                     ("word_characters", word_characters)):
     lines += ["", f"inline constexpr wrap_range {name}[] = {{"]
     lines += [f"  {{0x{first:04x}, 0x{last:04x}}},"
               for first, last in ranges(points)]
