@@ -6,18 +6,23 @@ Header: [`<tjg/color/styled_text.hpp>`](index.md), also available through
 ## Synopsis
 
 ```cpp
-auto word_wrap(const styled_text& text, std::size_t width)
+auto word_wrap(const styled_text& text, std::size_t width, std::size_t indent = 0)
   -> std::vector<styled_text>;
-auto word_wrap(const wstyled_text& text, std::size_t width)
+auto word_wrap(const wstyled_text& text, std::size_t width, std::size_t indent = 0)
   -> std::vector<wstyled_text>;
 ```
 
 ## Description
 
 Returns lines of styled text whose estimated display widths do not exceed
-`width`. Does not align or pad lines and leaves `text` unchanged. Preserves
+`width`. Leaves alignment to the caller and leaves `text` unchanged. Preserves
 nested groups, inherited styles, and absolute-style boundaries, including when
 the returned lines are subsequently nested or overlaid with another style.
+
+The first line uses the full width. Each subsequent nonblank line starts
+with `indent` spaces in the outermost style and has `width - indent` columns
+available for its text. This also applies after explicit newlines. Blank
+lines remain empty, and `indent` defaults to zero.
 
 ### Narrow overload
 
@@ -45,8 +50,8 @@ keeps apostrophes within contractions. Eligible punctuation remains on the
 preceding line with no added hyphen. These are break preferences, not a full
 Unicode line-breaking implementation.
 
-A word or punctuation-delimited portion that fits the full width moves intact
-to the next line if it cannot fit the remaining space. For an oversized
+A word or punctuation-delimited portion that fits the line's content width
+moves to the next line if it cannot fit the remaining space. For an oversized
 portion, choose the last fitting soft-hyphen or ideographic break. A soft
 hyphen (`U+00AD`) becomes an ASCII `-` only when its break is used and there
 is room for the hyphen. The hyphen inherits the preceding character's style
@@ -99,11 +104,11 @@ For any valid width large enough for the text:
 
 ## Exceptions
 
-Throws `std::invalid_argument` when `width < 4`, even for empty or
-whitespace-only input. Width is checked before inspecting text. Validate
-signed widths before converting them to `std::size_t`.
-Allocation can throw. With exceptions disabled, invalid widths use the
-library's `TJG_THROW` failure policy.
+Throws `std::invalid_argument` when `width < 4` or `indent > width - 4`, even
+for empty or whitespace-only input. Validate signed widths and indents before
+converting them to `std::size_t`. Allocation can throw. With exceptions
+disabled, invalid widths or indents use the library's `TJG_THROW` failure
+policy.
 
 ## See also
 

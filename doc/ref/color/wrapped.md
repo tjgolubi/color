@@ -16,9 +16,16 @@ Newlines separate the lines, with no trailing newline. Empty or whitespace-only
 input produces no output.
 
 In a narrow format string, the field width sets the wrap width in display
-columns. The default is 80. Dynamic width is supported. An explicit alignment
-applies fill and padding to each wrapped line. A width below 4, precision, or
-debug presentation produces a format error.
+columns and defaults to 80. Precision sets the hanging indent and defaults
+to zero. Both can be dynamic. The first line uses the full width, and each
+subsequent nonblank line starts with that many ordinary spaces, including
+after an explicit newline. With a positive indent, blank lines remain empty.
+
+An explicit alignment applies fill and padding to each line's text field.
+For example, `{:^40.2}` centers the first line across 40 columns and centers
+continuation lines in the 38 columns after their two leading spaces.
+`{:>40.2}` keeps the right edge at column 40. Width below four, indent that
+leaves fewer than four columns, and debug presentation are format errors.
 
 In a `std::ostream`, a positive pending width supplies the wrap width and is
 reset to zero. A positive width below 4 throws `std::format_error`. Without a
@@ -35,5 +42,6 @@ An object that stores the text and applies wrapping on formatting or insertion.
 using namespace tjg::color;
 auto notes = styled_text{"Build completed with warnings."};
 std::println("{:{}}", wrapped(notes), 18);
+std::println("{:18.2}", wrapped(notes));
 std::cout << std::setw(18) << wrapped(notes) << '\n';
 ```

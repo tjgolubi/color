@@ -65,7 +65,8 @@ struct line_range {
 
 // Each punctuation-delimited word is inspected once. Prefix sums avoid
 // rescanning the remainder of an oversized word after each hyphenation.
-auto select_lines(const std::vector<token>& tokens, std::size_t limit)
+auto select_lines(const std::vector<token>& tokens, std::size_t width,
+                  std::size_t indent)
     TJG_NOEXCEPT_UNLESS_BAD_ALLOC
   -> std::vector<line_range>
 {
@@ -74,11 +75,14 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
   for (const auto& t : tokens)
     sums.push_back(sums.back() + t.columns);
   auto lines = std::vector<line_range>{};
+  auto limit = width;
+  const auto continuation_limit = width - indent;
 
   auto emit = [&](std::size_t begin, std::size_t end, bool hyphen = false) {
     while (end > begin && is_space(tokens[end - 1].kind))
       --end;
     lines.push_back({begin, end, hyphen});
+    limit = continuation_limit;
   }; // emit
 
   for (std::size_t paragraph = 0; paragraph < tokens.size();) {
@@ -126,8 +130,8 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
           auto separator = pos;
           auto hyphen = true;
           for (auto next = pos + 1; next < word_end; ++next) {
-            const auto width = sums[next] - sums[pos];
-            if (width > available)
+            const auto prefix_width = sums[next] - sums[pos];
+            if (prefix_width > available)
               break;
             const auto& before = tokens[next - 1];
             if (tokens[next].kind == token_kind::no_break_space) {
@@ -135,7 +139,7 @@ auto select_lines(const std::vector<token>& tokens, std::size_t limit)
                 separator = next;
               continue;
             }
-            if (width < available) {
+            if (prefix_width < available) {
               cut = next;
               if (before.soft_hyphen_after) {
                 preferred = next;
@@ -272,7 +276,8 @@ struct styled_text_word_wrapper {
 
   template<CharType Char>
   static auto reconstruct(const std::vector<record<Char>>& records,
-                          const std::vector<token>& tokens, line_range line)
+                          const std::vector<token>& tokens, line_range line,
+                          std::size_t indent)
     TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> basic_styled_text<Char>
   {
     auto result = basic_styled_text<Char>{};
@@ -288,6 +293,7 @@ struct styled_text_word_wrapper {
       stack.pop_back();
       const auto& node = records[id];
       output->_style = node.source->_style;
+      const auto prefix = id == 0 ? indent : 0;
       if (node.children.empty()) {
         const auto begin = std::max(line.begin, node.begin);
         const auto end = std::min(line.end, node.end);
@@ -296,6 +302,8 @@ struct styled_text_word_wrapper {
         const auto offset = tokens[begin].offset;
         const auto& last = tokens[end - 1];
         auto text = node.text.substr(offset, last.offset + last.size - offset);
+        if (prefix != 0)
+          text.insert(0, prefix, Char{' '});
         if (line.hyphen && end == line.end)
           text.push_back(Char{'-'});
         output->_text =
@@ -313,41 +321,61 @@ struct styled_text_word_wrapper {
           [&](std::size_t child, std::size_t pos) {
             return records[child].begin < pos;
           });
-        output->_children.resize(static_cast<std::size_t>(last - first));
-        for (auto it = first; it != last; ++it)
-          stack.push_back({*it, &output->_children[it - first]});
+        const auto first_child = prefix == 0 ? 0u : 1u;
+        const auto count = static_cast<std::size_t>(last - first);
+        output->_children.resize(first_child + count);
+        if (prefix != 0)
+          output->_children.front() = basic_styled_text<Char>{
+            std::basic_string<Char>(prefix, Char{' '})};
+        for (auto it = first; it != last; ++it) {
+          const auto index = first_child + static_cast<std::size_t>(it - first);
+          stack.push_back({*it, &output->_children[index]});
+        }
       }
     }
     return result;
   } // reconstruct
 
   template<CharType Char>
-  static auto wrap(const basic_styled_text<Char>& text, std::size_t width)
+  static auto wrap(const basic_styled_text<Char>& text, std::size_t width,
+                   std::size_t indent, bool materialize_indent)
     -> std::vector<basic_styled_text<Char>>
   {
     if (width < min_wrap_width)
       TJG_THROW(std::invalid_argument{"word_wrap: width must be at least 4"});
+    if (indent > width - min_wrap_width)
+      TJG_THROW(std::invalid_argument{
+        "word_wrap: width minus indent must be at least 4"});
     auto tokens = std::vector<token>{};
     const auto records = collect(text, tokens);
-    const auto lines = select_lines(tokens, width);
+    const auto lines = select_lines(tokens, width, indent);
     auto result = std::vector<basic_styled_text<Char>>{};
     result.reserve(lines.size());
-    for (const auto line : lines)
-      result.push_back(reconstruct(records, tokens, line));
+    for (const auto line : lines) {
+      const auto prefix = materialize_indent && !result.empty() ? indent : 0;
+      result.push_back(reconstruct(records, tokens, line, prefix));
+    }
     return result;
   }
 }; // styled_text_word_wrapper
+
+// The formatter adds the indent before its alignment padding.
+auto wrap_for_formatting(const styled_text& text, std::size_t width,
+                         std::size_t indent) -> std::vector<styled_text>
+{
+  return styled_text_word_wrapper::wrap(text, width, indent, false);
+}
 
 } // tjg::color::detail
 
 namespace tjg::color {
 
-auto word_wrap(const styled_text& text, std::size_t width)
+auto word_wrap(const styled_text& text, std::size_t width, std::size_t indent)
   -> std::vector<styled_text>
-{ return detail::styled_text_word_wrapper::wrap(text, width); }
+{ return detail::styled_text_word_wrapper::wrap(text, width, indent, true); }
 
-auto word_wrap(const wstyled_text& text, std::size_t width)
+auto word_wrap(const wstyled_text& text, std::size_t width, std::size_t indent)
   -> std::vector<wstyled_text>
-{ return detail::styled_text_word_wrapper::wrap(text, width); }
+{ return detail::styled_text_word_wrapper::wrap(text, width, indent, true); }
 
 } // tjg::color

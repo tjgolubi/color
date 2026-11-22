@@ -248,6 +248,11 @@ and nested groups stay with their text, and the original value is unchanged.
 Pass a `std::size_t` width of at least 4 columns. The returned lines have no
 padding, so your table or output code chooses how to align them.
 
+Pass a third argument to reserve a hanging indent. `word_wrap(text, 40, 2)`
+uses all 40 columns on the first line and adds two leading spaces to each
+subsequent nonblank line. Those lines have 38 columns for text, including
+after explicit newlines. The remaining width must be at least four columns.
+
 ```cpp
 using namespace tjg::color;
 auto message = bold(styled_text{"Build completed; "}
@@ -292,11 +297,20 @@ your own table, with styled cells, column alignment, and Unicode borders.
 
 Use [`wrapped()`](ref/color/wrapped.md) to write the lines as one argument.
 The format field sets the wrap width. Use `{}` for 80 display columns or pass
-a dynamic field width. In a stream, set the width with `std::setw()`.
+a dynamic field width. Format precision sets the hanging indent. Use `<`,
+`^`, or `>` to align each line within the area available for text after any
+indent. In a stream, set the width with `std::setw()`.
 
 ```cpp
 std::print("{:{}}", wrapped(message), column_width);
 std::cout << std::setw(20) << wrapped(message);
+```
+
+```cpp
+auto item = styled_text{"- Build finished with warnings."};
+std::println("{:20.2}", wrapped(item));
+// - Build finished
+//   with warnings.
 ```
 
 `wrapped()` writes newlines between the lines. Use `std::println()` or insert

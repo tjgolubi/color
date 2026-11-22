@@ -130,7 +130,8 @@ public:
     auto wrapped = std::array<std::vector<styled_text>, N>{};
     auto height = std::size_t{1}; // Even an entirely empty row has a line.
     for (std::size_t i = 0; i < N; ++i) {
-      wrapped[i] = tjg::color::word_wrap(cells[i], _columns[i].width);
+      auto indent = (i == 0) ? 4 : 0;
+      wrapped[i] = tjg::color::word_wrap(cells[i], _columns[i].width, indent);
       height = std::max(height, wrapped[i].size());
     }
 
@@ -182,10 +183,13 @@ int main() {
   const auto work = table<3>{{{
     {"Work item / handoff notes", 40, alignment::left,   rgb{30, 42, 54}},
     {"Status",                    18, alignment::center, rgb{31, 46, 39}},
-    {"Est. effort",               16, alignment::right,  rgb{49, 40, 49}},
+    {"Est. effort",               12, alignment::right,  rgb{49, 40, 49}},
   }}};
 
-  std::println("PLATFORM MAINTENANCE — weekly work queue\n");
+  using em = tjg::color::emphasis;
+  println(em::bold | em::reverse, "{:^80}\n",
+          "PLATFORM MAINTENANCE — weekly work queue");
+
   work.print_header();
 
   work.print_row({
@@ -226,6 +230,7 @@ int main() {
   });
   work.print_rule("└", "┴", "┘", false);
 
-  std::println("\nEffort estimates are person-hours; descriptions and status "
-               "notes wrap independently.");
+  std::println("{}\n", wrapped(
+      "Effort estimates are person-hours; descriptions and status notes wrap "
+      "independently."));
 } // main

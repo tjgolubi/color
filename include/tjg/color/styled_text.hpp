@@ -156,7 +156,9 @@ using wstyled_text = basic_styled_text<wchar_t>;
 /**
  * Wraps text into unpadded display lines, preserving nested and absolute styles.
  * Width must be at least 4; otherwise throws std::invalid_argument, even for
- * empty input. Leaves the input unchanged. Removes ANSI sequences per span,
+ * empty input. Prepends `indent` spaces to each nonblank line after the first.
+ * Indentation counts toward `width`, and `width - indent` must be at least 4.
+ * Leaves the input unchanged. Removes ANSI sequences per span,
  * normalizes whitespace except newlines and no-break spaces (U+00A0), and
  * discards remaining C0/C1 controls. Newlines force breaks. Trailing whitespace
  * and trailing blank lines are removed.
@@ -170,12 +172,12 @@ using wstyled_text = basic_styled_text<wchar_t>;
  * malformed code units are preserved and count as one column each.
  */
 [[nodiscard]]
-auto word_wrap(const styled_text& text, std::size_t width)
+auto word_wrap(const styled_text& text, std::size_t width, std::size_t indent = 0)
   -> std::vector<styled_text>;
 
 /// Wide-character overload; decodes UTF-16 or UTF-32 independently per span.
 [[nodiscard]]
-auto word_wrap(const wstyled_text& text, std::size_t width)
+auto word_wrap(const wstyled_text& text, std::size_t width, std::size_t indent = 0)
   -> std::vector<wstyled_text>;
 
 namespace detail {
