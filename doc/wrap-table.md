@@ -4,7 +4,7 @@ The WrapTable demo prints a work queue with left-aligned notes, centered
 statuses, and right-aligned effort estimates. Each cell can span several
 lines and contain text with different styles.
 
-![WrapTable output showing four work items in three colored columns, with wrapped cell text and aligned borders](wrap-table.png)
+![WrapTable output showing four work items with hanging indents under their titles, centered statuses, right-aligned estimates, and a wrapped footer](wrap-table.png)
 
 The demo defines the table layout in its own `table` class. It chooses the
 column widths, row heights, alignment, and borders. `{color}` provides the
@@ -53,10 +53,10 @@ work.print_row({
 
 ## Wrap each cell and find the row height
 
-Pass each cell and its column width to
+Pass each cell, its column width, and the indent to
 [`word_wrap()`](ref/color/styled_text/word_wrap.md). It returns a vector of
-unpadded styled lines. It keeps the styles attached to the text, honors
-explicit newlines, and estimates the display width of Unicode characters.
+styled lines ready for alignment. It keeps the styles attached to the text,
+honors explicit newlines, and estimates the display width of Unicode characters.
 For example, each character in `東京` occupies two display columns even
 though its UTF-8 encoding uses three bytes.
 
@@ -64,10 +64,16 @@ though its UTF-8 encoding uses three bytes.
 auto wrapped = std::array<std::vector<styled_text>, N>{};
 auto height = std::size_t{1};
 for (std::size_t i = 0; i < N; ++i) {
-  wrapped[i] = tjg::color::word_wrap(cells[i], _columns[i].width);
+  auto indent = (i == 0) ? 4 : 0;
+  wrapped[i] = tjg::color::word_wrap(cells[i], _columns[i].width, indent);
   height = std::max(height, wrapped[i].size());
 }
 ```
+
+In the first column, each work-item title starts at the left edge of the
+text field. The note begins on the next line with four leading spaces, so
+each note line has 36 columns for text. The status and effort columns use
+their full widths on every line.
 
 The tallest cell sets the row height. In the screenshot, the restore row's
 notes take five lines, the status takes four, and the effort estimate takes
