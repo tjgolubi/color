@@ -119,16 +119,19 @@ class styled_text_renderer {
   auto write_node(const basic_styled_text<Char>& node,
                   text_style enclosing,
                   OutputIt out,
-                  std::size_t left = 0, std::size_t right = 0)
+                  std::size_t left = 0, std::size_t right = 0,
+                  std::size_t indent = 0)
     -> OutputIt
   {
-    if ((node.empty() || _stopped) && left == 0 && right == 0)
+    if ((node.empty() || _stopped) && left == 0 && right == 0 && indent == 0)
       return out;
     auto effective = node._style;
     if (!effective.is_absolute())
       effective.underlay(enclosing);
-    if (left != 0) {
+    if (indent != 0 || left != 0) {
       out = transition(effective, std::move(out));
+      for (std::size_t i = 0; i < indent; ++i)
+        *out++ = Char{' '};
       out = _specs.pad(std::move(out), left);
     }
     if (!node._children.empty()) {
@@ -160,7 +163,9 @@ class styled_text_renderer {
   // Shared by the formatter and ostream bridge. Options are already resolved;
   // stream insertion never builds or parses a format-specification string.
   template<std::output_iterator<Char> OutputIt>
-  auto format(const basic_styled_text<Char>& value, OutputIt out) -> OutputIt {
+  auto format(const basic_styled_text<Char>& value, OutputIt out,
+              std::size_t indent = 0) -> OutputIt
+  {
     if (_specs.debug)
       return write_debug(value, std::move(out));
 
@@ -182,7 +187,8 @@ class styled_text_renderer {
     if (_specs.precision == 0) _stopped = true;
     auto initial = get_style_state();
     auto scope = detail::style_scope{};
-    out = write_node(value, initial, std::move(out), left, padding - left);
+    out = write_node(value, initial, std::move(out), left, padding - left,
+                     indent);
     return transition(initial, std::move(out));
   } // format
 
@@ -223,16 +229,28 @@ struct wrapped_arg {
   styled_text text;
 };
 
+auto wrap_for_formatting(const styled_text& text, std::size_t width,
+                         std::size_t indent) -> std::vector<styled_text>;
+
 template<std::output_iterator<char> OutputIt>
 auto render_wrapped(const styled_text& text, std::size_t width,
-                    const string_format_specs<char>& specs, OutputIt out)
+                    const string_format_specs<char>& specs, OutputIt out,
+                    std::size_t indent = 0)
   -> OutputIt
 {
-  const auto lines = word_wrap(text, width);
+  const auto lines = wrap_for_formatting(text, width, indent);
   auto renderer = styled_text_renderer<char>{specs};
+  auto continuation_specs = specs;
+  if (continuation_specs.width != 0) continuation_specs.width -= indent;
+  auto continuation = styled_text_renderer<char>{continuation_specs};
   for (auto line = lines.begin(); line != lines.end(); ++line) {
-    if (line != lines.begin()) *out++ = '\n';
-    out = renderer.format(*line, std::move(out));
+    const auto first = line == lines.begin();
+    if (!first) *out++ = '\n';
+    if (indent != 0 && line->empty()) continue;
+    if (first || indent == 0)
+      out = renderer.format(*line, std::move(out));
+    else
+      out = continuation.format(*line, std::move(out), indent);
   }
   return out;
 }
@@ -244,9 +262,6 @@ struct wrapped_arg_formatter {
 
   constexpr auto parse(std::format_parse_context& ctx) -> decltype(ctx.begin()) {
     const auto end = specs.parse(ctx);
-    if (specs.precision_arg >= 0
-        || specs.precision != std::numeric_limits<std::size_t>::max())
-      standard_format_error("wrapped does not accept precision");
     if (specs.debug)
       standard_format_error("wrapped does not accept debug presentation");
     return end;
@@ -261,8 +276,13 @@ struct wrapped_arg_formatter {
                      ? default_wrap_width : resolved.width;
     if (width < min_wrap_width)
       standard_format_error("wrapped: width must be at least 4");
+    constexpr auto no_precision = std::numeric_limits<std::size_t>::max();
+    const auto indent = resolved.precision == no_precision ? 0 : resolved.precision;
+    if (indent > width - min_wrap_width)
+      standard_format_error("wrapped: width minus indent must be at least 4");
+    resolved.precision = no_precision;
     resolved.width = resolved.alignment == '\0' ? 0 : width;
-    return render_wrapped(arg.text, width, resolved, ctx.out());
+    return render_wrapped(arg.text, width, resolved, ctx.out(), indent);
   }
 }; // wrapped_arg_formatter
 
@@ -272,8 +292,9 @@ namespace tjg::color {
 
 /**
  * Wraps styled text when formatted or inserted into a narrow stream.
- * Uses the field width or 80 display columns if omitted. Separates lines
- * with newlines and emits no trailing newline. Format precision is invalid.
+ * Uses the field width or 80 display columns if omitted. Format precision
+ * sets the hanging indent. Separates lines with newlines and emits no trailing
+ * newline.
  */
 [[nodiscard]] inline
 auto wrapped(styled_text text) noexcept -> detail::wrapped_arg

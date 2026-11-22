@@ -118,6 +118,40 @@ TYPED_TEST(WordWrap, BlankLinesPreservePaddingStyle) {
   }
 }
 
+TYPED_TEST(WordWrap, HangingIndent) {
+  using Char = TypeParam;
+  using text = basic_styled_text<Char>;
+  const auto check = [](std::string_view input, std::size_t width,
+                        std::size_t indent,
+                        std::initializer_list<std::string_view> expected) {
+    auto wanted = std::vector<std::basic_string<Char>>{};
+    for (const auto line : expected)
+      wanted.push_back(ascii<Char>(line));
+    EXPECT_EQ(plain(word_wrap(text{ascii<Char>(input)}, width, indent)), wanted);
+  };
+  check("- one two three four", 9, 2, {"- one two", "  three", "  four"});
+  check("  a b c d\n \t\n e\n\t ", 8, 2, {"  a b c", "  d", "", "   e"});
+  check("\nx", 6, 2, {"", "  x"});
+  check("\n \t\n", 6, 2, {});
+  check("first\nabcdef", 6, 2, {"first", "  abc-", "  def"});
+
+  EXPECT_EQ(plain(word_wrap(text{encoded<Char>(U"x\n10\u00a0kg")}, 6, 2)),
+            (std::vector{ascii<Char>("x"), ascii<Char>("  10"), ascii<Char>("  kg")}));
+  EXPECT_EQ(plain(word_wrap(text{encoded<Char>(U"x\n\u754c\u754c\u754c")}, 6, 2)),
+            (std::vector{ascii<Char>("x"), encoded<Char>(U"  \u754c\u754c"),
+                         encoded<Char>(U"  \u754c")}));
+
+  const auto root = bg(term_color::red);
+  const auto child = text{ascii<Char>("hi"), absolute(underline())};
+  auto input = text{ascii<Char>("first\n")} + child;
+  input.style(root);
+  auto expected = text{ascii<Char>("  ")} + child;
+  expected.style(root);
+  const auto lines = word_wrap(input, 6, 2);
+  ASSERT_EQ(lines.size(), 2u);
+  EXPECT_EQ(lines[1], expected);
+}
+
 TYPED_TEST(WordWrap, WidthValidatedBeforeInput) {
   using Char = TypeParam;
   using text = basic_styled_text<Char>;
@@ -126,6 +160,9 @@ TYPED_TEST(WordWrap, WidthValidatedBeforeInput) {
     EXPECT_THROW((void)word_wrap(text{ascii<Char>(" \n")}, width),
                  std::invalid_argument);
   }
+  EXPECT_THROW((void)word_wrap(text{}, 6, 3), std::invalid_argument);
+  EXPECT_THROW((void)word_wrap(text{}, 4, std::numeric_limits<std::size_t>::max()),
+               std::invalid_argument);
   EXPECT_EQ(plain(word_wrap(text{encoded<Char>(U"\u754c\u754c\u754c")}, 4)),
             (std::vector{encoded<Char>(U"\u754c\u754c"),
                          encoded<Char>(U"\u754c")}));
@@ -398,7 +435,8 @@ TYPED_TEST(WordWrap, WidthAndContentInvariants) {
         content.push_back(static_cast<Char>(cp));
     }
     const auto width = 16 + trial % 33;
-    const auto lines = word_wrap(text{input}, width);
+    const auto indent = trial % 2 == 0 ? 0 : trial % (width - 3);
+    const auto lines = word_wrap(text{input}, width, indent);
     auto recovered = std::basic_string<Char>{};
     for (const auto& line : lines) {
       const auto value = line.plain_text();

@@ -812,8 +812,37 @@ TEST(styled_text_format_test, wrapped_rejects_invalid_specs) {
   const auto text = tjg::color::wrapped(tjg::color::styled_text{"a"});
   EXPECT_THROW((void)runtime_format("{:3}", text), std::format_error);
   EXPECT_THROW((void)runtime_format("{:{}}", text, 0), std::format_error);
-  EXPECT_THROW((void)runtime_format("{:.2}", text), std::format_error);
-  EXPECT_THROW((void)runtime_format("{:.{}}", text, 2), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:6.3}", text), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:6.7}", text), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:.77}", text), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:.{}}", text, -1), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:6.{}}", text, 3u), std::format_error);
+  EXPECT_THROW((void)runtime_format("{:8.2?}", text), std::format_error);
+}
+
+TEST(styled_text_format_test, wrapped_hanging_indent) {
+  using namespace tjg::color;
+  const auto text = wrapped(styled_text{"1234567 x yy\n \t\nz\n"});
+  EXPECT_EQ(std::format("{:8.2}", text), "1234567\n  x yy\n\n  z");
+  EXPECT_EQ(std::format("{0:{1}.{2}}", text, 8u, 2), "1234567\n  x yy\n\n  z");
+  EXPECT_EQ(std::format("{:*<8.2}", text), "1234567*\n  x yy**\n\n  z*****");
+  EXPECT_EQ(std::format("{:*>8.2}", text), "*1234567\n  **x yy\n\n  *****z");
+  EXPECT_EQ(std::format("{:*^8.2}", text), "1234567*\n  *x yy*\n\n  **z***");
+  EXPECT_EQ(std::format("{:*>8.0}", text), std::format("{:*>8}", text));
+  EXPECT_EQ(std::format("{:>6.2}", wrapped(styled_text{"\nx"})), "\n     x");
+  EXPECT_EQ(std::format("{:.2}", text), "1234567 x yy\n\n  z");
+  EXPECT_EQ(std::format("{:6.2}", wrapped(styled_text{"x\nabcdef"})),
+            "x\n  abc-\n  def");
+
+  const auto root = bg(term_color::red);
+  const auto green = fg(term_color::green);
+  auto nested = styled_text{"x\n"} + styled_text{"y", absolute(green)};
+  nested.style(root);
+  auto states = std::vector<text_style>(13, root);
+  states[6] = {};
+  states.back() = green;
+  check_states(std::format("{:*>6.2}", wrapped(nested)),
+               std::string{"*****x\n  ***y"}, states);
 }
 
 TEST(styled_text_format_test, wrapped_stream_consumes_width) {
@@ -823,9 +852,10 @@ TEST(styled_text_format_test, wrapped_stream_consumes_width) {
                       + render(bold(styled_text{"beta"}));
   EXPECT_EQ(std::format("{:5}", text), expected);
   auto os = std::ostringstream{};
-  os << std::setw(5) << text;
+  os << std::setprecision(2) << std::setw(5) << text;
   EXPECT_EQ(os.str(), expected);
   EXPECT_EQ(os.width(), 0);
+  EXPECT_EQ(os.precision(), 2);
   os.str("");
   os << std::left << std::setfill('.') << std::setw(5)
      << wrapped(styled_text{"alpha B"}) << '!';
