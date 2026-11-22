@@ -41,7 +41,7 @@ int main() {
         "\x1b[31m42\x1b[0m");
   std::ostringstream stream;
   tjg::color::println(stream, red, "{}", value);
-  check(stream.str() == "\x1b[31m42\x1b[0m\n");
+  check(stream.str() == "\x1b[31m42\n\x1b[0m");
   std::wostringstream wide_stream;
   wide_stream << tjg::color::format(red, L"{}", value);
   check(wide_stream.str() == wide);
@@ -54,7 +54,7 @@ int main() {
   std::rewind(file);
   char bytes[64]{};
   const auto count = std::fread(bytes, 1, sizeof(bytes), file);
-  check(std::string(bytes, count) == "\x1b[31m42\x1b[0m\n");
+  check(std::string(bytes, count) == "\x1b[31m42\n\x1b[0m");
   std::fclose(file);
   try {
     (void)tjg::color::vformat(red, "{", std::make_format_args());

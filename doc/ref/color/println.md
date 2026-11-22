@@ -15,7 +15,8 @@ void println(std::ostream& os, text_style style, std::format_string<T...> fmt, T
 
 ## Description
 
-Formats arguments with `style` and writes to the supplied `FILE*` or narrow `std::ostream`. With no destination, writes to `stdout`. Appends a newline after the formatted message and any trailing reset. Styling is applied to the message and restored to defaults after styled output.
+Writes the formatted message and a newline using `style`, then restores the
+enclosing style.
 
 ### File output: `FILE* f`
 
@@ -35,7 +36,7 @@ Writes the formatted result to the supplied narrow C++ output stream `os`.
 | ---       | ---                                                    |
 | `f`       | Destination C file stream.                             |
 | `os`      | Destination narrow C++ output stream.                  |
-| `style`   | Style applied to the formatted result.                 |
+| `style`   | Style applied to the formatted message and newline.   |
 | `fmt`     | Compile-time-checked format string.                    |
 | `args`    | Arguments used to replace fields in the format string. |
 

@@ -144,11 +144,10 @@ auto combined = red | blue;       // rgb{255, 0, 238}.
 
 <a id="TextStyleRendering"></a>
 
-If a style is not empty, the formatted text is preceded by [SGR] (Select Graphic
-Rendition) sequences for its specified foreground, background, and emphasis,
-and followed by an SGR reset to terminal defaults. An empty style adds no
-sequences of its own. `println` appends its newline after
-the reset.
+Styled formatting and printing use [SGR] (Select Graphic Rendition) to
+apply the requested style and then restore the enclosing style. A relative
+style inherits any unspecified colors and combines its emphasis with the
+enclosing style.
 
 A shared terminal style carries the enclosing style through replacement fields.
 Relative styled arguments and structured text inherit missing colors and combine
@@ -172,9 +171,9 @@ Illustrative output using our fixed terminal-to-RGB palette: bright red is
 | ` after rounding.` | Underlined                |
 
 After `42`, the foreground returns to its enclosing value and underline remains
-active. The outer call resets to terminal defaults at the end. An absolute
-replacement field temporarily uses its own complete style, then also restores
-the enclosing style.
+active. The outer call also restores the style it entered with, which is
+the default style in this example. An absolute replacement field uses its
+style relative to the terminal defaults, then restores the enclosing style.
 
 The same rules apply to [structured styled
 text](styled.md#structured-styled-text): concatenate complete spans with `+` or

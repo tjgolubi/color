@@ -99,19 +99,19 @@ auto operator<<(std::ostream& os, const wrapped_arg& arg) -> std::ostream&;
 
 /**
  * Prints styled text using the standard non-Unicode stream output path.
- * A nonempty style precedes the text with SGR sequences and appends a reset
- * to terminal defaults. An empty style emits no SGR sequences.
+ * Restores the enclosing style after the formatted text.
  */
 void vprint_nonunicode(std::ostream& os, text_style style,
                               std::string_view fmt, std::format_args args);
 
 /// Prints styled text using the standard Unicode stream output path.
+/// Restores the enclosing style after the formatted text.
 void vprint_unicode(std::ostream& os, text_style style,
                            std::string_view fmt, std::format_args args);
 
 /**
- * Prints formatted text to `os` using `style`, followed by a terminal reset for
- * a nonempty style. Reset does not restore a previously active style.
+ * Prints formatted text to `os` using `style`, then restores the enclosing
+ * style.
  *
  * **Example**:
  *
@@ -126,15 +126,15 @@ void print(std::ostream& os, text_style style, std::format_string<T...> fmt,
 }
 
 /**
- * Prints formatted text to `os` using `style`, followed by a newline.
- * A nonempty style ends with a reset to terminal defaults before the newline.
+ * Prints formatted text to `os` using `style`, then restores the enclosing
+ * style.
  */
 template<typename... T>
 void println(std::ostream& os, text_style style, std::format_string<T...> fmt,
              T&&... args)
 {
-  tjg::color::print(os, style, fmt, std::forward<T>(args)...);
-  os.put('\n');
+  TJG_SGR_OSTREAM_SCOPE(os, style);
+  std::println(os, fmt, std::forward<T>(args)...);
 }
 
 /**

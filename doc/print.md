@@ -70,14 +70,13 @@ print(os, text_style{emphasis::bold}, "Result: {}", 42);
 println(os, fg(term_color::red), "Status: {}", "failed");
 ```
 
-The style applies to the entire formatted message. A nonempty style ends with
-a reset to terminal defaults. `println` places its newline after the reset.
+The style applies to the entire formatted message, including the newline
+added by `println`. The function restores the enclosing style afterward.
 The formatted-output functions use the stream's locale for localized format
 specifications and preserve settings such as field width and numeric base.
 
-Restore terminal defaults with `tjg::color::sgr_reset()` after writing your own SGR
-and before calling the library's styled printing or formatting functions.
-Those functions assume terminal defaults at the start of an outermost call.
+If you write raw SGR directly, use `tjg::color::sgr_reset()` to explicitly
+restore terminal defaults.
 
 ::: print(std::ostream&, text_style, std::format_string<T...>, T&&...)
     options:

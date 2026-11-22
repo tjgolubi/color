@@ -27,8 +27,8 @@ The example emits one SGR sequence with unpadded parameters,
 `\x1b[1;38;2;1;2;3;40m`. Here `\x1b` denotes the ESC character.
 The function can allocate and is not `noexcept`.
 
-Use `to_sgr` when managing terminal state yourself. Use the styled formatting
-or printing functions to wrap text in styling followed by a terminal reset.
+Use `to_sgr` when managing terminal state yourself. The styled formatting
+and printing functions apply a style and restore the enclosing style.
 
 ### Transitions from a known style
 

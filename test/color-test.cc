@@ -2310,13 +2310,13 @@ TEST(color_test, runtime_print) {
 TEST(color_test, println) {
   EXPECT_WRITE(stdout,
                tjg::color::println(fg(tjg::color::rgb(255, 20, 30)), "rgb(255,20,30)"),
-               "\x1b[38;2;255;20;30mrgb(255,20,30)\x1b[0m\n");
+               "\x1b[38;2;255;20;30mrgb(255,20,30)\n\x1b[0m");
   EXPECT_WRITE(stdout, tjg::color::println(tjg::color::emphasis::bold, "bold"),
-               "\x1b[1mbold\x1b[0m\n");
+               "\x1b[1mbold\n\x1b[0m");
   EXPECT_WRITE(
       stdout,
       tjg::color::println(fg(tjg::color::rgb::blue).bold(), "blue/bold"),
-      "\x1b[1;38;2;0;0;255mblue/bold\x1b[0m\n");
+      "\x1b[1;38;2;0;0;255mblue/bold\n\x1b[0m");
 }
 
 TEST(color_test, compact_sgr_combined_style) {

@@ -187,7 +187,7 @@ TEST(color_ostream_test, print) {
 TEST(color_ostream_test, println) {
   std::ostringstream os;
   tjg::color::println(os, tjg::color::emphasis::underline, "Result: {}", 42);
-  EXPECT_EQ(os.str(), "\x1b[4mResult: 42\x1b[0m\n");
+  EXPECT_EQ(os.str(), "\x1b[4mResult: 42\n\x1b[0m");
 }
 
 TEST(color_ostream_test, argument_packs) {
@@ -227,7 +227,7 @@ TEST(color_ostream_test, empty_style_and_text) {
   EXPECT_EQ(os.str(), "\x1b[1m\x1b[0m");
   os.str("");
   tjg::color::println(os, tjg::color::emphasis::bold, "");
-  EXPECT_EQ(os.str(), "\x1b[1m\x1b[0m\n");
+  EXPECT_EQ(os.str(), "\x1b[1m\n\x1b[0m");
 }
 
 TEST(color_ostream_test, literal_text_and_stream_state) {

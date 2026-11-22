@@ -200,9 +200,8 @@ auto vformat_to(OutputIt out, text_style style,
  * The colored analog of
  * [std::vformat_to()](https://en.cppreference.com/w/cpp/utility/format/vformat_to.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
+ * Writes the formatted text with `style` and then restores the enclosing
+ * style in the output.
  */
 template<std::output_iterator<const char&> OutputIt>
 auto vformat_to(OutputIt out, text_style style,
@@ -238,9 +237,7 @@ void write_file(FILE* f, const char* data, std::size_t size);
  * The colored analog of
  * [std::vprint_nonunicode()](https://en.cppreference.com/w/cpp/io/vprint_nonunicode.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
+ * Prints the formatted text with `style`, then restores the enclosing style.
  */
 void vprint_nonunicode(FILE* f, text_style style, std::string_view fmt,
                       std::format_args args);
@@ -261,9 +258,7 @@ void vprint_unicode(text_style style, std::string_view fmt,
  * The colored analog of
  * [std::print()](https://en.cppreference.com/w/cpp/io/print.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
+ * Prints the formatted text with `style`, then restores the enclosing style.
  *
  * **Example**:
  *
@@ -284,9 +279,7 @@ void print(FILE* f, text_style style, std::format_string<T...> fmt, T&&... args)
  * The colored analog of
  * [std::print()](https://en.cppreference.com/w/cpp/io/print.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
+ * Prints the formatted text with `style`, then restores the enclosing style.
  *
  * **Example**:
  *
@@ -301,9 +294,8 @@ void print(text_style style, std::format_string<T...> fmt, T&&... args)
  * The colored analog of
  * [std::println()](https://en.cppreference.com/w/cpp/io/println.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults. The newline follows the reset.
+ * Prints the formatted text and a newline with `style`, then restores the
+ * enclosing style.
  *
  * **Example**:
  *
@@ -316,17 +308,16 @@ void println(FILE* f, text_style style, std::format_string<T...> fmt, T&&... arg
   auto writer = [&](const char* data, std::size_t size)
                 { detail::write_file(f, data, size); };
 
-  print(f, style, fmt, std::forward<T>(args)...);
-  writer("\n", 1);
+  TJG_SGR_SCOPE(writer, style);
+  println(f, fmt, std::forward<T>(args)...);
 }
 
 /**
  * The colored analog of
  * [std::println()](https://en.cppreference.com/w/cpp/io/println.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults. The newline follows the reset.
+ * Prints the formatted text and a newline with `style`, then restores the
+ * enclosing style.
  *
  * **Example**:
  *
@@ -341,9 +332,8 @@ void println(text_style style, std::format_string<T...> fmt, T&&... args)
  * The colored analog of
  * [std::vformat()](https://en.cppreference.com/w/cpp/utility/format/vformat.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
+ * Returns the formatted text with SGR sequences to apply `style` and restore
+ * the enclosing style after the text.
  */
 auto vformat(text_style style, std::string_view fmt, std::format_args args)
   -> std::string;
@@ -352,10 +342,8 @@ auto vformat(text_style style, std::string_view fmt, std::format_args args)
  * The colored analog of
  * [std::format()](https://en.cppreference.com/w/cpp/utility/format/format.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
- * Reset does not restore a previously active style.
+ * Returns the formatted text with SGR sequences to apply `style` and restore
+ * the enclosing style after the text.
  *
  * **Example**:
  *
@@ -374,9 +362,8 @@ inline auto format(text_style style, std::format_string<T...> fmt, T&&... args)
  * The colored analog of
  * [std::format_to()](https://en.cppreference.com/w/cpp/utility/format/format_to.html).
  *
- * If `style` is not empty, the formatted text is preceded by SGR sequences for its
- * specified foreground, background, and emphasis, and followed by an SGR reset
- * to terminal defaults.
+ * Writes the formatted text with `style` and then restores the enclosing
+ * style in the output.
  *
  * **Example**:
  *
