@@ -1,6 +1,6 @@
 # Color coordination
 
-Updated November 22, 2026.
+Updated November 23, 2026.
 
 These documents provide continuity between conversations about
 [`tjgolubi/color`](https://github.com/tjgolubi/color). Keep them current as
@@ -27,7 +27,7 @@ the demo context. The user guide covers styled text; do not create a separate
 ## Current handoff
 
 The local and pushed `dev` tips match at
-`fc368946e2c4bb836d487952935070698cfbf8d5`. The library checkout is clean.
+`cac6728c39386436a97a1f47fa0869bd99c199b5`. The library checkout is clean.
 
 `dev` includes the fixed `rgb::xterm_*` names, Unicode break opportunities in
 `word_wrap()`, and `wrapped()`. `f26192a` adds hanging indents. `6edc31c`
@@ -37,9 +37,14 @@ updated WrapTable demo. The squash includes the demo README entry and the
 The [Tagged walkthrough](https://tjgolubi.github.io/color/tagged-demo.html)
 shows how to use it with wrapped text.
 
-`fc36894` updates `println()` for stdout, `FILE*`, and `std::ostream`.
-All three overloads apply the message style through the newline and restore
-the enclosing style. The user guide and API reference describe that behavior.
+`cac6728` adds destination-based SGR suppression to {color} printing and
+stream insertion. Terminal output keeps its styling. Redirected output
+receives plain text when styled values are passed directly to {color}'s
+output functions. The print overloads accept styled arguments without a
+whole-message style, including for `std::ostream`. The guide uses the
+`clr` namespace alias for ostream printing to avoid ambiguous calls.
+On a terminal, `println()` applies the message style through the newline
+before restoring the enclosing style.
 
 The project builds a static color archive using standard platform names:
 `libcolor.a` on Unix/MSYS2 and `color.lib` with MSVC. Consumers still use
@@ -56,9 +61,10 @@ with nested groups, uses shorter styling expressions, and includes an SGR
 format-and-parse walkthrough. The repository includes nine demos.
 `build.bash` runs the regression suite and builds the HTML guide.
 
-Marketing site version 23 shows the Tagged output above its full source and
-includes the refreshed WrapTable demo. The user guide and API reference are
-published from the amended `dev` commit on GitHub Pages.
+Marketing site version 25 shows the current Tagged and WrapTable demos,
+explains redirected output, and links to the ostream example in the guide.
+The user guide and API reference are published from the current `dev`
+commit on GitHub Pages.
 See [BuildAndTest.md](BuildAndTest.md) for checks and [Website.md](Website.md)
 for deployment provenance.
 
@@ -92,7 +98,7 @@ keeps adjacent text together when it fits a full line. `demo/WrapTable.cpp`
 shows how to align the returned lines in colored table cells. Its work-item
 notes use a four-column hanging indent.
 
-`wrapped()` formats or streams narrow styled prose using `word_wrap()`. It
+`wrapped()` formats or streams narrow and wide styled prose using `word_wrap()`. It
 takes its width from the format field or `std::setw`, defaults to 80 columns,
 and separates lines without a trailing newline. Format precision sets the
 hanging indent. The first line uses the full width, later nonblank lines

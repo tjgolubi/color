@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md) · [Build and test](BuildAndTest.md)
 
-Updated November 22, 2026.
+Updated November 23, 2026.
 
 ## Purpose and audience
 
@@ -45,7 +45,11 @@ the terminal screenshot and full `Tagged.cpp` code block each use the section
 width, with the screenshot first. The code block has a copy button. Links lead
 to the walkthrough, source download, GitHub source, and the `tagged()` API
 reference. Keep the marketing copy focused on visible results and examples.
-Detailed SGR and `println()` behavior belongs in the library documentation.
+The homepage explains that {color} print functions keep colors and emphasis
+on terminals and produce plain text when output is redirected. It shows
+`clr::println(os, ...)` for the ostream overload and links to the guide
+example. Detailed SGR and `println()` behavior belongs in the library
+documentation.
 The getting-started
 section links to installation instructions, the API reference, and the guide's
 demo index. It documents CMake 3.31 and linking the static archive using
@@ -99,7 +103,7 @@ cropped terminal screenshot with `Request ID: 002a — completed`.
 `dist/assets/tagged-demo.png` matches `demo/Tagged.png` (1040 × 698).
 
 The published comparison source and links use the `dev` snapshot
-`fc368946e2c4bb836d487952935070698cfbf8d5`. `dist/examples/` contains all nine
+`cac6728c39386436a97a1f47fa0869bd99c199b5`. `dist/examples/` contains all nine
 demos and the site's quick-start program. The result page displays excerpts
 from `Result42Compare.cpp`. The three dashboard pages show complete sources
 using `TableDemo.cpp` alongside `TableDemoCpp.cpp`, `TableDemoFmt.cpp`, or
@@ -108,30 +112,30 @@ downloads, and source links together after an accepted demo update.
 
 ## Last recorded public deployment
 
-Sites confirmed that version 23 succeeded on November 22, 2026 at 2:29 p.m.
+Sites confirmed that version 25 succeeded on November 23, 2026 at 6:25 a.m.
 CST. The source commit was pushed and the matching archive was saved before
 deployment. Sites metadata confirmed the public audience.
 
-| Item             | Value                                                                                  |
-| ---------------- | -------------------------------------------------------------------------------------- |
-| Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                          |
-| Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                             |
-| Version          | 23                                                                                     |
-| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_803c92daaa888191921a97c1cb4469f5`    |
-| Deployment ID    | `appgdep_6b03509ec45c8191b3affd8ac2d0eab3`                                             |
-| Source commit    | `74891ea4ccac9874447b7a470935d30c789479eb`                                             |
-| Audience         | Public                                                                                 |
+| Item             | Value                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| Site URL         | https://color-kit-cpp23.tjgolubi.chatgpt.site                                       |
+| Project ID       | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02`                                          |
+| Version          | 25                                                                                  |
+| Saved version ID | `appgprj_6afbd589fbb08191b3ab25ed2fb0dc02~appgver_5541f0f775208191b3b14bc921242f32` |
+| Deployment ID    | `appgdep_6b043097c4788191be99af781b465e44`                                          |
+| Source commit    | `a3d8e926f63883a3e77d39d57e2d2adaa5cd7a08`                                          |
+| Audience         | Public                                                                              |
 
 ## Verification and current handoff
 
-The nine demo downloads and four screenshots matched the `fc36894` library
-snapshot byte for byte before the source links were refreshed. The Tagged
-output appears above the complete `Tagged.cpp` example. All five live pages
-were checked after the homepage's `println()` newline-order explanation was
-removed in version 23.
+All nine demo downloads matched the `cac6728` library snapshot byte for byte
+before publication. The ostream guide anchor was checked in the generated
+guide. The screenshots and comparison code had already been verified in
+the preceding Site update. The Tagged output appears above the complete
+`Tagged.cpp` example.
 
 The [GitHub Pages user guide](https://tjgolubi.github.io/color/) was published
-separately from `dev` commit `fc36894`. See [BuildAndTest.md](BuildAndTest.md)
+separately from `dev` commit `cac6728`. See [BuildAndTest.md](BuildAndTest.md)
 for the guide and CI results.
 
 ### Homepage idea under discussion

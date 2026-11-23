@@ -2,7 +2,7 @@
 
 [Document map](README.md) · [Workflow](Workflow.md)
 
-Updated November 22, 2026.
+Updated November 23, 2026.
 
 ## Requirements and standard build
 
@@ -113,15 +113,15 @@ not visual review or deployment; record those checks separately.
 ## Current `dev` validation
 
 Verified for amended `dev` commit
-`fc368946e2c4bb836d487952935070698cfbf8d5`. All nine platform jobs and both
+`cac6728c39386436a97a1f47fa0869bd99c199b5`. All nine platform jobs and both
 documentation jobs passed.
 
 | Workflow                                                                  | Configurations                                                             | Jobs | Result |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---: | ------ |
-| [Linux](https://github.com/tjgolubi/color/actions/runs/45065723414)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
-| [macOS](https://github.com/tjgolubi/color/actions/runs/45065723372)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
-| [Windows](https://github.com/tjgolubi/color/actions/runs/45065723358)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
-| [Color guide](https://github.com/tjgolubi/color/actions/runs/45065723394) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
+| [Linux](https://github.com/tjgolubi/color/actions/runs/45173272753)       | GCC 14 and Clang 20/libc++ Debug and Release, plus GCC 14 Debug ASan/UBSan |    5 | Passed |
+| [macOS](https://github.com/tjgolubi/color/actions/runs/45173272835)       | LLVM 20/libc++ Debug and Release                                           |    2 | Passed |
+| [Windows](https://github.com/tjgolubi/color/actions/runs/45173272830)     | MSVC v143 x64 Debug and Release                                            |    2 | Passed |
+| [Color guide](https://github.com/tjgolubi/color/actions/runs/45173272908) | Python 3.14 build and GitHub Pages publication                             |    2 | Passed |
 
 The nine platform jobs configure, build, and run the TJG suite in C++23 mode
 with warnings treated as errors. Matrix fail-fast is disabled. The results
@@ -132,12 +132,16 @@ Clang/libc++ and MSVC when the implementation used `std::floor`. The guarded
 positive-range cast preserves the quantization and supports constant evaluation
 on all tested toolchains. Keep the compile-time regression check.
 
-The MSYS2 GCC Debug `./build.bash` run passed all 24 CTest entries and built
-the guide for `c923a2f`. The stdout, `FILE*`, and `std::ostream` checks cover
-restoring the style after the `println()` newline. The amendment to `fc36894`
-changed only the guide and reference pages, which passed strict MkDocs
-builds locally. The package test installs and relocates the archive and
-exercises both `word_wrap()` overloads from a consumer.
+The local MSYS2 GCC Debug suite passed all 24 CTest entries after the SGR
+suppression test updates, before the final ostream overloads were added.
+The standalone test checks that file printing suppresses SGR from raw style
+arguments, styled arguments, styled text, and wrapped text. String-stream
+tests check plain text, field width, padding, and newlines. Formatting tests
+still check exact SGR sequences. A separate MSYS2 pseudo-terminal probe
+confirmed that `std::wcout << wrapped(...)` emits SGR on a terminal. The
+new ostream overloads passed a focused plain-output probe, and the guide
+example using the `clr` alias compiled and ran. The package test installs and
+relocates the archive and exercises both `word_wrap()` overloads.
 
 The Ubuntu and Windows runners used CMake 3.31.6 when a 4.0 minimum blocked
 configuration. The current 3.31 minimum works with their preinstalled CMake.
@@ -249,11 +253,9 @@ serialized without cancelling an active publication.
 The guide build, artifact upload, and Pages deployment succeeded for the
 current `dev` commit. The published
 [`println()` reference](https://tjgolubi.github.io/color/ref/color/println.html)
-covers all three destinations. The published
-[`tagged()` reference](https://tjgolubi.github.io/color/ref/color/styled_text/tagged.html)
-and the silver output preview on the `basic_styled_text` page were checked
-on GitHub Pages. The `tagged()` title links to the declaration at `f2cba0d`,
-and that revision still resolves on GitHub after the amendment.
+covers all three destinations, including the ostream overload without a
+whole-message style. The [styled output guide](https://tjgolubi.github.io/color/print.html)
+explains terminal detection and shows the namespace alias for ostream calls.
 Publication instructions are in `support/color-pages.md`.
 
 ## Other workflow coverage

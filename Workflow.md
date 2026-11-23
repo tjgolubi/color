@@ -2,7 +2,7 @@
 
 [Document map](README.md)
 
-Updated November 22, 2026.
+Updated November 23, 2026.
 
 ## Authorization and scope
 
@@ -198,6 +198,12 @@ permalinks until intentionally refreshing them, rather than changing every
 link merely because a documentation commit changes HEAD.
 
 ## User-guide terminology and review
+
+Use {color}'s print functions in examples that print styled arguments.
+Prefer passing the styled values directly so printing can suppress generated
+SGR on redirected output. A string formatted before the call can already
+contain escape sequences. Use `namespace clr = tjg::color;` where a short
+qualified call avoids ambiguity with a standard print overload.
 
 Describe concatenated text and nested groups of styled text, with grouping
 like parentheses and colors or emphasis applied to groups. Avoid exposing the
