@@ -1,10 +1,8 @@
 #include "gtest/gtest.h"
 
 #if defined(__ANDROID__)
-namespace testing {
-// This flag is implemented but not declared in the vendored public header.
+// This flag is implemented but not declared in the public header.
 GTEST_DECLARE_bool_(death_test_use_fork);
-}  // namespace testing
 #endif
 
 int main(int argc, char** argv) {

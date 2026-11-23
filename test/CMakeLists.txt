@@ -19,12 +19,19 @@ endif ()
 get_filename_component(TJG_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/.."
                        ABSOLUTE)
 
-# Use vendored Google Test when available.
+# Prefer an existing target, then the Google Test submodule.
 if (TARGET gtest)
   set(TJG_GTEST_TARGET gtest)
 elseif (EXISTS "${TJG_SOURCE_ROOT}/ext/gtest/CMakeLists.txt")
-  add_subdirectory("${TJG_SOURCE_ROOT}/ext/gtest"
-                   "${CMAKE_CURRENT_BINARY_DIR}/gtest")
+  block()
+    set(BUILD_SHARED_LIBS OFF)
+    set(BUILD_GMOCK OFF)
+    set(INSTALL_GTEST OFF)
+    set(gtest_force_shared_crt ON)
+    add_subdirectory("${TJG_SOURCE_ROOT}/ext/gtest"
+                     "${CMAKE_CURRENT_BINARY_DIR}/gtest"
+                     EXCLUDE_FROM_ALL SYSTEM)
+  endblock()
   set(TJG_GTEST_TARGET gtest)
 else ()
   find_package(GTest CONFIG REQUIRED)

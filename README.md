@@ -74,12 +74,16 @@ when building the library and its consumers.
 
 ## Regression tests
 
-Run `./build.bash` from the repository root to configure, build, and run the
-TJG suite with GCC and warnings treated as errors. To use a different compiler,
-configure the standalone project with `-DTJG_TEST=ON`.
+From the repository root, initialize the Google Test submodule:
 
-Test sources live in `test/`. The suite uses the vendored Google Test in
-`ext/gtest/` and checks that the installed package works after relocation.
+```sh
+git submodule update --init -- ext/gtest
+```
+
+Run `./build.bash` to configure, build, and run the TJG suite with GCC and
+warnings treated as errors. To use a different compiler, configure the
+standalone project with `-DTJG_TEST=ON`. Test sources live in `test/`. The
+suite also checks that the installed package works after relocation.
 
 ## Documentation and licenses
 
