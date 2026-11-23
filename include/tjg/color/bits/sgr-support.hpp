@@ -8,7 +8,7 @@
 #include <tjg/color/colors.hpp>
 #include "emphasis.hpp"
 #include <tjg/inline_buffer.hpp>
-#include "error_support.hpp"
+#include "error-support.hpp"
 #include <tjg/utility.hpp>
 
 #include <string>

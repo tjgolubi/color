@@ -14,7 +14,7 @@ standard library with working `<format>` and `<print>`.
 | `<tjg/color/text_style.hpp>` | Combine colors and emphasis into a style. |
 | `<tjg/color.hpp>` | Styled arguments, narrow and wide formatting, and printing to standard output or a `FILE*`. |
 | `<tjg/color-ostream.hpp>` | Styled printing to `std::ostream` and styled insertion into narrow and wide streams. |
-| `<tjg/sgr_support.hpp>` | Convert styles to SGR sequences, obtain a reset sequence, or wrap text with a style. |
+| `<tjg/color/bits/sgr-support.hpp>` | Convert styles to SGR sequences, obtain a reset sequence, or wrap text with a style. |
 | `<tjg/strip_ansi.hpp>` | Strip ANSI escape sequences from strings. |
 | `<tjg/backslash.hpp>` | Escape control characters or decode backslash escapes. |
 | `<tjg/inline_buffer.hpp>` | Fixed-capacity character buffers with inline storage. |

@@ -1,4 +1,4 @@
-# [`tjg::color::strip_ansi`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/color/bits/strip_ansi_styled_text.hpp#L50)
+# [`tjg::color::strip_ansi`](https://github.com/tjgolubi/color/blob/bf01e2dda7a63533f350ec19807749fca60a40cb/include/tjg/color/bits/strip_ansi-style_text.hpp#L30)
 
 Header: [`<tjg/color.hpp>`](../index.md).
 

@@ -10,7 +10,7 @@
 
 #include "EastAsianWidth.hpp"
 
-#include "error_support.hpp"
+#include "error-support.hpp"
 #include <tjg/utility.hpp>
 
 #include <string_view>

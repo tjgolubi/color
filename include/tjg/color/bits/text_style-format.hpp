@@ -6,10 +6,10 @@
 #include <tjg/color/text_style.hpp>
 #include "colors-format.hpp"
 #include "emphasis-format.hpp"
-#include "format_support.hpp"
-#include "sgr_support.hpp"
+#include "format-support.hpp"
+#include "sgr-support.hpp"
 #include <tjg/inline_buffer.hpp>
-#include "error_support.hpp"
+#include "error-support.hpp"
 #include <tjg/utility.hpp>
 
 #include <print>

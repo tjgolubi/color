@@ -1,6 +1,6 @@
 /// @copyright 2026 Terry Golubiewski, all rights reserved.
 #include <tjg/color/styled_text.hpp>
-#include <tjg/color/bits/strip_ansi_styled_text.hpp>
+#include <tjg/color/bits/strip_ansi-style_text.hpp>
 #include <tjg/strip_ansi.hpp>
 
 namespace tjg::color {

@@ -2,7 +2,7 @@
 
 [API reference](../index.md) · [`<tjg/color.hpp>`](../color/index.md)
 
-Use the direct headers below when you only need the shared utilities.
+Use the headers listed below for the shared utilities.
 
 ## `<tjg/backslash.hpp>`
 
@@ -11,12 +11,18 @@ Use the direct headers below when you only need the shared utilities.
 - [`tjg::backslash_unescape`](backslash_unescape.md)
 - [`tjg::backslash_unescape_to`](backslash_unescape_to.md)
 
-## `<tjg/hash_support.hpp>`
+## Hash helpers
 
-- [`tjg::hash_t`](hash_t.md)
-- [`tjg::hash_value`](hash_value.md)
-- [`tjg::hash_combine`](hash_combine.md)
-- [`tjg::hash_values`](hash_values.md)
+`<tjg/hash-support.hpp>` provides internal utilities used by the library's
+hash implementations. Hash values are suitable for in-process lookup and
+should not be serialized.
+
+| Name                                   | Description                               |
+| -------------------------------------- | ----------------------------------------- |
+| [`tjg::hash_t`](hash_t.md)              | Result and seed type.                     |
+| [`tjg::hash_value`](hash_value.md)      | Hashes one value using `std::hash`.       |
+| [`tjg::hash_combine`](hash_combine.md)  | Mixes a value's hash into an existing seed. |
+| [`tjg::hash_values`](hash_values.md)    | Hashes an ordered sequence from seed zero. |
 
 ## `<tjg/inline_buffer.hpp>`
 

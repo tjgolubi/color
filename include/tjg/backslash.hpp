@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <tjg/color/bits/error_support.hpp>
+#include <tjg/color/bits/error-support.hpp>
 #include <tjg/utility.hpp>
 
 #include <stdexcept>

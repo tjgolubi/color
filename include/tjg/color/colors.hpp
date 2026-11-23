@@ -4,8 +4,8 @@
 #pragma once
 
 #include <tjg/utility.hpp>
-#include <tjg/color/bits/error_support.hpp>
-#include <tjg/hash_support.hpp>
+#include <tjg/color/bits/error-support.hpp>
+#include <tjg/hash-support.hpp>
 
 #include <algorithm>
 

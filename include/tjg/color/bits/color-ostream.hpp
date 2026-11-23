@@ -7,7 +7,7 @@
 #include "text_style-format.hpp"
 #include "colors-format.hpp"
 #include "emphasis-format.hpp"
-#include "sgr_support.hpp"
+#include "sgr-support.hpp"
 #include <tjg/inline_buffer.hpp>
 #include <tjg/utility.hpp>
 
