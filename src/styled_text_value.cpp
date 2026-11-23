@@ -13,7 +13,7 @@ void basic_styled_text<Char>::append_plain_text(string_type& result) const {
 }
 
 template<CharType Char>
-auto basic_styled_text<Char>::overlay(text_style overrides) noexcept
+auto basic_styled_text<Char>::overlay(const text_style& overrides) noexcept
   -> basic_styled_text&
 {
   if (_style.is_absolute()) return *this;
@@ -52,16 +52,19 @@ auto basic_styled_text<Char>::operator+=(basic_styled_text rhs)
 template void basic_styled_text<char>::append_plain_text(std::string&) const;
 
 template
-auto basic_styled_text<char>::overlay(text_style) noexcept -> styled_text&;
+auto basic_styled_text<char>::overlay(const text_style&) noexcept
+  -> styled_text&;
 
 template auto basic_styled_text<char>::plain_text() const -> std::string;
 
 template auto basic_styled_text<char>::operator+=(styled_text) -> styled_text&;
 
-template void basic_styled_text<wchar_t>::append_plain_text(
-                                                    std::wstring&) const;
 template
-auto basic_styled_text<wchar_t>::overlay(text_style) noexcept -> wstyled_text&;
+void basic_styled_text<wchar_t>::append_plain_text(std::wstring&) const;
+
+template
+auto basic_styled_text<wchar_t>::overlay(const text_style&) noexcept
+  -> wstyled_text&;
 
 template auto basic_styled_text<wchar_t>::plain_text() const -> std::wstring;
 

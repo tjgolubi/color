@@ -6,10 +6,10 @@ Header: [`<tjg/color.hpp>`](index.md).
 
 ```cpp
 template<typename... T>
-auto format(text_style style, std::format_string<T...> fmt, T&&... args)
+auto format(const text_style& style, std::format_string<T...> fmt, T&&... args)
   -> std::string;
 template<typename... T>
-auto format(text_style style, std::wformat_string<T...> pattern, T&&... args)
+auto format(const text_style& style, std::wformat_string<T...> pattern, T&&... args)
   -> std::wstring;
 ```
 

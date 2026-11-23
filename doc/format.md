@@ -133,25 +133,25 @@ Use the returned string's `size` for the actual opening length.
 
 ## `format`
 
-::: format(text_style, std::format_string<T...>, T&&...)
+::: format(const text_style&, std::format_string<T...>, T&&...)
     options:
       color_reference: true
 
 ## `format_to`
 
-::: format_to(OutputIt, text_style, std::format_string<T...>, T&&...)
+::: format_to(OutputIt, const text_style&, std::format_string<T...>, T&&...)
     options:
       color_reference: true
 
 ## `vformat`
 
-::: vformat(text_style, std::string_view, std::format_args)
+::: vformat(const text_style&, std::string_view, std::format_args)
     options:
       color_reference: true
 
 ## `vformat_to`
 
-::: vformat_to(OutputIt, text_style, std::string_view, std::format_args)
+::: vformat_to(OutputIt, const text_style&, std::string_view, std::format_args)
     options:
       color_reference: true
 

@@ -23,7 +23,8 @@ int main() {
   const auto red = tjg::color::fg(tjg::color::term_color::red);
   check(&terminal_state_from_other_translation_unit() ==
         &tjg::color::detail::get_style_state());
-  const auto hello = tjg::color::styled("hello", tjg::color::bold());
+  const auto bold = tjg::color::bold();
+  const auto hello = tjg::color::styled("hello", bold);
   const auto rendered = std::format("{}", hello);
   check(rendered == "\x1b[1mhello\x1b[0m");
   check(tjg::strip_ansi(rendered) == "hello");
@@ -41,20 +42,23 @@ int main() {
         "\x1b[31m42\x1b[0m");
   std::ostringstream stream;
   tjg::color::println(stream, red, "{}", value);
-  check(stream.str() == "\x1b[31m42\n\x1b[0m");
+  check(stream.str() == "42\n");
   std::wostringstream wide_stream;
   wide_stream << tjg::color::format(red, L"{}", value);
   check(wide_stream.str() == wide);
   stream.str("");
   stream << hello;
-  check(stream.str() == rendered);
+  check(stream.str() == "hello");
   auto file = std::tmpfile();
   check(file);
   tjg::color::println(file, red, "{}", value);
+  tjg::color::print(file, "{}{}{}{}", bold, hello,
+                    tjg::color::bold("x"),
+                    tjg::color::wrapped(tjg::color::bold("y")));
   std::rewind(file);
   char bytes[64]{};
   const auto count = std::fread(bytes, 1, sizeof(bytes), file);
-  check(std::string(bytes, count) == "\x1b[31m42\n\x1b[0m");
+  check(std::string(bytes, count) == "42\nhelloxy");
   std::fclose(file);
   try {
     (void)tjg::color::vformat(red, "{", std::make_format_args());

@@ -493,7 +493,9 @@ auto blend(First first, Second second, Styles... rest) noexcept -> text_style {
 namespace std {
 
 template<> struct hash<tjg::color::text_style> {
-  auto operator()(tjg::color::text_style value) const noexcept -> std::size_t {
+  auto operator()(const tjg::color::text_style& value) const noexcept
+    -> std::size_t
+  {
     return tjg::hash_values(
                     value.is_absolute(), value.emph(), value.fg(), value.bg());
   }

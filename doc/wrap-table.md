@@ -111,7 +111,7 @@ underlines `person` in “person-hours”. [`wrapped()`](ref/color/wrapped.md)
 prints the result at its default width of 80 columns, matching the table.
 
 ```cpp
-std::println("{}\n", wrapped(tagged(
+tjg::color::println(stdout, "{}\n", wrapped(tagged(
     "Effort estimates are _person_-hours; descriptions and status notes wrap "
     "independently.")));
 ```

@@ -6,16 +6,16 @@ Header: [`<tjg/color.hpp>`](index.md).
 
 ```cpp
 template<std::output_iterator<const char&> OutputIt>
-auto vformat_to(OutputIt out, text_style style,
+auto vformat_to(OutputIt out, const text_style& style,
                 std::string_view fmt, std::format_args args) -> OutputIt;
 template<std::output_iterator<const char&> OutputIt>
-auto vformat_to(OutputIt out, const std::locale& loc, text_style style,
+auto vformat_to(OutputIt out, const std::locale& loc, const text_style& style,
                 std::string_view fmt, std::format_args args) -> OutputIt;
 template<std::output_iterator<const wchar_t&> OutputIt>
-auto vformat_to(OutputIt out, text_style style,
+auto vformat_to(OutputIt out, const text_style& style,
                 std::wstring_view fmt, std::wformat_args args) -> OutputIt;
 template<std::output_iterator<const wchar_t&> OutputIt>
-auto vformat_to(OutputIt out, const std::locale& loc, text_style style,
+auto vformat_to(OutputIt out, const std::locale& loc, const text_style& style,
                 std::wstring_view fmt, std::wformat_args args) -> OutputIt;
 ```
 

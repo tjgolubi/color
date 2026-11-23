@@ -393,8 +393,8 @@ using namespace tjg::color;
 constexpr auto heading = bold();
 constexpr auto plain   = bold(false); // Empty style.
 bool use_bold = true;                 // For example, a user preference.
-std::println("{}", styled(42, bold(use_bold)));
-std::println("{}", styled("Heading", bold()));
+tjg::color::println(stdout, "{}", styled(42, bold(use_bold)));
+tjg::color::println(stdout, "{}", styled("Heading", bold()));
 ```
 
 ::: bold(bool)

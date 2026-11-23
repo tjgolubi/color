@@ -5,17 +5,23 @@ Header: [`<tjg/color.hpp>`](index.md).
 ## Synopsis
 
 ```cpp
-void vprint_unicode(FILE* f, text_style style, std::string_view fmt,
+void vprint_unicode(FILE* f, std::string_view fmt, std::format_args args);
+void vprint_unicode(std::string_view fmt, std::format_args args);
+void vprint_unicode(FILE* f, const text_style& style, std::string_view fmt,
                          std::format_args args);
-void vprint_unicode(text_style style, std::string_view fmt,
+void vprint_unicode(const text_style& style, std::string_view fmt,
                          std::format_args args);
-void vprint_unicode(std::ostream& os, text_style style, std::string_view fmt,
+void vprint_unicode(std::ostream& os, const text_style& style, std::string_view fmt,
                          std::format_args args);
 ```
 
 ## Description
 
 Writes styled output using the standard Unicode printing path. `fmt` and `args` are runtime formatting inputs. The destination defaults to `stdout`; explicit overloads take a `FILE*` or `std::ostream&`. These overloads append no newline. See [`print`](print.md) for compile-time format checking.
+
+Overloads without a style still apply the destination check to styled
+arguments. See [Terminal detection](print.md#terminal-detection) for the
+rules shared by the printing overloads.
 
 ### File output: `FILE* f`
 

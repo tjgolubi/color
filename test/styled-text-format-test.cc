@@ -246,16 +246,21 @@ void check_context_styles() {
                chars<Char>("a  42z"),
                {outer, inherited, inherited, inherited, inherited, outer});
 
-  const auto absolute = tjg::color::styled(number, tjg::color::absolute(red));
+  const auto absolute_style = tjg::color::absolute(red);
+
+  const auto absolute = tjg::color::styled(number, absolute_style);
   check_states(format_in_style<Char>(outer, "a{}z", absolute),
                chars<Char>("a42z"), {outer, red, red, outer});
-  const auto clear = tjg::color::styled(number, tjg::color::absolute(tjg::color::text_style{}));
+  const auto clear_style = tjg::color::absolute(tjg::color::text_style{});
+  const auto clear = tjg::color::styled(number, clear_style);
   check_states(format_in_style<Char>(outer, "a{}z", clear),
                chars<Char>("a42z"), {outer, {}, {}, outer});
   check_states(format_in_style<Char>(outer, "a{}z", tjg::color::styled(42, {})),
                chars<Char>("a42z"), {outer, outer, outer, outer});
 
-  const auto nested = tjg::color::styled(value, tjg::color::bold());
+  const auto nested_style = tjg::color::bold();
+
+  const auto nested = tjg::color::styled(value, nested_style);
   const auto bold_red = tjg::color::bold(inherited);
   check_states(format_in_style<Char>(outer, "a{}z", nested),
                chars<Char>("a42z"), {outer, bold_red, bold_red, outer});
@@ -275,7 +280,9 @@ void check_context_styles() {
   check_states(format_in_style<Char>(tjg::color::absolute(outer), "a{}z", tree),
                chars<Char>("axyz"), {outer, inherited, tjg::color::bold(), outer});
 
-  const auto wrapped = tjg::color::styled(tree, tjg::color::italic());
+  const auto wrapped_style = tjg::color::italic();
+
+  const auto wrapped = tjg::color::styled(tree, wrapped_style);
   check_states(format_in_style<Char>(outer, "a{}z", wrapped),
                chars<Char>("axyz"),
                {outer, tjg::color::italic(inherited), tjg::color::bold(), outer});
@@ -349,15 +356,18 @@ TEST(styled_text_format_test, terminal_state_is_shared_and_exception_safe) {
   const auto outer = tjg::color::underline(tjg::color::bg(tjg::color::term_color::blue));
   terminal = outer;
   const auto number = 42;
-  auto inner = tjg::color::styled(number, tjg::color::fg(tjg::color::term_color::red));
+  const auto inner_style = tjg::color::fg(tjg::color::term_color::red);
+  auto inner = tjg::color::styled(number, inner_style);
   (void)std::format("{}", inner);
   EXPECT_EQ(&tjg::color::detail::get_style_state(), &terminal);
-  const auto wide_text = tjg::color::styled(number, tjg::color::fg(tjg::color::term_color::red));
+  const auto wide_text_style = tjg::color::fg(tjg::color::term_color::red);
+  const auto wide_text = tjg::color::styled(number, wide_text_style);
   EXPECT_FALSE(std::format(L"{}", wide_text).empty());
   EXPECT_EQ(tjg::color::detail::get_style_state(), outer);
 #if defined(__cpp_exceptions) || defined(_CPPUNWIND)
   const auto value = color_context_throwing{};
-  auto styled = tjg::color::styled(value, tjg::color::bold());
+  const auto styled_style = tjg::color::bold();
+  auto styled = tjg::color::styled(value, styled_style);
   EXPECT_THROW((void)std::format("{}", styled), std::format_error);
   EXPECT_EQ(tjg::color::detail::get_style_state(), outer);
 #endif
@@ -377,14 +387,14 @@ TEST(styled_text_format_test, enclosing_format_context) {
                std::string{"a42z"}, expected);
   std::ostringstream os{};
   tjg::color::print(os, outer, "a{}z", tjg::color::styled(42, red));
-  check_states(os.str(), std::string{"a42z"}, expected);
+  EXPECT_EQ(os.str(), "a42z");
   std::wostringstream wide{};
   wide << tjg::color::format(outer, L"a{:}z", tjg::color::styled(42, red)) << L'\n';
   check_states(wide.str(), std::wstring{L"a42z\n"},
                {outer, tjg::color::underline(red), tjg::color::underline(red), outer, {}});
   EXPECT_WRITE(stdout, tjg::color::print(outer, "a{}z",
                                  tjg::color::styled(42, red)),
-      format_in_style<char>(outer, "a{}z", tjg::color::styled(42, red)));
+      "a42z");
   auto output = std::vector<char>{};
   tjg::color::format_to(std::back_inserter(output), outer, "a{}z",
                  tjg::color::overlay(red, "42"));
@@ -396,7 +406,8 @@ TEST(styled_text_format_test, enclosing_format_context) {
 
 TEST(styled_text_format_test, compiled_nested_style_and_pointer_output) {
   const auto inner = tjg::color::bold("x");
-  const auto wrapped = tjg::color::styled(inner, tjg::color::underline());
+  const auto wrapped_style = tjg::color::underline();
+  const auto wrapped = tjg::color::styled(inner, wrapped_style);
   const auto both = tjg::color::underline(tjg::color::bold());
   check_states(std::format("a{}z", wrapped),
                std::string{"axz"}, {{}, both, {}});
@@ -417,7 +428,6 @@ TEST(styled_text_format_test, unsupported_specifications) {
 TEST(styled_text_format_test, stream_insertion_options) {
   const auto tree = tjg::color::bold(tjg::color::styled_text{"ab"} +
                              tjg::color::styled_text{"cdefgh", tjg::color::fg(tjg::color::term_color::red)});
-  const auto bold_red = tjg::color::bold(tjg::color::fg(tjg::color::term_color::red));
   for (auto alignment : {std::ios_base::left, std::ios_base::right,
                          std::ios_base::internal, std::ios_base::fmtflags{}}) {
     std::ostringstream os;
@@ -427,15 +437,9 @@ TEST(styled_text_format_test, stream_insertion_options) {
     auto& result = (os << tree);
     EXPECT_EQ(&result, &os);
     if (alignment == std::ios_base::left) {
-      check_states(os.str(), std::string{"abcdefgh***"},
-                   {tjg::color::bold(), tjg::color::bold(), bold_red, bold_red,
-                    bold_red, bold_red, bold_red, bold_red,
-                    tjg::color::bold(), tjg::color::bold(), tjg::color::bold()});
+      EXPECT_EQ(os.str(), "abcdefgh***");
     } else {
-      check_states(os.str(), std::string{"***abcdefgh"},
-                   {tjg::color::bold(), tjg::color::bold(), tjg::color::bold(), tjg::color::bold(),
-                    tjg::color::bold(), bold_red, bold_red, bold_red, bold_red,
-                    bold_red, bold_red});
+      EXPECT_EQ(os.str(), "***abcdefgh");
     }
     EXPECT_EQ(os.width(), 0);
     EXPECT_EQ(os.precision(), 4);
@@ -446,43 +450,32 @@ TEST(styled_text_format_test, stream_insertion_options) {
   }
   std::ostringstream default_stream;
   default_stream << tree;
-  check_states(default_stream.str(), std::string{"abcdefgh"},
-               {tjg::color::bold(), tjg::color::bold(), bold_red, bold_red, bold_red, bold_red,
-                bold_red, bold_red});
+  EXPECT_EQ(default_stream.str(), "abcdefgh");
   std::ostringstream zero;
   zero << std::setprecision(0) << std::setfill('*') << std::setw(3) << tree;
-  check_states(zero.str(), std::string{"abcdefgh"},
-               {tjg::color::bold(), tjg::color::bold(), bold_red, bold_red, bold_red, bold_red,
-                bold_red, bold_red});
+  EXPECT_EQ(zero.str(), "abcdefgh");
   EXPECT_EQ(zero.precision(), 0);
   std::ostringstream empty;
   empty << std::setfill('*') << std::setw(3) << tjg::color::bold("");
-  check_states(empty.str(), std::string{"***"},
-               {tjg::color::bold(), tjg::color::bold(), tjg::color::bold()});
+  EXPECT_EQ(empty.str(), "***");
 }
 
 TEST(styled_text_format_test, stream_insertion_wide_and_utf8) {
-  const auto style = tjg::color::bold();
   std::wostringstream wide;
   wide << std::left << std::setfill(L'\u2603') << std::setprecision(2)
        << std::setw(5) << tjg::color::bold(tjg::color::wstyled_text{L"abcd"});
-  check_states(wide.str(), std::wstring{L"abcd\u2603"},
-               {style, style, style, style, style});
+  EXPECT_EQ(wide.str(), L"abcd\u2603");
   EXPECT_EQ(wide.width(), 0);
   EXPECT_EQ(wide.fill(), L'\u2603');
   const auto tree = tjg::color::bold(tjg::color::styled_text{"\xe6\x9d\xb1\xe4\xba\xac"} + "abc");
   std::ostringstream utf8;
   utf8 << std::left << std::setprecision(3) << std::setw(9) << tree;
-  EXPECT_EQ(utf8.str(), std::format("{:<9}", tree));
-  check_states(utf8.str(), std::string{"\xe6\x9d\xb1\xe4\xba\xac" "abc  "},
-               {style, style, style, style, style, style, style, style, style,
-                style, style});
+  EXPECT_EQ(utf8.str(), "\xe6\x9d\xb1\xe4\xba\xac" "abc  ");
   std::ostringstream absolute;
   const auto protected_tree = tjg::color::bold(
       tjg::color::styled_text{"a"} + tjg::color::absolute(tjg::color::underline("b")) + "c");
   absolute << protected_tree;
-  check_states(absolute.str(), std::string{"abc"},
-               {style, tjg::color::underline(), style});
+  EXPECT_EQ(absolute.str(), "abc");
 }
 
 TEST(styled_text_format_test, stream_insertion_failure) {
@@ -854,8 +847,7 @@ TEST(styled_text_format_test, wrapped_wide_format_and_stream) {
 
   auto os = std::wostringstream{};
   os << std::setw(5) << text;
-  EXPECT_EQ(os.str(), std::format(L"{}\n{}", bold(wstyled_text{L"alpha"}),
-                                  bold(wstyled_text{L"beta"})));
+  EXPECT_EQ(os.str(), L"alpha\nbeta");
   EXPECT_EQ(os.width(), 0);
 }
 
@@ -867,7 +859,7 @@ TEST(styled_text_format_test, wrapped_stream_consumes_width) {
   EXPECT_EQ(std::format("{:5}", text), expected);
   auto os = std::ostringstream{};
   os << std::setprecision(2) << std::setw(5) << text;
-  EXPECT_EQ(os.str(), expected);
+  EXPECT_EQ(os.str(), "alpha\nbeta");
   EXPECT_EQ(os.width(), 0);
   EXPECT_EQ(os.precision(), 2);
   os.str("");

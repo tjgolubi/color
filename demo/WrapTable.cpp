@@ -95,9 +95,10 @@ public:
     for (std::size_t i = 0; i < N; ++i) {
       const auto width = _columns[i].width + 2;
       auto style = inner ? bg(_columns[i].background) : text_style{};
-      std::print("{}{:─<{}}", (i == 0) ? left : joint, styled("", style), width);
+      tjg::color::print("{}{:─<{}}",
+                            (i == 0) ? left : joint, styled("", style), width);
     }
-    std::println("{}", right);
+    tjg::color::println("{}", right);
   } // print_rule
 
   /// Prints the top rule, bold column headings, and the rule below them.
@@ -127,6 +128,8 @@ public:
    * override those defaults. The demo prints the gutters and vertical borders.
    */
   void print_row(const row& cells, bool header = false) const {
+    using tjg::color::print;
+    using tjg::color::println;
     auto wrapped = std::array<std::vector<styled_text>, N>{};
     auto height = std::size_t{1}; // Even an entirely empty row has a line.
     for (std::size_t i = 0; i < N; ++i) {
@@ -137,7 +140,7 @@ public:
 
     const auto blank = styled_text{};
     for (std::size_t line = 0; line < height; ++line) {
-      std::print("│");
+      print("│");
       for (std::size_t i = 0; i < N; ++i) {
         const auto& value = (line < wrapped[i].size())
                           ? wrapped[i][line] : blank;
@@ -150,18 +153,18 @@ public:
         // bytes, and formatting a rendered ANSI string would count escapes.
         switch (col.align) {
           case alignment::left:
-            tjg::color::print(style, " {:<{}} ", value, col.width);
+            print(style, " {:<{}} ", value, col.width);
             break;
           case alignment::center:
-            tjg::color::print(style, " {:^{}} ", value, col.width);
+            print(style, " {:^{}} ", value, col.width);
             break;
           case alignment::right:
-            tjg::color::print(style, " {:>{}} ", value, col.width);
+            print(style, " {:>{}} ", value, col.width);
             break;
         }
-        std::print("│");
+        print("│");
       }
-      std::println();
+      println();
     }
   } // print_row
 
@@ -179,6 +182,8 @@ public:
 int main() {
   using namespace tjg::color;
   using enum term_color;
+  using tjg::color::print;
+  using tjg::color::println;
 
   const auto work = table<3>{{{
     {"Work item / handoff notes", 40, alignment::left,   rgb{30, 42, 54}},
@@ -230,7 +235,7 @@ int main() {
   });
   work.print_rule("└", "┴", "┘", false);
 
-  std::println("{}\n", wrapped(tagged(
+  println("{}\n", wrapped(tagged(
       "Effort estimates are _person_-hours; descriptions and status notes wrap "
       "independently.")));
 } // main

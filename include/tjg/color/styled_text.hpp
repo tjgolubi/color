@@ -93,7 +93,7 @@ private:
 
   constexpr auto style() const noexcept -> text_style { return _style; }
 
-  constexpr auto style(text_style value) noexcept -> basic_styled_text& {
+  constexpr auto style(const text_style& value) noexcept -> basic_styled_text& {
     _style = value;
     return *this;
   }
@@ -105,14 +105,16 @@ private:
    * Returns this node for chaining.
    * To overlay only this node, use style(style().overlay(overrides)).
    */
-  auto overlay(text_style overrides) noexcept -> basic_styled_text&;
+  auto overlay(const text_style& overrides) noexcept -> basic_styled_text&;
 
   /**
    * Underlays this node's style in place, leaving its text and children intact.
    * Specified colors replace unspecified matching channels; emphasis attributes
    * are combined. Returns a reference to this node for chaining.
    */
-  constexpr auto underlay(text_style style) noexcept -> basic_styled_text& {
+  constexpr auto underlay(const text_style& style) noexcept
+    -> basic_styled_text&
+  {
     _style.underlay(style);
     return *this;
   }
@@ -228,7 +230,7 @@ auto to_styled_text(S&& text) -> basic_styled_text<Char>
  * rvalues move it. Only the returned value is modified.
  */
 template<typename T>
-[[nodiscard]] auto overlay(text_style overrides, T&& text)
+[[nodiscard]] auto overlay(const text_style& overrides, T&& text)
   -> decltype(detail::to_styled_text(std::forward<T>(text)))
 {
   auto result = detail::to_styled_text(std::forward<T>(text));
@@ -243,7 +245,7 @@ template<typename T>
  * their styles. Only the returned value is modified.
  */
 template<typename T>
-[[nodiscard]] auto underlay(text_style style, T&& text)
+[[nodiscard]] auto underlay(const text_style& style, T&& text)
   -> decltype(detail::to_styled_text(std::forward<T>(text)))
 {
   auto result = detail::to_styled_text(std::forward<T>(text));

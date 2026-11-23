@@ -18,6 +18,8 @@ auto operator<<(std::basic_ostream<Char>& os,
 ## Description
 
 Supports `char` and `wchar_t` streams where the wrapped value is insertable.
+Styled insertion emits SGR only on a detected terminal. See
+[Terminal detection](print.md#terminal-detection) for the stream mapping.
 
 ### Readable values
 
@@ -26,8 +28,9 @@ Color values, `color_t`, `no_color_t`, and emphasis use readable notation via
 
 ### Opening style: `const text_style&`
 
-Writes opening [SGR](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters) only. An empty style emits a terminal reset. Pending stream
-width is preserved.
+On a terminal, writes opening SGR or a reset for an empty style. Other
+destinations receive no bytes for this operand. Pending stream width is
+preserved.
 
 ### Styled value: `styled` result
 
@@ -40,7 +43,7 @@ Renders nested styled text. Stream width applies to the visible width of the res
 
 ### Wrapped text
 
-Inserts the result of [`wrapped()`](wrapped.md) into a `std::ostream`. A pending
+Inserts the result of [`wrapped()`](wrapped.md) into a narrow or wide stream. A pending
 width set with `std::setw()` supplies the wrap width and is consumed by the
 insertion. The default is 80 display columns.
 
@@ -61,14 +64,13 @@ The destination stream `os`.
 
 ## Notes
 
-When inserting `text_style` values directly into a stream, also insert an SGR
-reset after the styled text, for example with [`sgr_reset()`](sgr/sgr_reset.md).
-Without that reset, subsequent styled output may behave unexpectedly.
+When inserting a `text_style` to start styling directly, insert an empty style
+after the text to reset the terminal. Both insertions check the destination.
 
 ```cpp
 using namespace tjg::color;
 using enum term_color;
-std::cout << fg(red) << "Warning" << sgr_reset();
+std::cout << fg(red) << "Warning" << text_style{};
 ```
 
 ## See also

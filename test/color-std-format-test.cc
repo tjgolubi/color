@@ -137,7 +137,8 @@ TEST(color_std_format_test, nested_native_formatting_and_absolute_styles) {
     EXPECT_EQ(tjg::color::detail::get_style_state(), tjg::color::text_style{});
   }
   const int integer = 42;
-  const auto inner = tjg::color::styled(integer, tjg::color::fg(tjg::color::term_color::red));
+  const auto red = tjg::color::fg(tjg::color::term_color::red);
+  const auto inner = tjg::color::styled(integer, red);
   const auto nested = tjg::color::styled(inner, outer);
   EXPECT_EQ(std::format("{}", nested), tjg::color::to_sgr(outer) + tjg::color::to_sgr(tjg::color::overlay(outer, tjg::color::fg(tjg::color::term_color::red)), outer) + "42" + tjg::color::to_sgr(outer, tjg::color::overlay(outer, tjg::color::fg(tjg::color::term_color::red))) + tjg::color::to_sgr(tjg::color::text_style{}, outer));
 }
@@ -147,7 +148,8 @@ TEST(color_std_format_test, exception_restores_shared_state) {
   const auto outer = tjg::color::underline(tjg::color::bg(tjg::color::term_color::blue));
   tjg::color::detail::get_style_state() = outer;
   const auto body = native_throwing{};
-  const auto value = tjg::color::styled(body, tjg::color::bold());
+  const auto style = tjg::color::bold();
+  const auto value = tjg::color::styled(body, style);
   EXPECT_THROW((void)std::format("{}", value), std::format_error);
   EXPECT_EQ(tjg::color::detail::get_style_state(), outer);
   auto output = std::string{};

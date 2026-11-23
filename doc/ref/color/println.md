@@ -6,17 +6,27 @@ Header: [`<tjg/color.hpp>`](index.md).
 
 ```cpp
 template<typename... T>
-void println(FILE* f, text_style style, std::format_string<T...> fmt, T&&... args);
+void println(FILE* f, std::format_string<T...> fmt, T&&... args);
 template<typename... T>
-void println(text_style style, std::format_string<T...> fmt, T&&... args);
+void println(FILE* f, const text_style& style, std::format_string<T...> fmt, T&&... args);
 template<typename... T>
-void println(std::ostream& os, text_style style, std::format_string<T...> fmt, T&&... args);
+void println(std::format_string<T...> fmt, T&&... args);
+template<typename... T>
+void println(const text_style& style, std::format_string<T...> fmt, T&&... args);
+template<typename... T>
+void println(std::ostream& os, std::format_string<T...> fmt, T&&... args);
+template<typename... T>
+void println(std::ostream& os, const text_style& style, std::format_string<T...> fmt, T&&... args);
+void println(FILE* f = stdout);
 ```
 
 ## Description
 
-Writes the formatted message and a newline using `style`, then restores the
-enclosing style.
+Writes the formatted message and a newline. On a terminal, the overloads with
+`style` apply it through the newline and then restore the enclosing style.
+The formatting overloads without `style` still honor styles on individual
+arguments.
+See [Terminal detection](print.md#terminal-detection) for the shared policy.
 
 ### File output: `FILE* f`
 
@@ -29,6 +39,13 @@ Writes the formatted result to `stdout`.
 ### Stream output: `std::ostream& os`
 
 Writes the formatted result to the supplied narrow C++ output stream `os`.
+Use a qualified call such as `clr::println(os, fmt, args...)` with
+`namespace clr = tjg::color;` to avoid ambiguity with `std::println`.
+
+### Newline only
+
+`println(f)` writes a single newline to `f`. `println()` writes it to
+`stdout`.
 
 ## Parameters
 

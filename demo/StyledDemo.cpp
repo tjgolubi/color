@@ -6,7 +6,7 @@ int main() {
   using namespace tjg::color;
   using enum tjg::color::term_color;
 
-  std::println("{} {} {} | {} | {} | {}",
+  println("{} {} {} | {} | {} | {}",
             styled("red text with", fg(red)),
             styled("nested bold", fg(red).bold()),
             styled("still red", fg(red)),
@@ -16,7 +16,7 @@ int main() {
 
   constexpr auto surrounding = fg(white).bg(gray).strike();
 
-  tjg::color::println(surrounding, "{} {} {} | {} | {} | {}",
+  println(surrounding, "{} {} {} | {} | {} | {}",
             styled("red text with", fg(red)),
             styled("nested bold", fg(red).bold()),
             styled("still red", fg(red)),

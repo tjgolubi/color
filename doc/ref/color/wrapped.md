@@ -15,6 +15,8 @@ auto wrapped(wstyled_text text) noexcept;
 Formats or inserts `text` as styled lines using [`word_wrap()`](styled_text/word_wrap.md).
 Newlines separate the lines, with no trailing newline. Empty or whitespace-only
 input produces no output.
+Printing with {color} or inserting into a stream applies
+[terminal detection](print.md#terminal-detection).
 
 In a format string of the matching character type, the field width sets the
 wrap width in display columns and defaults to 80. Precision sets the hanging
@@ -44,7 +46,7 @@ An object that stores the text and applies wrapping on formatting or insertion.
 ```cpp
 using namespace tjg::color;
 auto notes = styled_text{"Build completed with warnings."};
-std::println("{:{}}", wrapped(notes), 18);
-std::println("{:18.2}", wrapped(notes));
+tjg::color::println(stdout, "{:{}}", wrapped(notes), 18);
+tjg::color::println(stdout, "{:18.2}", wrapped(notes));
 std::cout << std::setw(18) << wrapped(notes) << '\n';
 ```

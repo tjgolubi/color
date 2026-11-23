@@ -2290,7 +2290,7 @@ TEST(color_test, format_to) {
 
 TEST(color_test, print) {
   EXPECT_WRITE(stdout, tjg::color::print(fg(tjg::color::rgb(255, 20, 30)), "rgb(255,20,30)"),
-               "\x1b[38;2;255;20;30mrgb(255,20,30)\x1b[0m");
+               "rgb(255,20,30)");
 }
 
 TEST(color_test, runtime_print) {
@@ -2298,25 +2298,25 @@ TEST(color_test, runtime_print) {
   auto args = std::make_format_args(value);
   const auto style = tjg::color::bold();
   EXPECT_WRITE(stdout, tjg::color::vprint_unicode(stdout, style, "{:04}", args),
-               "\x1b[1m0042\x1b[0m");
+               "0042");
   EXPECT_WRITE(stdout, tjg::color::vprint_unicode(style, "{}", args),
-               "\x1b[1m42\x1b[0m");
+               "42");
   EXPECT_WRITE(stdout, tjg::color::vprint_nonunicode(stdout, style, "{:04}", args),
-               "\x1b[1m0042\x1b[0m");
+               "0042");
   EXPECT_WRITE(stdout, tjg::color::vprint_nonunicode(style, "{}", args),
-               "\x1b[1m42\x1b[0m");
+               "42");
 }
 
 TEST(color_test, println) {
   EXPECT_WRITE(stdout,
                tjg::color::println(fg(tjg::color::rgb(255, 20, 30)), "rgb(255,20,30)"),
-               "\x1b[38;2;255;20;30mrgb(255,20,30)\n\x1b[0m");
+               "rgb(255,20,30)\n");
   EXPECT_WRITE(stdout, tjg::color::println(tjg::color::emphasis::bold, "bold"),
-               "\x1b[1mbold\n\x1b[0m");
+               "bold\n");
   EXPECT_WRITE(
       stdout,
       tjg::color::println(fg(tjg::color::rgb::blue).bold(), "blue/bold"),
-      "\x1b[1;38;2;0;0;255mblue/bold\n\x1b[0m");
+      "blue/bold\n");
 }
 
 TEST(color_test, compact_sgr_combined_style) {

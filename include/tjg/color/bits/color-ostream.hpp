@@ -29,7 +29,6 @@ template<CharType Char, typename T>
   requires (Color<T>
             || std::same_as<std::remove_cvref_t<T>, color_t>
             || std::same_as<std::remove_cvref_t<T>, no_color_t>
-            || std::same_as<std::remove_cvref_t<T>, text_style>
             || std::same_as<std::remove_cvref_t<T>, emphasis>)
         && requires(char* out, const T& value)
            { (void) tjg::color::write_value(out, value); }
@@ -41,6 +40,13 @@ auto operator<<(std::basic_ostream<Char>& os, const T& value)
   return os << buf.view();
 }
 
+namespace detail {
+
+[[nodiscard]] auto is_tty(std::ostream&)  noexcept -> bool;
+[[nodiscard]] auto is_tty(std::wostream&) noexcept -> bool;
+
+} // detail
+
 /**
  * Writes a style's SGR sequence without a trailing reset. An empty style
  * writes a reset. Pending stream width and other formatting settings are
@@ -50,6 +56,7 @@ template<CharType Char>
 auto operator<<(std::basic_ostream<Char>& os, const text_style& style)
   -> std::basic_ostream<Char>&
 {
+  if (!detail::is_tty(os)) return os;
   auto buffer = detail::basic_sgr_buffer<Char>{};
   detail::append_sgr(buffer, style.empty() ? absolute(style) : style);
   return os.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
@@ -61,7 +68,7 @@ template<typename T, CharType Char>
 auto operator<<(std::basic_ostream<Char>& os, const styled_arg<T>& arg)
   -> std::basic_ostream<Char>&
 {
-  if (arg.style.empty())
+  if (arg.style.empty() || !is_tty(os))
     return os << arg.value;
 
   constexpr auto reset = sgr_reset<Char>();
@@ -88,28 +95,23 @@ auto operator<<(std::basic_ostream<Char>& os, const styled_arg<T>& arg)
 } // << styled_arg
 
 /// Inserts wrapped lines, consuming the stream's field width.
-auto operator<<(std::ostream& os, const wrapped_arg<char>& arg)
+auto operator<<(std::ostream&  os, const wrapped_arg<char   >& arg)
   -> std::ostream&;
 auto operator<<(std::wostream& os, const wrapped_arg<wchar_t>& arg)
   -> std::wostream&;
 
 } // detail
 
-#define TJG_SGR_OSTREAM_SCOPE(stream, style) \
-  auto writer = [&](const char* data, std::size_t size) \
-    { stream.write(data, static_cast<std::streamsize>(size)); }; \
-  TJG_SGR_SCOPE(writer, style)
-
 /**
  * Prints styled text using the standard non-Unicode stream output path.
  * Restores the enclosing style after the formatted text.
  */
-void vprint_nonunicode(std::ostream& os, text_style style,
+void vprint_nonunicode(std::ostream& os, const text_style& style,
                               std::string_view fmt, std::format_args args);
 
 /// Prints styled text using the standard Unicode stream output path.
 /// Restores the enclosing style after the formatted text.
-void vprint_unicode(std::ostream& os, text_style style,
+void vprint_unicode(std::ostream& os, const text_style& style,
                            std::string_view fmt, std::format_args args);
 
 /**
@@ -121,10 +123,20 @@ void vprint_unicode(std::ostream& os, text_style style,
  *     tjg::color::print(os, tjg::color::text_style{tjg::color::emphasis::bold}, "Result: {}", 42);
  */
 template<typename... T>
-void print(std::ostream& os, text_style style, std::format_string<T...> fmt,
-           T&&... args)
+void print(std::ostream& os, const text_style& style,
+           std::format_string<T...> fmt, T&&... args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, style);
+  auto writer = [&](const char* data, std::size_t size)
+    { os.write(data, static_cast<std::streamsize>(size)); };
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  TJG_SGR_SCOPE(writer, style);
+  std::print(os, fmt, std::forward<T>(args)...);
+}
+
+template<typename... T>
+void print(std::ostream& os, std::format_string<T...> fmt, T&&... args) {
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  auto scope = detail::style_scope{};
   std::print(os, fmt, std::forward<T>(args)...);
 }
 
@@ -133,10 +145,20 @@ void print(std::ostream& os, text_style style, std::format_string<T...> fmt,
  * style.
  */
 template<typename... T>
-void println(std::ostream& os, text_style style, std::format_string<T...> fmt,
-             T&&... args)
+void println(std::ostream& os, const text_style& style,
+             std::format_string<T...> fmt, T&&... args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, style);
+  auto writer = [&](const char* data, std::size_t size)
+    { os.write(data, static_cast<std::streamsize>(size)); };
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  TJG_SGR_SCOPE(writer, style);
+  std::println(os, fmt, std::forward<T>(args)...);
+}
+
+template<typename... T>
+void println(std::ostream& os, std::format_string<T...> fmt, T&&... args) {
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  auto scope = detail::style_scope{};
   std::println(os, fmt, std::forward<T>(args)...);
 }
 
@@ -147,7 +169,7 @@ void println(std::ostream& os, text_style style, std::format_string<T...> fmt,
  * alignment; only left places padding after text.
  * Field width is consumed; other stream settings are preserved.
  */
-auto operator<<(std::ostream& os, const styled_text& value) -> std::ostream&;
+auto operator<<(std::ostream&  os, const styled_text&  value) -> std::ostream&;
 auto operator<<(std::wostream& os, const wstyled_text& value) -> std::wostream&;
 
 template<CharType Char>
@@ -156,7 +178,4 @@ auto operator<<(std::basic_ostream<Char>& os,
   -> std::basic_ostream<Char>&
 { return operator<<(os, value); }
 
-
 } // tjg::color
-
-#undef TJG_SGR_OSTREAM_SCOPE

@@ -51,11 +51,11 @@ different way each time.
 auto line2 = "This is part1.  " + line + "  This is part2.";
 constexpr auto surrounding = fg(white).bg(gray).strike();
 
-std::println("Underlay:");
-std::println("{}", underlay(surrounding, line2));
+tjg::color::println(stdout, "Underlay:");
+tjg::color::println(stdout, "{}", underlay(surrounding, line2));
 
-std::println("Overlay:");
-std::println("{}", overlay(surrounding, line2));
+tjg::color::println(stdout, "Overlay:");
+tjg::color::println(stdout, "{}", overlay(surrounding, line2));
 ```
 
 With **underlay**, red text keeps its red foreground and the blue-background

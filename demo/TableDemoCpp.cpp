@@ -86,8 +86,10 @@ void print_row(cell service,
                cell notes,
                std::string_view row = {})
 {
+  using std::print;
+  using std::println;
   using enum alignment;
-  std::println("{} {} {} {}\x1b[0m",
+  println("{} {} {} {}\x1b[0m",
                render_cell(service, 16, left,   service_color, row),
                render_cell(status,  12, center, status_color,  row),
                render_cell(latency, 12, right,  latency_color, row),
@@ -97,7 +99,8 @@ void print_row(cell service,
 } // local
 
 int main() {
-  std::println("SYSTEM HEALTH DASHBOARD\n");
+  using std::println;
+  println("SYSTEM HEALTH DASHBOARD\n");
 
   // Column headings inherit bold and underline from the row.
   constexpr auto bold_underline = std::string_view{"1;4"};
@@ -132,5 +135,5 @@ int main() {
   print_row({{"Old server"}}, {{"OFFLINE"}}, {{"--"}}, {{"Maintenance mode"}}, "2");
 
   // Style only the hexadecimal ID; the suffix uses the surrounding style.
-  std::println("\nRequest ID: \x1b[96m{:04x}\x1b[0m — completed", 42);
+  println("\nRequest ID: \x1b[96m{:04x}\x1b[0m — completed", 42);
 } // main

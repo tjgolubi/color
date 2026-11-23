@@ -7,13 +7,15 @@ Header: [`<tjg/color.hpp>`](index.md).
 ```cpp
 // Returns an object of unspecified type.
 template<typename T>
-constexpr auto styled(const T& value, text_style style);
+constexpr auto styled(const T& value, const text_style& style);
 ```
 
 ## Description
 
-Applies the specified text style to a value when it is formatted or written to a
-stream. After the value is written, the surrounding style is restored.
+Applies the specified text style when formatting a value. Formatting restores
+the enclosing style afterward. Stream insertion applies the style and then
+resets to terminal defaults when styling is enabled. See
+[Terminal detection](print.md#terminal-detection) for printing and insertion.
 
 ## Parameters
 
@@ -28,13 +30,13 @@ Returns an object of unspecified type such that the described behavior takes pla
 
 ## Notes
 
-The value is borrowed and must remain alive until formatting or stream insertion
-completes. The result stores a copy of `style`.
+The result borrows both `value` and `style`. Keep both alive until formatting
+or stream insertion completes. Temporaries are valid within an immediate call.
 
 ## Example
 
 ```cpp
 using namespace tjg::color;
 using enum term_color;
-std::println("The result is {} bytes.", styled(42, fg(red)));
+tjg::color::println(stdout, "The result is {} bytes.", styled(42, fg(red)));
 ```

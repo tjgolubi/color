@@ -7,7 +7,8 @@ arrange it into nested groups. Grouping works like parentheses: a style applied
 to a group provides the surrounding style for its contents. Include
 `<tjg/color/styled_text.hpp>` to create and combine text that keeps its own
 contents. Include `<tjg/color.hpp>` to use it with `std::format`,
-`std::format_to`, or `std::println`. Use `{:?}` to inspect the text and its
+`std::format_to`, or [`tjg::color::println()`](print.md). Use `{:?}` to
+inspect the text and its
 groups.
 
 Styled text keeps its own text, so the original strings need not remain alive.
@@ -26,7 +27,7 @@ using namespace tjg::color;
 auto red_text = underlay(fg(rgb::red),
     "red text with " + bold("nested bold") + " still red");
 auto line = styled_text{"plain | "} + red_text + " | plain again";
-std::println("{}", line);
+tjg::color::println(stdout, "{}", line);
 ```
 
 Expected output (followed by a newline):
@@ -62,7 +63,7 @@ auto words =       styled_text{"red",   fg(rgb::red)}
            + " " + styled_text{"blue",  fg(rgb::blue)};
 auto defaults = fg(rgb::black).bg(rgb::light_gray);
 auto group = underlay(defaults, words);
-std::println("{}", group);
+tjg::color::println(stdout, "{}", group);
 ```
 
 Expected output (followed by a newline):
@@ -94,7 +95,7 @@ replace explicit choices:
 ```cpp
 using namespace tjg::color;
 auto all_red = overlay(fg(rgb::red), words);
-std::println("{}", all_red);
+tjg::color::println(stdout, "{}", all_red);
 ```
 
 Expected output (followed by a newline):
@@ -148,7 +149,7 @@ using namespace tjg::color;
 auto underline_only = absolute(underline("underline only"));
 auto sentence = styled_text{"before "} + underline_only + " after";
 auto decorated = strike(underlay(bg(rgb::gray), sentence));
-std::println("{}", decorated);
+tjg::color::println(stdout, "{}", decorated);
 ```
 
 Expected output (followed by a newline):
@@ -198,7 +199,7 @@ presentation described below.
 
 ```cpp
 using namespace tjg::color;
-std::println("{:*>13.9}", bold("hello " + styled_text{"world", fg(rgb::blue)}));
+tjg::color::println(stdout, "{:*>13.9}", bold("hello " + styled_text{"world", fg(rgb::blue)}));
 // Four '*' characters followed by "hello wor", all bold; "wor" is blue.
 ```
 
@@ -258,7 +259,7 @@ using namespace tjg::color;
 auto message = bold(styled_text{"Build completed; "}
                   + styled_text{"all checks passed", fg(term_color::green)});
 for (const auto& line : word_wrap(message, 20))
-  std::println("{}", line);
+  tjg::color::println(stdout, "{}", line);
 // Build completed; all
 // checks passed
 ```
@@ -302,18 +303,18 @@ a dynamic field width. Format precision sets the hanging indent. Use `<`,
 indent. In a stream, set the width with `std::setw()`.
 
 ```cpp
-std::print("{:{}}", wrapped(message), column_width);
+tjg::color::print(stdout, "{:{}}", wrapped(message), column_width);
 std::cout << std::setw(20) << wrapped(message);
 ```
 
 ```cpp
 auto item = styled_text{"- Build finished with warnings."};
-std::println("{:20.2}", wrapped(item));
+tjg::color::println(stdout, "{:20.2}", wrapped(item));
 // - Build finished
 //   with warnings.
 ```
 
-`wrapped()` writes newlines between the lines. Use `std::println()` or insert
+`wrapped()` writes newlines between the lines. Use `tjg::color::println()` or insert
 `'\n'` yourself when you want a final newline.
 
 ### Debug output
@@ -331,7 +332,7 @@ characters.
 using namespace tjg::color;
 auto text = bold(styled_text{"hello\n", fg(term_color::red)}
                       + (underline("world") + "!"));
-std::print("{:?}", text);
+tjg::color::print(stdout, "{:?}", text);
 ```
 
 Output:
@@ -358,8 +359,8 @@ dynamic arguments.
 ### Stream insertion
 
 Include `<tjg/color.hpp>` to insert a `styled_text` value into a narrow stream
-or a `wstyled_text` value into a wide stream. Insertion uses the same ANSI
-rendering as the styled-text formatter.
+or a `wstyled_text` value into a wide stream. Insertion styles terminal output
+and produces plain text in a string stream.
 
 ```cpp
 #include <tjg/color.hpp>
@@ -369,7 +370,7 @@ rendering as the styled-text formatter.
 std::ostringstream os;
 os << std::left << std::setfill('*') << std::setw(14)
    << tjg::color::bold("hello world");
-// Bold "hello world***", followed by a reset to terminal defaults.
+// os.str() contains "hello world***".
 ```
 
 Stream width, fill, and alignment control padding. Left alignment pads after
@@ -400,7 +401,7 @@ using namespace tjg::color;
 
 auto note = tagged("<cyan>Task reports now wrap "
                    "<yellow>**long notes**</> within each column.</>");
-std::println("{:<40}", wrapped(note));
+tjg::color::println(stdout, "{:<40}", wrapped(note));
 ```
 
 The outer tag sets cyan. The inner tag makes “long notes” yellow, and
@@ -437,11 +438,11 @@ escape bytes visible as `\e`. Parse the original string and print the parsed
 value with `{:?}` as well.
 
 ```cpp
-std::println("{:?}", group);
+tjg::color::println(stdout, "{:?}", group);
 auto encoded = std::format("{}", group);
-std::println("{}", tjg::backslash_escape(encoded));
+tjg::color::println(stdout, "{}", tjg::backslash_escape(encoded));
 auto parsed = tjg::color::parse_styled_text(encoded);
-std::println("{:?}", parsed);
+tjg::color::println(stdout, "{:?}", parsed);
 ```
 
 ```text
@@ -671,7 +672,7 @@ interpret ANSI sequences or remove explicit styles.
 Include `<tjg/color.hpp>` to style an individual replacement
 field with `styled`. Its format specifications apply to the underlying value.
 
-::: styled(const T&, text_style)
+::: styled(const T&, const text_style&)
     options:
       color_reference: true
 
@@ -681,7 +682,7 @@ Expected output for the example above (without a trailing newline):
 
 ```cpp
 using namespace tjg::color;
-std::println("Amount: {:>8.2f}", styled(1.23, fg(rgb::green)));
+tjg::color::println(stdout, "Amount: {:>8.2f}", styled(1.23, fg(rgb::green)));
 ```
 
 Expected output (followed by a newline):

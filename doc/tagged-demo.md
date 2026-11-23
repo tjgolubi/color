@@ -39,9 +39,9 @@ each line to the left and `>` aligns it to the right. The colors and emphasis
 stay with their text, including where the yellow phrase spans two lines.
 
 ```cpp
-std::println("{:<40}", wrapped(note));
-std::println("{:>40}", wrapped(note));
-std::println("{:<64}", wrapped(note));
+tjg::color::println(stdout, "{:<40}", wrapped(note));
+tjg::color::println(stdout, "{:>40}", wrapped(note));
+tjg::color::println(stdout, "{:<64}", wrapped(note));
 ```
 
 The demo uses fixed field widths so you can compare the results in any terminal.

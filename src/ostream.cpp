@@ -1,30 +1,70 @@
 /// @copyright 2026 Terry Golubiewski, all rights reserved.
 #include <tjg/color/bits/color-ostream.hpp>
 
+#include <iostream>
 #include <limits>
 
 namespace tjg::color {
 
-#define TJG_SGR_OSTREAM_SCOPE(stream, style) \
-  auto writer = [&](const char* data, std::size_t size) \
-    { stream.write(data, static_cast<std::streamsize>(size)); }; \
-  TJG_SGR_SCOPE(writer, style)
+namespace detail {
 
-void vprint_nonunicode(std::ostream& os, text_style style,
+// Assumes the standard streams use their usual buffers.
+[[nodiscard]] auto is_tty(std::ostream& os) noexcept -> bool {
+  if (&os == &std::cout)
+    return is_tty(stdout);
+  if (&os == &std::cerr || &os == &std::clog)
+    return is_tty(stderr);
+  return false;
+} // is_tty
+
+// Assumes the standard streams use their usual buffers.
+[[nodiscard]] auto is_tty(std::wostream& os) noexcept -> bool {
+  if (&os == &std::wcout)
+    return is_tty(stdout);
+  if (&os == &std::wcerr || &os == &std::wclog)
+    return is_tty(stderr);
+  return false;
+} // is_tty
+
+} // detail
+
+void vprint_nonunicode(std::ostream& os,
                       std::string_view fmt, std::format_args args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, style);
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  auto scope = detail::style_scope{};
   std::vprint_nonunicode(os, fmt, args);
 }
 
-void vprint_unicode(std::ostream& os, text_style style,
+void vprint_unicode(std::ostream& os,
                     std::string_view fmt, std::format_args args)
 {
-  TJG_SGR_OSTREAM_SCOPE(os, style);
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  auto scope = detail::style_scope{};
   std::vprint_unicode(os, fmt, args);
 }
 
-#undef TJG_SGR_OSTREAM_SCOPE
+void vprint_nonunicode(std::ostream& os, const text_style& style,
+                      std::string_view fmt, std::format_args args)
+{
+  auto writer = [&](const char* data, std::size_t size)
+    { os.write(data, static_cast<std::streamsize>(size)); };
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  TJG_SGR_SCOPE(writer, style);
+  std::vprint_nonunicode(os, fmt, args);
+}
+
+void vprint_unicode(std::ostream& os, const text_style& style,
+                    std::string_view fmt, std::format_args args)
+{
+  auto writer = [&](const char* data, std::size_t size)
+    { os.write(data, static_cast<std::streamsize>(size)); };
+  auto guard = detail::sgr_enable_scope{detail::is_tty(os)};
+  TJG_SGR_SCOPE(writer, style);
+  std::vprint_unicode(os, fmt, args);
+}
+
+namespace {
 
 template<bool Wrap = false, CharType Char>
 auto insert_styled_text(std::basic_ostream<Char>& os,
@@ -55,6 +95,7 @@ auto insert_styled_text(std::basic_ostream<Char>& os,
   }
 
   auto output = std::ostreambuf_iterator<Char>{os};
+  auto guard  = detail::sgr_enable_scope(detail::is_tty(os));
 
   bool failed;
 #if defined(__cpp_exceptions) || defined(_CPPUNWIND)
@@ -83,7 +124,9 @@ auto insert_styled_text(std::basic_ostream<Char>& os,
   return os;
 } // << styled_text
 
-auto operator<<(std::ostream& os, const styled_text& value) -> std::ostream&
+} // local
+
+auto operator<<(std::ostream&  os, const styled_text&  value) -> std::ostream&
 { return insert_styled_text(os, value); }
 
 auto operator<<(std::wostream& os, const wstyled_text& value) -> std::wostream&

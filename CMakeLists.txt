@@ -28,6 +28,7 @@ file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/TaggedColors.inc"
 
 add_library(tjg STATIC
   src/format.cpp
+  src/is_tty.cpp
   src/ostream.cpp
   src/parse_styled_text.cpp
   src/sgr.cpp

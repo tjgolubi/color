@@ -48,7 +48,7 @@ void print_row(styled_text service,
 } // local
 
 int main() {
-  std::println("SYSTEM HEALTH DASHBOARD\n");
+  tjg::color::println("SYSTEM HEALTH DASHBOARD\n");
 
   // Column headings inherit bold and underline from the row.
   print_row("Service", "Status", "Latency", "Notes", tjg::color::bold().underline());
@@ -85,6 +85,6 @@ int main() {
   print_row("Old server", "OFFLINE", "--", "Maintenance mode", faint());
 
   // Style only the hexadecimal ID; the suffix uses the surrounding style.
-  std::println("\nRequest ID: {:04x} — completed",
+  tjg::color::println("\nRequest ID: {:04x} — completed",
                styled(42, fg(tc::bright_cyan)));
 } // main

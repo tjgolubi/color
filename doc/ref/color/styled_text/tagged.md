@@ -80,11 +80,10 @@ after the input string is changed or destroyed.
 
 ```cpp
 #include <tjg/color.hpp>
-#include <print>
 
 int main() {
   using namespace tjg::color;
-  std::println("{}", tagged("<cyan>Build **passed**.</>"));
+  tjg::color::println(stdout, "{}", tagged("<cyan>Build **passed**.</>"));
 }
 ```
 

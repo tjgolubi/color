@@ -1,7 +1,8 @@
 #include "tjg/color.hpp"
 
 int main() {
-  const auto value = tjg::color::styled("hello", tjg::color::bold());
+  const auto style = tjg::color::bold();
+  const auto value = tjg::color::styled("hello", style);
   const auto narrow = tjg::color::format(tjg::color::underline(), "{}", value);
   const auto wide = tjg::color::format(tjg::color::bold(), L"{}", L"wide");
   const auto lines = tjg::color::word_wrap(

@@ -5,9 +5,9 @@ Header: [`<tjg/color.hpp>`](index.md).
 ## Synopsis
 
 ```cpp
-auto vformat(text_style style, std::string_view fmt, std::format_args args)
+auto vformat(const text_style& style, std::string_view fmt, std::format_args args)
   -> std::string;
-auto vformat(text_style style, std::wstring_view fmt, std::wformat_args args)
+auto vformat(const text_style& style, std::wstring_view fmt, std::wformat_args args)
   -> std::wstring;
 ```
 

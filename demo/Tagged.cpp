@@ -5,8 +5,9 @@
 #include <string_view>
 
 int main() {
-  using namespace tjg::color;
-  using em = tjg::color::emphasis;
+  namespace clr = tjg::color;
+  using em = clr::emphasis;
+  using namespace clr;
 
   constexpr std::string_view prose =
     "<bold white on dark_blue>Release highlights</>\n\n"
@@ -19,15 +20,15 @@ int main() {
 
   auto heading_emphasis = em::reverse | em::bold;
 
-  std::println("{:^80}\n\n{:<40}\n",
+  clr::println("{:^80}\n\n{:<40}\n",
                styled(">>> 40 columns, left aligned <<<", heading_emphasis),
                wrapped(note));
 
-  std::println("{:^80}\n\n{:>40}\n",
+  clr::println("{:^80}\n\n{:>40}\n",
                styled(">>> 40 columns, right aligned <<<", heading_emphasis),
                wrapped(note));
 
-  std::println("{:^80}\n\n{:<64}\n",
+  clr::println("{:^80}\n\n{:<64}\n",
                styled(">>> 64 columns, left aligned <<<", heading_emphasis),
                wrapped(note));
 } // main

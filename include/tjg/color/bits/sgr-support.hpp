@@ -203,7 +203,7 @@ constexpr inline void reset_color(Buffer& buffer) {
 }
 
 template<typename Buffer>
-constexpr void append_sgr_raw(Buffer& buf, text_style ts) {
+constexpr void append_sgr_raw(Buffer& buf, const text_style& ts) {
   if (ts.empty()) return;
   if (ts.is_absolute()) {
     buf.push_back('0');
@@ -218,7 +218,7 @@ constexpr void append_sgr_raw(Buffer& buf, text_style ts) {
 }  // append_sgr_raw
 
 template<typename Buffer>
-constexpr void append_sgr(Buffer& buf, text_style ts) {
+constexpr void append_sgr(Buffer& buf, const text_style& ts) {
   if (ts.empty()) return;
   buf.push_back('\x1b');
   buf.push_back('[');
@@ -227,7 +227,8 @@ constexpr void append_sgr(Buffer& buf, text_style ts) {
 }  // append_sgr
 
 auto make_sgr(const text_style& style) -> std::string;
-auto make_sgr(const text_style& target, const text_style& initial) -> std::string;
+auto make_sgr(const text_style& target, const text_style& initial)
+  -> std::string;
 
 } // detail
 
@@ -241,9 +242,9 @@ auto make_sgr(const text_style& target, const text_style& initial) -> std::strin
  * the leading reset selects terminal defaults for those channels.
  */
 [[nodiscard]] inline
-auto to_sgr(const text_style& style) TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string {
-  return detail::make_sgr(style);
-}
+auto to_sgr(const text_style& style) TJG_NOEXCEPT_UNLESS_BAD_ALLOC
+  -> std::string
+{ return detail::make_sgr(style); }
 
 namespace detail {
 
@@ -256,7 +257,9 @@ constexpr void append_transition_code(Buffer& buf, uint8_t code) {
 
 template<typename Buffer>
 constexpr
-void append_transition(Buffer& buf, text_style target, text_style initial) {
+void append_transition(Buffer& buf,
+                       const text_style& target, const text_style& initial)
+{
   auto before = static_cast<unsigned>(std::to_underlying(initial.emph()));
   auto after  = static_cast<unsigned>(std::to_underlying(target.emph()));
   auto removed = before & ~after;
@@ -296,7 +299,9 @@ void append_transition(Buffer& buf, text_style target, text_style initial) {
 
 template<typename Buffer>
 constexpr
-void append_sgr_transition(Buffer& buf, text_style target, text_style initial) {
+void append_sgr_transition(Buffer& buf,
+                           const text_style& target, text_style initial)
+{
   if (target.is_absolute()) return append_sgr(buf, target);
   initial.absolute(false);
   if (target == initial) return;
@@ -330,9 +335,7 @@ void append_sgr_transition(Buffer& buf, text_style target, text_style initial) {
 [[nodiscard]] inline
 auto to_sgr(const text_style& target, const text_style& initial)
   TJG_NOEXCEPT_UNLESS_BAD_ALLOC -> std::string
-{
-  return detail::make_sgr(target, initial);
-}
+{ return detail::make_sgr(target, initial); }
 
 /**
  * Returns a copy of `sv` wrapped in the SGR sequences for `style` and a terminal

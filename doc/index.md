@@ -25,7 +25,6 @@ configuration.
 
 ```cpp
 #include <tjg/color.hpp>
-#include <print>
 
 int main() {
   using namespace tjg::color;
@@ -33,7 +32,7 @@ int main() {
   auto result = 42;
   auto style = fg(rgb::forest_green).bold();
   println(style, "The result is {} bytes.", result);
-  std::println("The result is {} bytes.", styled(result, fg(red)));
+  tjg::color::println(stdout, "The result is {} bytes.", styled(result, fg(red)));
 }
 ```
 
@@ -41,6 +40,9 @@ int main() {
 The result is <span style="color: #CD0000">42</span> bytes.</pre>
 
 The first call styles the entire message. The second styles only `42`.
+Both show styling in a terminal and write plain text when you redirect output
+to a file or pipe. Use {color}'s print functions whenever an argument may
+contain styled text. See [Styled Output](print.md) for details.
 
 ## Demonstration Programs
 

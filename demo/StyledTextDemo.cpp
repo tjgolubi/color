@@ -16,16 +16,16 @@ int main() {
             + " | " + absolute(underline("reset+underline only"))
             + " | " + reverse(overlay(fg(red), "reverse red"));
 
-  std::println("{}", line);
+  println("{}", line);
 
   auto line2 = "This is part1.  " + line + "  This is part2.";
   constexpr auto surrounding = fg(white).bg(gray).strike();
 
   // Defaults preserve each part's explicit colors and absolute scopes.
-  std::println("Underlay:");
-  std::println("{}", underlay(surrounding, line2));
+  println("Underlay:");
+  println("{}", underlay(surrounding, line2));
 
   // Overrides replace colors throughout relative parts; absolute scopes stay.
-  std::println("Overlay:");
-  std::println("{}", overlay(surrounding, line2));
+  println("Overlay:");
+  println("{}", overlay(surrounding, line2));
 } // main

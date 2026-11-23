@@ -30,19 +30,19 @@ void check_style_insertion() {
   const auto flags = os.flags();
   const auto style = fg(term_color::red).bold();
   EXPECT_EQ(&(os << style), &os);
-  EXPECT_EQ(os.str(), widen("\x1b[1;31m"));
+  EXPECT_EQ(os.str(), widen(""));
   EXPECT_EQ(os.width(), 5);
   EXPECT_EQ(os.flags(), flags);
   EXPECT_EQ(os.fill(), Char{'*'});
   EXPECT_EQ(os.precision(), 3);
   EXPECT_EQ(detail::get_style_state(), text_style{});
   os << widen("x");
-  EXPECT_EQ(os.str(), widen("\x1b[1;31mx****"));
+  EXPECT_EQ(os.str(), widen("x****"));
   os << std::setw(7) << text_style{};
-  EXPECT_EQ(os.str(), widen("\x1b[1;31mx****\x1b[0m"));
+  EXPECT_EQ(os.str(), widen("x****"));
   EXPECT_EQ(os.width(), 7);
   os << absolute(text_style{});
-  EXPECT_EQ(os.str(), widen("\x1b[1;31mx****\x1b[0m\x1b[0m"));
+  EXPECT_EQ(os.str(), widen("x****"));
 }
 } // namespace
 
@@ -107,8 +107,7 @@ TEST(color_ostream_test, insertion) {
   auto& result = (os << tjg::color::styled(text, style));
   EXPECT_EQ(&result, &os);
   result << ' ' << tjg::color::styled(42, tjg::color::emphasis::underline) << '!';
-  const std::string opening = "\x1b[1;38;2;1;2;3;40m";
-  EXPECT_EQ(os.str(), opening + text + "\x1b[0m \x1b[4m42\x1b[0m!");
+  EXPECT_EQ(os.str(), text + " 42!");
 }
 
 TEST(color_ostream_test, insertion_wide) {
@@ -119,8 +118,7 @@ TEST(color_ostream_test, insertion_wide) {
   auto& result = (os << tjg::color::styled(text, style));
   EXPECT_EQ(&result, &os);
   result << L' ' << tjg::color::styled(42, tjg::color::emphasis::underline) << L'!';
-  const std::wstring opening = L"\x1b[1;38;2;1;2;3;40m";
-  EXPECT_EQ(os.str(), opening + text + L"\x1b[0m \x1b[4m42\x1b[0m!");
+  EXPECT_EQ(os.str(), text + L" 42!");
 }
 
 TEST(color_ostream_test, insertion_empty_style_and_text) {
@@ -129,35 +127,35 @@ TEST(color_ostream_test, insertion_empty_style_and_text) {
      << tjg::color::styled("", tjg::color::text_style{});
   EXPECT_EQ(os.str(), "plain");
   os << tjg::color::styled("", tjg::color::emphasis::bold);
-  EXPECT_EQ(os.str(), "plain\x1b[1m\x1b[0m");
+  EXPECT_EQ(os.str(), "plain");
 
   std::wostringstream wide;
   wide << tjg::color::styled(L"plain", tjg::color::text_style{})
        << tjg::color::styled(L"", tjg::color::text_style{})
        << tjg::color::styled(L"", tjg::color::emphasis::bold);
-  EXPECT_EQ(wide.str(), L"plain\x1b[1m\x1b[0m");
+  EXPECT_EQ(wide.str(), L"plain");
 }
 
 TEST(color_ostream_test, insertion_stream_formatting) {
   std::ostringstream os;
   os << std::hex << std::setfill('*') << std::setw(4)
      << tjg::color::styled(42, tjg::color::emphasis::bold);
-  EXPECT_EQ(os.str(), "\x1b[1m**2a\x1b[0m");
+  EXPECT_EQ(os.str(), "**2a");
   EXPECT_EQ(os.width(), 0);
   EXPECT_EQ(os.fill(), '*');
   EXPECT_EQ(os.flags() & std::ios_base::basefield, std::ios_base::hex);
   os << std::fixed << std::setprecision(2)
      << tjg::color::styled(1.25, tjg::color::emphasis::underline);
-  EXPECT_EQ(os.str(), "\x1b[1m**2a\x1b[0m\x1b[4m1.25\x1b[0m");
+  EXPECT_EQ(os.str(), "**2a1.25");
   EXPECT_EQ(os.precision(), 2);
 
   std::wostringstream wide;
   wide << std::hex << std::setfill(L'*') << std::setw(4)
        << tjg::color::styled(42, tjg::color::emphasis::bold);
-  EXPECT_EQ(wide.str(), L"\x1b[1m**2a\x1b[0m");
+  EXPECT_EQ(wide.str(), L"**2a");
   EXPECT_EQ(wide.width(), 0);
   wide << std::setw(4) << tjg::color::styled(42, tjg::color::text_style{});
-  EXPECT_EQ(wide.str(), L"\x1b[1m**2a\x1b[0m**2a");
+  EXPECT_EQ(wide.str(), L"**2a**2a");
 }
 
 namespace {
@@ -172,22 +170,22 @@ TEST(color_ostream_test, insertion_stream_only_value) {
   std::ostringstream os;
   const stream_only_value value{};
   os << tjg::color::styled(value, tjg::color::emphasis::bold);
-  EXPECT_EQ(os.str(), "\x1b[1mcustom\x1b[0m");
+  EXPECT_EQ(os.str(), "custom");
 }
 TEST(color_ostream_test, print) {
   std::ostringstream os;
   const auto style = tjg::color::text_style{tjg::color::emphasis::bold, tjg::color::rgb{1, 2, 3},
                                     tjg::color::term_color::black};
   tjg::color::print(os, style, "Result: {:04x} {}", 42, "done");
-  EXPECT_EQ(os.str(), "\x1b[1;38;2;1;2;3;40mResult: 002a done\x1b[0m");
+  EXPECT_EQ(os.str(), "Result: 002a done");
   os << " plain";
-  EXPECT_EQ(os.str().substr(os.str().size() - 10), "\x1b[0m plain");
+  EXPECT_EQ(os.str(), "Result: 002a done plain");
 }
 
 TEST(color_ostream_test, println) {
   std::ostringstream os;
   tjg::color::println(os, tjg::color::emphasis::underline, "Result: {}", 42);
-  EXPECT_EQ(os.str(), "\x1b[4mResult: 42\n\x1b[0m");
+  EXPECT_EQ(os.str(), "Result: 42\n");
 }
 
 TEST(color_ostream_test, argument_packs) {
@@ -195,10 +193,10 @@ TEST(color_ostream_test, argument_packs) {
   int value = 42;
   auto args = std::make_format_args(value);
   tjg::color::vprint_nonunicode(os, tjg::color::emphasis::bold, "{:04}", args);
-  EXPECT_EQ(os.str(), "\x1b[1m0042\x1b[0m");
+  EXPECT_EQ(os.str(), "0042");
   os.str("");
   tjg::color::vprint_unicode(os, tjg::color::emphasis::bold, "{}\n", args);
-  EXPECT_EQ(os.str(), "\x1b[1m42\n\x1b[0m");
+  EXPECT_EQ(os.str(), "42\n");
 }
 
 TEST(color_ostream_test, localized_runtime_print) {
@@ -212,7 +210,7 @@ TEST(color_ostream_test, localized_runtime_print) {
   auto args = std::make_format_args(value);
   tjg::color::vprint_nonunicode(os, tjg::color::bold(), "{:L}", args);
   tjg::color::vprint_unicode(os, tjg::color::bold(), "{:L}", args);
-  EXPECT_EQ(os.str(), "\x1b[1m1_234\x1b[0m\x1b[1m1_234\x1b[0m");
+  EXPECT_EQ(os.str(), "1_2341_234");
 }
 
 TEST(color_ostream_test, empty_style_and_text) {
@@ -224,10 +222,10 @@ TEST(color_ostream_test, empty_style_and_text) {
   tjg::color::print(os, tjg::color::text_style{}, "");
   EXPECT_EQ(os.str(), "");
   tjg::color::print(os, tjg::color::emphasis::bold, "");
-  EXPECT_EQ(os.str(), "\x1b[1m\x1b[0m");
+  EXPECT_EQ(os.str(), "");
   os.str("");
   tjg::color::println(os, tjg::color::emphasis::bold, "");
-  EXPECT_EQ(os.str(), "\x1b[1m\n\x1b[0m");
+  EXPECT_EQ(os.str(), "\n");
 }
 
 TEST(color_ostream_test, literal_text_and_stream_state) {
@@ -239,7 +237,7 @@ TEST(color_ostream_test, literal_text_and_stream_state) {
   const auto value = std::string_view(text, sizeof(text) - 1);
   std::print(plain, "{} {}", value, 42);
   tjg::color::print(os, tjg::color::emphasis::bold, "{} {}", value, 42);
-  EXPECT_EQ(os.str(), "\x1b[1m" + plain.str() + "\x1b[0m");
+  EXPECT_EQ(os.str(), plain.str());
   EXPECT_EQ(os.width(), plain.width());
   EXPECT_EQ(os.fill(), '*');
   EXPECT_EQ(os.flags() & std::ios_base::basefield, std::ios_base::hex);
@@ -279,7 +277,7 @@ TEST(color_ostream_test, long_output) {
   std::ostringstream os;
   const auto text = std::string(4096, 'x');
   tjg::color::print(os, tjg::color::emphasis::bold, "{}", text);
-  EXPECT_EQ(os.str(), "\x1b[1m" + text + "\x1b[0m");
+  EXPECT_EQ(os.str(), text);
 }
 
 TEST(color_ostream_test, formatting_error) {
@@ -287,7 +285,7 @@ TEST(color_ostream_test, formatting_error) {
   os << "original";
   EXPECT_THROW(tjg::color::vprint_nonunicode(os, tjg::color::emphasis::bold, "{", std::make_format_args()),
                std::format_error);
-  EXPECT_EQ(os.str(), "original\x1b[1m\x1b[0m");
+  EXPECT_EQ(os.str(), "original");
   EXPECT_EQ(tjg::color::detail::get_style_state(), tjg::color::text_style{});
 }
 
@@ -308,59 +306,47 @@ TEST(color_ostream_test, stream_failure) {
                std::ios_base::failure);
 }
 
-TEST(color_ostream_test, text_style_insertion_failure) {
+TEST(color_ostream_test, suppressed_style_does_not_write) {
   failing_streambuf buf;
   std::ostream os(&buf);
   os << std::setw(5) << tjg::color::text_style{};
-  EXPECT_TRUE(os.bad());
+  EXPECT_TRUE(os.good());
   EXPECT_EQ(os.width(), 5);
-  os.clear();
   os.exceptions(std::ios_base::badbit);
-  EXPECT_THROW(os << tjg::color::bold(), std::ios_base::failure);
+  EXPECT_NO_THROW(os << tjg::color::bold());
   EXPECT_EQ(os.width(), 5);
 }
 
 #if defined(__cpp_exceptions) || defined(_CPPUNWIND)
 namespace {
 struct insertion_error {};
-struct reset_error {};
 
-struct recovery_streambuf : std::stringbuf {
-  bool fail = false;
+struct counting_streambuf : std::stringbuf {
   int attempts = 0;
 
   std::streamsize xsputn(const char* text, std::streamsize size) override {
     ++attempts;
-    if (fail) throw reset_error{};
     return std::stringbuf::xsputn(text, size);
   }
 };
 
-struct throwing_value {
-  recovery_streambuf& buffer;
-  bool fail_reset;
-};
+struct throwing_value {};
 
-auto operator<<(std::ostream& os, const throwing_value& value) -> std::ostream& {
+auto operator<<(std::ostream& os, const throwing_value&) -> std::ostream& {
   os << "partial";
-  value.buffer.fail = value.fail_reset;
   throw insertion_error{};
 }
 }  // namespace
 
-TEST(color_ostream_test, insertion_exception_reset) {
-  for (bool fail_reset : {false, true}) {
-    SCOPED_TRACE(fail_reset);
-    recovery_streambuf buffer;
-    std::ostream os(&buffer);
-    os.exceptions(std::ios_base::badbit);
-    const throwing_value value{buffer, fail_reset};
-    EXPECT_THROW(os << tjg::color::styled(value, tjg::color::emphasis::bold), insertion_error);
-    EXPECT_EQ(buffer.attempts, 3);
-    EXPECT_EQ(buffer.str(), fail_reset ? "\x1b[1mpartial"
-                                       : "\x1b[1mpartial\x1b[0m");
-    EXPECT_EQ(os.bad(), fail_reset);
-    EXPECT_EQ(os.exceptions(), std::ios_base::badbit);
-  }
+TEST(color_ostream_test, suppressed_style_insertion_propagates_exception) {
+  counting_streambuf buffer;
+  std::ostream os(&buffer);
+  os.exceptions(std::ios_base::badbit);
+  EXPECT_THROW(os << tjg::color::styled(throwing_value{}, tjg::color::bold()),
+               insertion_error);
+  EXPECT_EQ(buffer.attempts, 1);
+  EXPECT_EQ(buffer.str(), "partial");
+  EXPECT_TRUE(os.good());
+  EXPECT_EQ(os.exceptions(), std::ios_base::badbit);
 }
 #endif

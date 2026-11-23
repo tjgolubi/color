@@ -52,11 +52,13 @@ class styled_text_renderer {
     auto& terminal = get_style_state();
     if (style == terminal)
       return out;
-    auto sgr = sgr_buffer{};
-    detail::append_sgr_transition(sgr, style, terminal);
+    if (sgr_enabled()) {
+      auto sgr = sgr_buffer{};
+      detail::append_sgr_transition(sgr, style, terminal);
+      for (const auto ch : sgr.view())
+        *out++ = static_cast<Char>(ch);
+    }
     terminal = style.absolute(false);
-    for (const auto ch : sgr.view())
-      *out++ = static_cast<Char>(ch);
     return out;
   } // transition
 
@@ -96,7 +98,8 @@ class styled_text_renderer {
   };
 
   auto take(std::basic_string_view<Char> text) noexcept -> styled_text_prefix {
-    const auto prefix = tjg::color::detail::unicode::text_prefix(text, _remaining);
+    const auto prefix =
+                    tjg::color::detail::unicode::text_prefix(text, _remaining);
     _remaining -= prefix.second;
     _stopped = (prefix.first < text.size() || _remaining == 0);
     return {prefix.first, prefix.second};
@@ -117,7 +120,7 @@ class styled_text_renderer {
 
   template<std::output_iterator<Char> OutputIt>
   auto write_node(const basic_styled_text<Char>& node,
-                  text_style enclosing,
+                  const text_style& enclosing,
                   OutputIt out,
                   std::size_t left = 0, std::size_t right = 0,
                   std::size_t indent = 0)

@@ -16,7 +16,7 @@ namespace tjg::color {
  * verbatim. Malformed SGR is retained atomically; unknown valid parameters are
  * ignored. This parses appearance, not an exact escape-byte round trip.
  */
-[[nodiscard]] auto parse_styled_text(std::string_view input) -> styled_text;
+[[nodiscard]] auto parse_styled_text(std::string_view  input) -> styled_text;
 [[nodiscard]] auto parse_styled_text(std::wstring_view input) -> wstyled_text;
 
 template<CharType Char>
