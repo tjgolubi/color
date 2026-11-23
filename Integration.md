@@ -157,9 +157,10 @@ ctest --test-dir build/color-tests --output-on-failure
 ```
 
 `TJG_TEST` defaults to `OFF`. The test sources are in `test/`.
-They use the vendored Google Test in `ext/gtest/` or an installed
-`GTest` CMake package when the vendored sources are unavailable. The package
-test installs and relocates TJG, then builds a separate consumer with
+They use the Google Test submodule in `ext/gtest/`. Initialize it with
+`git submodule update --init -- ext/gtest`. An installed `GTest` CMake
+package can also supply Google Test when the submodule is unavailable. The
+package test installs and relocates TJG, then builds a separate consumer with
 `find_package(tjg)`.
 
 The Linux, Windows, and macOS workflows build the standalone project in
