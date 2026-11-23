@@ -89,8 +89,12 @@ auto operator<<(std::ostream& os, const styled_text& value) -> std::ostream&
 auto operator<<(std::wostream& os, const wstyled_text& value) -> std::wostream&
 { return insert_styled_text(os, value); }
 
-auto detail::operator<<(std::ostream& os, const wrapped_arg& arg)
+auto detail::operator<<(std::ostream& os, const wrapped_arg<char>& arg)
   -> std::ostream&
+{ return insert_styled_text<true>(os, arg.text); }
+
+auto detail::operator<<(std::wostream& os, const wrapped_arg<wchar_t>& arg)
+  -> std::wostream&
 { return insert_styled_text<true>(os, arg.text); }
 
 } // tjg::color

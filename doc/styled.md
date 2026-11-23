@@ -392,7 +392,7 @@ with column defaults, row emphasis, and fixed-width fields.
 Use [`tagged()`](ref/color/styled_text/tagged.md) to put styles directly in a
 string. It returns `styled_text` for a narrow string and `wstyled_text` for a
 wide string. Print the result
-directly or give narrow text to [`wrapped()`](ref/color/wrapped.md) to wrap and
+directly or give the text to [`wrapped()`](ref/color/wrapped.md) to wrap and
 align it in a format field.
 
 ```cpp

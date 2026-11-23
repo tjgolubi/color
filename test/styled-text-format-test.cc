@@ -845,6 +845,20 @@ TEST(styled_text_format_test, wrapped_hanging_indent) {
                std::string{"*****x\n  ***y"}, states);
 }
 
+TEST(styled_text_format_test, wrapped_wide_format_and_stream) {
+  using namespace tjg::color;
+  const auto text = wrapped(bold(wstyled_text{L"alpha beta"}));
+  const auto formatted = std::format(L"{:6.2}", text);
+  EXPECT_EQ(formatted, std::format(L"{}\n{}", bold(wstyled_text{L"alpha"}),
+                                  bold(wstyled_text{L"  beta"})));
+
+  auto os = std::wostringstream{};
+  os << std::setw(5) << text;
+  EXPECT_EQ(os.str(), std::format(L"{}\n{}", bold(wstyled_text{L"alpha"}),
+                                  bold(wstyled_text{L"beta"})));
+  EXPECT_EQ(os.width(), 0);
+}
+
 TEST(styled_text_format_test, wrapped_stream_consumes_width) {
   using namespace tjg::color;
   const auto text = wrapped(bold(styled_text{"alpha beta"}));

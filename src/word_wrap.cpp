@@ -335,6 +335,12 @@ auto wrap_for_formatting(const styled_text& text, std::size_t width,
   return styled_text_word_wrapper::wrap(text, width, indent, false);
 }
 
+auto wrap_for_formatting(const wstyled_text& text, std::size_t width,
+                         std::size_t indent) -> std::vector<wstyled_text>
+{
+  return styled_text_word_wrapper::wrap(text, width, indent, false);
+}
+
 } // tjg::color::detail
 
 namespace tjg::color {

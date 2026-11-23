@@ -7,6 +7,7 @@ Header: [`<tjg/color.hpp>`](index.md).
 ```cpp
 // Returns an object of unspecified type.
 auto wrapped(styled_text text) noexcept;
+auto wrapped(wstyled_text text) noexcept;
 ```
 
 ## Description
@@ -15,8 +16,9 @@ Formats or inserts `text` as styled lines using [`word_wrap()`](styled_text/word
 Newlines separate the lines, with no trailing newline. Empty or whitespace-only
 input produces no output.
 
-In a narrow format string, the field width sets the wrap width in display
-columns and defaults to 80. Precision sets the hanging indent and defaults
+In a format string of the matching character type, the field width sets the
+wrap width in display columns and defaults to 80. Precision sets the hanging
+indent and defaults
 to zero. Both can be dynamic. The first line uses the full width, and each
 subsequent nonblank line starts with that many ordinary spaces, including
 after an explicit newline. With a positive indent, blank lines remain empty.
@@ -27,8 +29,9 @@ continuation lines in the 38 columns after their two leading spaces.
 `{:>40.2}` keeps the right edge at column 40. Width below four, indent that
 leaves fewer than four columns, and debug presentation are format errors.
 
-In a `std::ostream`, a positive pending width supplies the wrap width and is
-reset to zero. A positive width below 4 throws `std::format_error`. Without a
+In a `std::ostream` or `std::wostream`, a positive pending width supplies the
+wrap width and is reset to zero. A positive width below 4 throws
+`std::format_error`. Without a
 positive width, wrapping uses 80 columns. An explicit stream alignment applies
 the stream fill to each wrapped line. Stream precision is ignored.
 

@@ -88,7 +88,10 @@ auto operator<<(std::basic_ostream<Char>& os, const styled_arg<T>& arg)
 } // << styled_arg
 
 /// Inserts wrapped lines, consuming the stream's field width.
-auto operator<<(std::ostream& os, const wrapped_arg& arg) -> std::ostream&;
+auto operator<<(std::ostream& os, const wrapped_arg<char>& arg)
+  -> std::ostream&;
+auto operator<<(std::wostream& os, const wrapped_arg<wchar_t>& arg)
+  -> std::wostream&;
 
 } // detail
 

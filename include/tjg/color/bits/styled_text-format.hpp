@@ -225,27 +225,31 @@ struct standard_styled_text_formatter {
 
 inline constexpr std::size_t default_wrap_width = 80;
 
+template<CharType Char>
 struct wrapped_arg {
-  styled_text text;
+  basic_styled_text<Char> text;
 };
 
 auto wrap_for_formatting(const styled_text& text, std::size_t width,
                          std::size_t indent) -> std::vector<styled_text>;
 
-template<std::output_iterator<char> OutputIt>
-auto render_wrapped(const styled_text& text, std::size_t width,
-                    const string_format_specs<char>& specs, OutputIt out,
+auto wrap_for_formatting(const wstyled_text& text, std::size_t width,
+                         std::size_t indent) -> std::vector<wstyled_text>;
+
+template<CharType Char, std::output_iterator<Char> OutputIt>
+auto render_wrapped(const basic_styled_text<Char>& text, std::size_t width,
+                    const string_format_specs<Char>& specs, OutputIt out,
                     std::size_t indent = 0)
   -> OutputIt
 {
   const auto lines = wrap_for_formatting(text, width, indent);
-  auto renderer = styled_text_renderer<char>{specs};
+  auto renderer = styled_text_renderer<Char>{specs};
   auto continuation_specs = specs;
   if (continuation_specs.width != 0) continuation_specs.width -= indent;
-  auto continuation = styled_text_renderer<char>{continuation_specs};
+  auto continuation = styled_text_renderer<Char>{continuation_specs};
   for (auto line = lines.begin(); line != lines.end(); ++line) {
     const auto first = line == lines.begin();
-    if (!first) *out++ = '\n';
+    if (!first) *out++ = static_cast<Char>('\n');
     if (indent != 0 && line->empty()) continue;
     if (first || indent == 0)
       out = renderer.format(*line, std::move(out));
@@ -255,12 +259,15 @@ auto render_wrapped(const styled_text& text, std::size_t width,
   return out;
 }
 
+template<CharType Char>
 struct wrapped_arg_formatter {
-  string_format_specs<char> specs{};
+  string_format_specs<Char> specs{};
 
   constexpr wrapped_arg_formatter() noexcept { specs.alignment = '\0'; }
 
-  constexpr auto parse(std::format_parse_context& ctx) -> decltype(ctx.begin()) {
+  constexpr auto parse(std::basic_format_parse_context<Char>& ctx)
+    -> decltype(ctx.begin())
+  {
     const auto end = specs.parse(ctx);
     if (specs.debug)
       standard_format_error("wrapped does not accept debug presentation");
@@ -268,7 +275,7 @@ struct wrapped_arg_formatter {
   }
 
   template<typename Context>
-  auto format(const wrapped_arg& arg, Context& ctx) const
+  auto format(const wrapped_arg<Char>& arg, Context& ctx) const
     -> decltype(ctx.out())
   {
     auto resolved = specs.resolve(ctx);
@@ -291,13 +298,18 @@ struct wrapped_arg_formatter {
 namespace tjg::color {
 
 /**
- * Wraps styled text when formatted or inserted into a narrow stream.
+ * Wraps narrow or wide styled text when formatted or inserted into a stream.
  * Uses the field width or 80 display columns if omitted. Format precision
  * sets the hanging indent. Separates lines with newlines and emits no trailing
  * newline.
  */
 [[nodiscard]] inline
-auto wrapped(styled_text text) noexcept -> detail::wrapped_arg
+auto wrapped(styled_text text) noexcept -> detail::wrapped_arg<char>
+{ return {std::move(text)}; }
+
+/// Wraps wide styled text with the same formatting and stream rules.
+[[nodiscard]] inline
+auto wrapped(wstyled_text text) noexcept -> detail::wrapped_arg<wchar_t>
 { return {std::move(text)}; }
 
 } // tjg::color
@@ -308,8 +320,8 @@ template<tjg::CharType Char>
 struct formatter<tjg::color::basic_styled_text<Char>, Char>
   : tjg::color::detail::standard_styled_text_formatter<Char> {};
 
-template<>
-struct formatter<tjg::color::detail::wrapped_arg, char>
-  : tjg::color::detail::wrapped_arg_formatter {};
+template<tjg::CharType Char>
+struct formatter<tjg::color::detail::wrapped_arg<Char>, Char>
+  : tjg::color::detail::wrapped_arg_formatter<Char> {};
 
 } // std
