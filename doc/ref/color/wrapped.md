@@ -1,4 +1,4 @@
-# `tjg::color::wrapped`
+# [`tjg::color::wrapped`](https://github.com/tjgolubi/color/blob/fc368946e2c4bb836d487952935070698cfbf8d5/include/tjg/color/bits/styled_text-format.hpp#L300)
 
 Header: [`<tjg/color.hpp>`](index.md).
 

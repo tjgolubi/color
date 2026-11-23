@@ -1,5 +1,5 @@
 /// @copyright 2026 Terry Golubiewski, all rights reserved.
-#include <tjg/color/bits/sgr_support.hpp>
+#include <tjg/color/bits/sgr-support.hpp>
 
 namespace tjg::color {
 

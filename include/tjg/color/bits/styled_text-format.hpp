@@ -4,8 +4,8 @@
 #pragma once
 
 #include <tjg/color/styled_text.hpp>
-#include "format_support.hpp"
-#include "sgr_support.hpp"
+#include "format-support.hpp"
+#include "sgr-support.hpp"
 #include "text_style-format.hpp"
 #include "unicode.hpp"
 

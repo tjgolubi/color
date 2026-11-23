@@ -5,7 +5,7 @@
 #pragma once
 
 #include "emphasis.hpp"
-#include "format_support.hpp"
+#include "format-support.hpp"
 #include <tjg/inline_buffer.hpp>
 #include <tjg/utility.hpp>
 

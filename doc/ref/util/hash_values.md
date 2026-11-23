@@ -1,6 +1,6 @@
-# [`tjg::hash_values`](https://github.com/tjgolubi/color/blob/92039b88e7f226935de41ed533b8601ddeff5517/include/tjg/hash_support.hpp#L67)
+# [`tjg::hash_values`](https://github.com/tjgolubi/color/blob/bf01e2dda7a63533f350ec19807749fca60a40cb/include/tjg/color/bits/hash-support.hpp#L67)
 
-Header: [`<tjg/hash_support.hpp>`](index.md#tjghash_supporthpp).
+Header: [`<tjg/hash-support.hpp>`](index.md#hash-helpers).
 
 ## Synopsis
 
@@ -13,4 +13,7 @@ auto hash_values(const T&... values)
 
 ## Description
 
-Starts with a zero seed and calls [`hash_combine`](hash_combine.md) once per argument in order. An empty argument list returns zero.
+Starts with a zero seed and calls [`hash_combine`](hash_combine.md) once per
+argument in order. Each argument must have a usable `std::hash` specialization.
+The function is `noexcept` when all of those calls are `noexcept`. An empty
+argument list returns zero.

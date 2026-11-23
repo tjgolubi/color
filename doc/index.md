@@ -49,19 +49,19 @@ for StyledTextDemo, Tagged, TableDemo, and WrapTable.
 
 ## Headers
 
-| Header                        | Provides                                           |
-| ----------------------------- | -------------------------------------------------- |
-| `<tjg/color.hpp>`             | The full library, including formatting and streams |
-| `<tjg/color/colors.hpp>`      | Color values, named colors, and `color_t`          |
-| `<tjg/color/text_style.hpp>`  | Color values, emphasis, and `text_style`           |
+| Header                        | Provides                                            |
+| ----------------------------- | --------------------------------------------------- |
+| `<tjg/color.hpp>`             | The full library, including output and SGR helpers  |
+| `<tjg/color/colors.hpp>`      | Color values, named colors, and `color_t`            |
+| `<tjg/color/text_style.hpp>`  | Color values, emphasis, and `text_style`             |
 | `<tjg/color/styled_text.hpp>` | Nested styled text, markup parsing, and wrapping    |
-| `<tjg/backslash.hpp>`         | Backslash escaping and unescaping for strings      |
-| `<tjg/strip_ansi.hpp>`        | ANSI escape removal from strings                   |
-| `<tjg/hash_support.hpp>`      | Hash values and hash combination                   |
-| `<tjg/utility.hpp>`           | Character-type concept and cast helpers            |
+| `<tjg/backslash.hpp>`         | Backslash escaping and unescaping for strings       |
+| `<tjg/strip_ansi.hpp>`        | ANSI escape removal from strings                    |
+| `<tjg/utility.hpp>`           | Character-type concept and cast helpers             |
 
-The narrower headers can be used without formatting, printing, or
-stream support.
+Use `<tjg/color.hpp>` for formatting, printing, stream output, SGR helpers,
+or ANSI escape removal from styled text. The narrower headers can be used
+independently. The `tjg/color/bits/` directory holds implementation headers.
 
 ## Reference
 
